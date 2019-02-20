@@ -1,0 +1,17 @@
+node_modules/
+*.log
+*.exe
+*.suo
+*.ide
+.eslintrc
+bin/
+obj/
+bundle/
+/.vs/LARIS/v15/Server/sqlite3
+/.vs/LARIS/DesignTimeBuild/.dtbcache
+/TronCore/.vs
+/LARIS.UI/Properties/PublishProfiles
+/LARIS.UI/LARIS.UI.csproj.user
+/LARIS.Migration/.vs/LARIS.Migracoes/v15/Server/sqlite3/db.lock
+/LARIS.Migration/.vs/LARIS.Migracoes/v15/Server/sqlite3/storage.ide-shm
+/LARIS.Migration/.vs/LARIS.Migracoes/v15/Server/sqlite3/storage.ide-wal
