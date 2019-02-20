@@ -1,0 +1,57 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <FileVersion>1.2.0.0</FileVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Mappings\**" />
+    <Compile Remove="UoW\**" />
+    <EmbeddedResource Remove="Mappings\**" />
+    <EmbeddedResource Remove="UoW\**" />
+    <None Remove="Mappings\**" />
+    <None Remove="UoW\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Context\GCDbContext.cs" />
+    <Compile Remove="Context\JobDbContext.cs" />
+    <Compile Remove="Factories\RepositoryFactory.cs" />
+    <Compile Remove="Factories\RepositoryFactoryNoSql.cs" />
+    <Compile Remove="Repositories\CidadeRepository2.cs" />
+    <Compile Remove="Repositories\FuncaoRepository.cs" />
+    <Compile Remove="Repositories\GenericRepository.cs" />
+    <Compile Remove="Repositories\GrupoUsuarioRepository.cs" />
+    <Compile Remove="Repositories\OperacaoRepository.cs" />
+    <Compile Remove="Repositories\PerfilVisibilidadeRepository.cs" />
+    <Compile Remove="Repositories\PermissaoAcessoRepository.cs" />
+    <Compile Remove="Repositories\PessoaUsuarioRepository.cs" />
+    <Compile Remove="Repositories\VisibilidadeFuncaoRepository.cs" />
+    <Compile Remove="Repositories\VisibilidadeOperacaoRepository.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Dapper" Version="1.50.5" />
+    <PackageReference Include="Dapper.Contrib" Version="1.50.5" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.1.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\TronCore\TronCore.csproj" />
+    <ProjectReference Include="..\..\TronSuite\TronSuite.csproj" />
+    <ProjectReference Include="..\TronBox.Domain\TronBox.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Context\" />
+    <Folder Include="Factories\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Comum.Infra.Data">
+      <HintPath>..\..\Binarios\Debug\netstandard2.0\Comum.Infra.Data.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>

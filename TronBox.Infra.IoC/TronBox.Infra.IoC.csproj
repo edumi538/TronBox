@@ -1,0 +1,50 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <FileVersion>1.2.0.0</FileVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Configuration\**" />
+    <EmbeddedResource Remove="Configuration\**" />
+    <None Remove="Configuration\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="BootstrapperAutofac.cs" />
+    <Compile Remove="BootstrapperSm.cs" />
+    <Compile Remove="Services\MensagemPush.cs" />
+    <Compile Remove="Services\Notificacoes.cs" />
+    <Compile Remove="Services\UsuarioLogado.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="JWT" Version="4.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.1.4" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="2.1.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\TronCore\TronCore.csproj" />
+    <ProjectReference Include="..\TronBox.Application\TronBox.Application.csproj" />
+    <ProjectReference Include="..\TronBox.Infra.Data\TronBox.Infra.Data.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Comum.Application">
+      <HintPath>..\..\Binarios\Debug\netstandard2.0\Comum.Application.dll</HintPath>
+    </Reference>
+    <Reference Include="Comum.Infra.Data">
+      <HintPath>..\..\Binarios\Debug\netstandard2.0\Comum.Infra.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="Comum.Infra.IoC">
+      <HintPath>..\..\Binarios\Debug\netstandard2.0\Comum.Infra.IoC.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Services\" />
+  </ItemGroup>
+
+</Project>
