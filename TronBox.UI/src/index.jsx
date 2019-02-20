@@ -1,7 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { Router, hashHistory } from 'react-router'
-import HttpsRedirect from 'react-https-redirect'
 
 import { applyMiddleware, createStore } from 'redux'
 import { Provider } from 'react-redux'
@@ -28,9 +27,7 @@ const store = applyMiddleware(...middlewares)(createStore)(reducers, devTools)
 ReactDOM.render(
     <LocaleProvider locale={ptBR}>
         <Provider store={store}>
-            {/* <HttpsRedirect> */}
-                <Router history={hashHistory} routes={routes} />
-            {/* </HttpsRedirect> */}
+            <Router history={hashHistory} routes={routes} />
         </Provider>
     </LocaleProvider>,
     document.getElementById('app'))

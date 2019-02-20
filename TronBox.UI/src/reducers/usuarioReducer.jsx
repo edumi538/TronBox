@@ -2,18 +2,18 @@ import * as a from './../actionTypes/actionTypes'
 
 const INITIAL_STATE = {
     pessoaLogada: {
+        id: null,
         nome: null,
-        foto: null,
         tipo: null,
+        empresaId: null,
         empresa: null,
-        isEscritorio: null,
-        empresaId: null
+        email: null
     },
-    pessoaJaLogada: false,
-    cargo: null
+    empregado: null,
+    pessoaJaLogada: false
 }
 
-export default ( state = INITIAL_STATE, action ) =>{
+export default (state = INITIAL_STATE, action) => {
 
     const { type, payload } = action
 
@@ -23,19 +23,18 @@ export default ( state = INITIAL_STATE, action ) =>{
                 ...state, pessoaLogada: {
                     id: payload.data.id,
                     nome: payload.data.nome,
-                    foto: payload.data.foto,
                     tipo: payload.data.tipo,
-                    empresa: payload.data.empresa,
                     empresaId: payload.data.empresaId,
-                    isEscritorio: payload.data.isEscritorio,
+                    empresa: payload.data.empresa,
+                    email: payload.data.email
                 }
             }
-        case a.USR_GET_CARGO_EMPREGADO:
-            return { ...state, cargo : payload.data.descricao }
+        case a.USR_GET_DADOS_EMPREGADO:
+            return { ...state, empregado: payload }
         case a.USR_SET_ESTADO_INICIAL_USUARIO_LOGADO:
-            return {
-                pessoaLogada: {}
-            }
+            return { ...state, pessoaLogada: {}, empregado: false, empregado: null }
+        case a.USR_SET_PESSOA_JA_LOGADA:
+            return { ...state, pessoaJaLogada: payload }
         default:
             return { ...state };
     }

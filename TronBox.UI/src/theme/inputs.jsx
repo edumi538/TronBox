@@ -54,6 +54,7 @@ const AppSelect = ({ input: { onChange, value }, tooltip, label, col, required, 
         <div className="form-group">
             <label className="control-label">
                 {label}
+                <span style={{ color: 'transparent' }}>.</span>
                 {required &&
                     <span className="text-danger"> * </span>
                 }
@@ -71,6 +72,49 @@ const AppSelect = ({ input: { onChange, value }, tooltip, label, col, required, 
                 loadingPlaceholder="Carregando..." placeholder="" noResultsText="Nenhum registro" searchPromptText="Digite para pesquisar"
             />
             {errorMessage(visited, value, touched, warning, error)}
+        </div>
+    </div>
+);
+
+const AppSelectWithCode = ({ input: { onChange, value }, tooltip, label, col, required, clear, valueKey, labelKey, labelKey1, options, disabled, valueRenderer, valueComponent, meta: { touched, error, visited, warning } }) => (
+    <div className={`col-md-${col}`}>
+        <div className="form-group">
+            <label className="control-label">
+                {label}
+                {required &&
+                    <span className="text-danger"> * </span>
+                }
+                {
+                    tooltip &&
+                    <Tooltip title={tooltip}>
+                        <Icon type="question-circle-o" style={{ color: tooltipColor }} />
+                    </Tooltip>
+                }
+            </label>
+
+            <div className="row">
+                <div className={'col-sm-2'}>
+                    <Select
+                        value={!value ? null : value} menuContainerStyle={{ zIndex: 1000 }} openOnFocus
+                        valueRenderer={valueRenderer} valueComponent={valueComponent} searchable simpleValue
+                        onChange={onChange} options={options} disabled={disabled} valueKey={valueKey} labelKey={labelKey1 ? labelKey1 : valueKey}
+                        loadingPlaceholder="Carregando..." placeholder="" noResultsText="Nenhum registro" searchPromptText="Digite para pesquisar"
+                    />
+                </div>
+                <div className={`col-sm-10`}>
+                    <Select
+                        value={!value ? null : value} menuContainerStyle={{ zIndex: 1000 }} openOnFocus
+                        valueRenderer={valueRenderer} valueComponent={valueComponent} searchable simpleValue
+                        onChange={onChange} options={options} disabled={disabled} valueKey={valueKey} labelKey={labelKey}
+                        loadingPlaceholder="Carregando..." placeholder="" noResultsText="Nenhum registro" searchPromptText="Digite para pesquisar"
+                    />
+                </div>
+            </div>
+            <div className="row">
+                <div className={`col-sm-12`}>
+                    {errorMessage(visited, value, touched, warning, error)}
+                </div>
+            </div>
         </div>
     </div>
 );
@@ -96,6 +140,40 @@ const AppSelectPagination = ({ input: { onChange, value }, valueKey, labelKey, l
         <small className="help-block">
             {touched && pristine && (error && <span className="text-danger">{error}</span>)}
         </small>
+    </div>
+);
+
+const AppSelectWithIcon = ({ input: { onChange, value }, tooltip, label, col, required, icon, onClick, valueKey, labelKey, options, disabled, valueRenderer, valueComponent, meta: { touched, error, visited, warning } }) => (
+    <div className={`col-md-${col}`}>
+        <div className="form-group">
+            <label className="control-label">
+                {label}
+                <span style={{ color: 'transparent' }}>.</span>
+                {required &&
+                    <span className="text-danger"> * </span>
+                }
+                {
+                    tooltip &&
+                    <Tooltip title={tooltip}>
+                        <Icon type="question-circle-o" style={{ color: tooltipColor }} />
+                    </Tooltip>
+                }
+            </label>
+            <div className="input-group">
+                <Select
+                    value={!value ? null : value} menuContainerStyle={{ zIndex: 1000 }} openOnFocus
+                    valueRenderer={valueRenderer} valueComponent={valueComponent} searchable simpleValue
+                    onChange={onChange} options={options} disabled={disabled} valueKey={valueKey} labelKey={labelKey}
+                    loadingPlaceholder="Carregando..." placeholder="" noResultsText="Nenhum registro" searchPromptText="Digite para pesquisar"
+                />
+                <span className="input-group-btn">
+                    <button type="button" onClick={onClick} className="btn btn-primary">
+                        <i className={`fa fa-${icon}`} />
+                    </button>
+                </span>
+            </div>
+            {errorMessage(visited, value, touched, warning, error)}
+        </div>
     </div>
 );
 
@@ -210,7 +288,7 @@ const AppInputTelephone = ({ input, meta: { touched, error } }) => (
 
 const AppInputCelular = ({ input, disabled, meta: { touched, error } }) => (
     <div>
-        <InputMask {...input} type="text" mask="(99) 99999-9999" className="form-control" disabled={disabled}/>
+        <InputMask {...input} type="text" mask="(99) 99999-9999" className="form-control" disabled={disabled} />
         <small className="help-block">
             {touched && (error && <span className="text-danger">{error}</span>)}
         </small>
@@ -249,6 +327,8 @@ export {
     AppSelect,
     AppSelectReadonly,
     AppSelectPagination,
+    AppSelectWithCode,
+    AppSelectWithIcon,
     AppInput,
     AppInputFile,
     AppInputButton,

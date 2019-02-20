@@ -12,6 +12,15 @@ moment.locale('pt-br')
 var tooltipColor = 'rgb(201, 195, 195)'
 
 const RadioGroup = Radio.Group
+const { RangePicker, MonthPicker } = DatePicker
+
+const errorMessage = (touched, warning, error) => {
+    return (
+        <small className="help-block">
+            {touched && ((error && <span className="text-danger">{error}</span>) || (warning && <span className="text-warning">{warning}</span>))}
+        </small>
+    );
+};
 
 const FormInput = ({ input, label, tooltip, note, col, required, maxLength, disabled, meta: { touched, error, warning } }) => (
     <div className={`col-md-${col}`}>
@@ -33,9 +42,7 @@ const FormInput = ({ input, label, tooltip, note, col, required, maxLength, disa
                 }
             </label>
             <Input {...input} maxLength={maxLength} disabled={disabled} style={{ width: '100%' }} />
-            <small className="help-block">
-                {touched && ((error && <span className="text-danger">{error}</span>) || (warning && <span className="text-warning">{warning}</span>))} <span style={{ color: 'transparent' }}>.</span>
-            </small>
+            {errorMessage(touched, warning, error)}
         </div>
     </div>
 )
@@ -63,7 +70,7 @@ const FormInputButton = ({ input: { onChange, value, onFocus }, onKeyUp, onClick
                     </button>
                 </span>
             </div>
-            {touched && ((error && <span className="text-danger">{error}</span>) || (warning && <span className="text-warning">{warning}</span>))} <span style={{ color: 'transparent' }}>.</span>
+            {errorMessage(touched, warning, error)}
         </div>
     </div>
 )
@@ -80,14 +87,12 @@ const FormInputTextArea = ({ input, label, tooltip, col, required, maxLength, di
                 {
                     tooltip &&
                     <Tooltip title={tooltip}>
-                        <Icon type="question-circle-o" style={{ color: tooltipColor }} />
+                        <Icon type="question-circle-o" style={{ color: tooltipColor, marginLeft: 5 }} />
                     </Tooltip>
                 }
             </label>
             <TextArea {...input} maxLength={maxLength} disabled={disabled} style={{ width: '100%' }} autosize={{ minRows, maxRows }} />
-            <small className="help-block">
-                {touched && ((error && <span className="text-danger">{error}</span>) || (warning && <span className="text-warning">{warning}</span>))} <span style={{ color: 'transparent' }}>.</span>
-            </small>
+            {errorMessage(touched, warning, error)}
         </div>
     </div>
 )
@@ -110,9 +115,7 @@ const FormSelect = ({ input, label, tooltip, clear, col, required, disabled, val
             <Select {...input} allowClear={clear} style={{ width: '100%' }} disabled={disabled}>
                 {values.map(d => <Option key={d.id}>{d.descricao}</Option>)}
             </Select>
-            <small className="help-block">
-                {touched && ((error && <span className="text-danger">{error}</span>) || (warning && <span className="text-warning">{warning}</span>))} <span style={{ color: 'transparent' }}>.</span>
-            </small>
+            {errorMessage(touched, warning, error)}
         </div>
     </div>
 )
@@ -142,13 +145,10 @@ const FormSelectTags = ({ input, label, tooltip, col, required, values, meta: { 
                 {children}
                 {/* { values.map(d => <Option key={d.id}>{d.descricao}</Option>)} */}
             </Select>
-            <small className="help-block">
-                {touched && ((error && <span className="text-danger">{error}</span>) || (warning && <span className="text-warning">{warning}</span>))} <span style={{ color: 'transparent' }}>.</span>
-            </small>
+            {errorMessage(touched, warning, error)}
         </div>
     </div>
 )
-
 
 const FormSelectChild = ({ input, label, tooltip, col, required, children, clear, meta: { touched, error, warning } }) => (
     <div className={`col-md-${col}`}>
@@ -169,9 +169,7 @@ const FormSelectChild = ({ input, label, tooltip, col, required, children, clear
                 filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0} style={{ width: '100%' }} >
                 {children}
             </Select>
-            <small className="help-block">
-                {touched && ((error && <span className="text-danger">{error}</span>) || (warning && <span className="text-warning">{warning}</span>))} <span style={{ color: 'transparent' }}>.</span>
-            </small>
+            {errorMessage(touched, warning, error)}
         </div>
     </div>
 )
@@ -192,15 +190,13 @@ const FormDatePicker = ({ input, desabilitaDatasAnteriores, formatoData, label, 
                     </Tooltip>
                 }
             </label>
-            <DatePicker {...input} value={input.value ? moment(input.value, formatoData ? formatoData : 'DD/MM/YYYY') : null} disabled={disabled} format="DD/MM/YYYY" style={{ width: '100%' }} disabledDate={desabilitaDatasAnteriores ? disabledDate : undefined} />
-            <small className="help-block">
-                {touched && ((error && <span className="text-danger">{error}</span>) || (warning && <span className="text-warning">{warning}</span>))} <span style={{ color: 'transparent' }}>.</span>
-            </small>
+            <DatePicker {...input} value={input.value ? moment(input.value, formatoData ? formatoData : 'DD/MM/YYYY') : null} disabled={disabled} format={'DD/MM/YYYY'} style={{ width: '100%' }} disabledDate={desabilitaDatasAnteriores ? disabledDate : undefined} />
+            {errorMessage(touched, warning, error)}
         </div>
     </div>
 )
 
-const FormInputNumber = ({ input, label, label1, label2, tooltip, col, required, min, max, meta: { touched, error, warning } }) => (
+const FormDateRangePicker = ({ input: { onChange, value }, desabilitaDatasAnteriores, label, tooltip, col, required, disabled, meta: { touched, error, warning } }) => (
     <div className={`col-md-${col}`}>
         <div className="form-group">
             <label className="control-label">
@@ -216,10 +212,52 @@ const FormInputNumber = ({ input, label, label1, label2, tooltip, col, required,
                     </Tooltip>
                 }
             </label>
-            <label>{label1}</label><InputNumber {...input} min={min} max={max} style={{ width: '100%' }} /><label>{label2}</label>
-            <small className="help-block">
-                {touched && ((error && <span className="text-danger">{error}</span>) || (warning && <span className="text-warning">{warning}</span>))} <span style={{ color: 'transparent' }}>.</span>
-            </small>
+            <RangePicker value={value} onChange={onChange} format="DD/MM/YYYY" style={{ width: '100%' }} disabled={disabled} disabledDate={desabilitaDatasAnteriores ? disabledDate : undefined} />
+            {errorMessage(touched, warning, error)}
+        </div>
+    </div>
+)
+
+const FormDateMonthPicker = ({ input: { value, onChange }, label, tooltip, col, required, disabled, meta: { touched, error, warning } }) => (
+    <div className={`col-md-${col}`}>
+        <div className="form-group">
+            <label className="control-label">
+                {label}
+                <span style={{ color: 'transparent' }}>.</span>
+                {required &&
+                    <span className="text-danger"> * </span>
+                }
+                {
+                    tooltip &&
+                    <Tooltip title={tooltip}>
+                        <Icon type="question-circle-o" style={{ color: tooltipColor }} />
+                    </Tooltip>
+                }
+            </label>
+            <MonthPicker value={value} onChange={onChange} format="MM/YYYY" style={{ width: '100%' }} />
+            {errorMessage(touched, warning, error)}
+        </div>
+    </div>
+)
+
+const FormInputNumber = ({ input, label, label1, label2, tooltip, col, required, disabled, min, max, meta: { touched, error, warning } }) => (
+    <div className={`col-md-${col}`}>
+        <div className="form-group">
+            <label className="control-label">
+                {label}
+                <span style={{ color: 'transparent' }}>.</span>
+                {required &&
+                    <span className="text-danger"> * </span>
+                }
+                {
+                    tooltip &&
+                    <Tooltip title={tooltip}>
+                        <Icon type="question-circle-o" style={{ color: tooltipColor }} />
+                    </Tooltip>
+                }
+            </label>
+            <label>{label1}</label><InputNumber {...input} min={min} max={max} style={{ width: '100%' }} disabled={disabled} /><label>{label2}</label>
+            {errorMessage(touched, warning, error)}
         </div>
     </div>
 )
@@ -277,12 +315,12 @@ const FormInputNumberDecimal = ({ input, label, label1, label2, disabled, fixedD
                     decimalSeparator=','
                     disabled={disabled}
 
-                    isAllowed={(maxValue || minValue) || (minValue && maxValue)  ?
+                    isAllowed={(maxValue || minValue) || (minValue && maxValue) ?
                         (values) => {
                             const { formattedValue, floatValue } = values;
-                            if(minValue && maxValue)
+                            if (minValue && maxValue)
                                 return formattedValue === '' || (floatValue <= maxValue && floatValue >= minValue);
-                            else if(minValue)
+                            else if (minValue)
                                 return formattedValue === '' || floatValue >= minValue;
                             else
                                 return formattedValue === '' || floatValue <= maxValue;
@@ -297,9 +335,7 @@ const FormInputNumberDecimal = ({ input, label, label1, label2, disabled, fixedD
                 />
             </div>
             <label>{label2}</label>
-            <small className="help-block">
-                {touched && ((error && <span className="text-danger">{error}</span>) || (warning && <span className="text-warning">{warning}</span>))} <span style={{ color: 'transparent' }}>.</span>
-            </small>
+            {errorMessage(touched, warning, error)}
         </div>
     </div>
 )
@@ -349,18 +385,16 @@ const MultiSelectTelerik = ({ input, data, placeholder, children, label, minRows
                 </Select>
 
                 <label>{label2}</label>
-                <small className="help-block">
-                    {touched && ((error && <span className="text-danger">{error}</span>) || (warning && <span className="text-warning">{warning}</span>))} <span style={{ color: 'transparent' }}>.</span>
-                </small>
+                {errorMessage(touched, warning, error)}
             </div>
         </div>
     )
 }
 
-const FormInputCheckbox = ({ input, label, checked, tooltip, children, col, required, meta: { touched, error, warning } }) => (
+const FormInputCheckbox = ({ input, label, checked, tooltip, disabled, children, col, required, meta: { touched, error, warning } }) => (
     <div className={`col-md-${col}`}>
         <div className="form-group">
-            <Checkbox {...input} checked={checked} /> <label style={{ marginLeft: 5 }}>{label} {required && <span className="text-danger"> * </span> }</label>
+            <Checkbox {...input} checked={checked} disabled={disabled} /> <label style={{ marginLeft: 5 }}>{label} {required && <span className="text-danger"> * </span>}</label>
             {children &&
                 children
             }
@@ -370,14 +404,12 @@ const FormInputCheckbox = ({ input, label, checked, tooltip, children, col, requ
                     <Icon type="question-circle-o" style={{ color: tooltipColor, marginLeft: 5 }} />
                 </Tooltip>
             }
-            <small className="help-block">
-                {touched && ((error && <span className="text-danger">{error}</span>) || (warning && <span className="text-warning">{warning}</span>))} <span style={{ color: 'transparent' }}>.</span>
-            </small>
+            {errorMessage(touched, warning, error)}
         </div>
     </div>
 )
 
-const FormRadioGroup = ({ input, label, label1, checked, tooltip, defaultValue, children, col, required, meta: { touched, error, warning } }) => (
+const FormRadioGroup = ({ input, label, tooltip, children, col, required, meta: { touched, error, warning } }) => (
     <div className={`col-md-${col}`}>
         <div className="form-group">
             <label className="control-label">
@@ -387,29 +419,26 @@ const FormRadioGroup = ({ input, label, label1, checked, tooltip, defaultValue, 
                     <span className="text-danger"> * </span>
                 }
             </label>
-            <div>
-                <RadioGroup
-                    //onChange={this.onChange}
-                    //value={this.state.value}
-                    {...input}
-                    //value={1}
-                >
-                    {
-                        children
-                    }
-                </RadioGroup>
-
+            <div className="panel panel-default">
+                <div className="panel-body" style={{ height: 36 }}>
+                    <RadioGroup
+                        buttonStyle="solid"
+                        {...input}
+                        onChange={input.onChange}
+                    >
+                        {
+                            children
+                        }
+                    </RadioGroup>
+                </div>
             </div>
-
             {
                 tooltip &&
                 <Tooltip title={tooltip}>
                     <Icon type="question-circle-o" style={{ color: tooltipColor, marginLeft: 5 }} />
                 </Tooltip>
             }
-            <small className="help-block">
-                {touched && ((error && <span className="text-danger">{error}</span>) || (warning && <span className="text-warning">{warning}</span>))} <span style={{ color: 'transparent' }}>.</span>
-            </small>
+            {errorMessage(touched, warning, error)}
         </div>
     </div>
 )
@@ -430,10 +459,8 @@ const FormTimePicker = ({ input, label, tooltip, col, required, meta: { touched,
                     </Tooltip>
                 }
             </label>
-            <TimePicker {...input} value={input.value ? moment(input.value, 'HH:mm') : null} format="HH:mm" />
-            <small className="help-block">
-                {touched && ((error && <span className="text-danger">{error}</span>) || (warning && <span className="text-warning">{warning}</span>))} <span style={{ color: 'transparent' }}>.</span>
-            </small>
+            <TimePicker {...input} value={input.value ? moment(input.value, 'HH:mm') : null} format="HH:mm" style={{ width: '100%' }} />
+            {errorMessage(touched, warning, error)}
         </div>
     </div>
 )
@@ -455,9 +482,7 @@ const FormInputMask = ({ input, label, tooltip, disabled, col, required, mask, m
                 }
             </label>
             <InputMask disabled={disabled} value={input.value ? input.value : ''} onChange={input.onChange} type="text" mask={mask} className="form-control" />
-            <small className="help-block">
-                {touched && ((error && <span className="text-danger">{error}</span>) || (warning && <span className="text-warning">{warning}</span>))} <span style={{ color: 'transparent' }}>.</span>
-            </small>
+            {errorMessage(touched, warning, error)}
         </div>
     </div>
 )
@@ -483,4 +508,6 @@ export {
     FormInputNumberDecimal,
     MultiSelectTelerik,
     FormRadioGroup,
+    FormDateRangePicker,
+    FormDateMonthPicker
 }

@@ -71,10 +71,10 @@ export const getRotasPermitidas = async () => {
 }
 
 /**
- * Function to get promise routes. Buscando rotas do Módulo CONNECT - 3.
+ * Function to get promise routes. Buscando rotas do Módulo CONNECT - 4.
  */
 const getRotasPromise = async () => {
-    const modulo = 3;
+    const modulo = 4;
     return new Promise((resolve, reject) => {
         axios.get(`${Util.getBaseUrlSentinela()}/rotas/rotas-permitidas/${modulo}`, Util.getHeaders())
             .then((response => {

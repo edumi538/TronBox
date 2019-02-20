@@ -55,16 +55,8 @@ export default class App extends Component {
             dataResult: process(this.props.dataSource, dataState),
             dataState: dataState,
             pdfExportRequested: false,
-            repeatHeader: false,
-            exportToPdfOrExcel: false
+            repeatHeader: false
         };
-
-        // if (this.props.exportToExcel)
-        //     this.setState({ exportToPdfOrExcel: true })
-
-        // if (this.props.exportToPdf)
-        //     this.setState({ exportToPdfOrExcel: true })
-
 
         this.exportToExcel = () => {
             this._export.save(this.state.dataResult);
@@ -131,12 +123,9 @@ export default class App extends Component {
             });
         }
 
-        const { filterable, groupable, pageSizes, resizable, reorderable, fileNameExport, height } = this.props
-
-
+        const { filterable, groupable, pageSizes, resizable, reorderable, fileNameExport, height, exportToPdf } = this.props
 
         const gridKendo = (
-
             <Grid
                 style={{ height: `${height}px` }}
                 group={this.state.dataState.group}
@@ -144,23 +133,19 @@ export default class App extends Component {
                 groupable={groupable}
                 resizable={resizable}
                 reorderable={reorderable}
-
                 sortable
                 sort={this.state.dataState.sort}
-
                 ref={(grid) => this._grid = grid}
-
                 pageable={{ pageSizes }}
                 onDataStateChange={dataStateChange}
                 filterable={filterable}
                 {...this.state.dataState}
-
                 data={this.state.dataResult}
             >
-                {this.state.exportToPdfOrExcel &&
+                {exportToPdf &&
                     < GridToolbar >
                         {
-                            this.props.exportToPdf &&
+                            exportToPdf &&
                             <span>
                                 <Button
                                     iconClass="fa fa-file-excel-o"
@@ -171,7 +156,7 @@ export default class App extends Component {
                             </span>
                         }
 
-                        {this.props.exportToPdf &&
+                        {exportToPdf &&
                             <span
                                 style={{
                                     paddingLeft: 5
@@ -202,137 +187,14 @@ export default class App extends Component {
 
         )
 
-        //#region Velharia de Grid
-        /*
-                const gridTelerik = (
-                    <LocalizationProvider language="pt">
-                        <IntlProvider locale="pt" >
-                            <ExcelExport
-                                data={this.state.dataResult}
-                                ref={(exporter) => { this._export = exporter }}
-                                fileName="exportExcel.xlsx"
-
-                            >
-                                {/* {
-                                    this.props.children.map(column => (
-                                        <ExcelExportColumn
-                                            key={column.key}
-                                            field={column.props.field}
-                                            title={column.props.title}
-                                            width={column.width}
-                                        />
-                                    ))
-                                }
-
-                                {/* <PDFExport
-                                            ref={(component) => this.pdfExportComponent = component}
-                                            paperSize="A4"
-                                            fileName="exportPDF.pdf"
-
-
-                                        // proxyData ={
-                                        //     <div>Teste</div>
-                                        // }
-
-                                        >
-                                            <div>
-                                                <h1>Teste de export para pdf</h1>
-                                            </div>
-
-
-
-                                <Grid
-                                    //style={{ height: `${window.innerHeight - 320}px` }}
-                                    //groupable={groupable}
-                                    //sortable={true}
-                                    //filterable={filterable}
-                                    //total={this.state.items.length}
-                                    //pageable={{ pageSizes }}
-                                    pageSize={10}
-                                    resizable={resizable}
-                                    reorderable={reorderable}
-                                    //onPageChange={pageChange}
-                                    //ref={(grid) => this._grid = grid}
-                                    pageable={true}
-                                    skip={this.state.skip}
-                                    total={sampleProducts.length}
-                                    data={sampleProducts}
-                                //{...this.state.dataState}
-                                //onDataStateChange={dataStateChange}
-                                >
-                                    {/* {this.props.exportToExcel &&
-                                                <GridToolbar>
-                                                    <button
-                                                        onClick={() => this.exportToExcel()}
-                                                        className="btn"
-                                                    >
-                                                        <i className="fa fa-file-excel-o"></i>
-                                                    </button>
-                                                    <button
-                                                        //onClick={this.exportPDFWithMethod}
-                                                        onClick={() => this.exportPDF()}
-                                                        style={{ marginLeft: 10 }}
-                                                        //disabled={this.state.pdfExportRequested}
-                                                        className="btn"
-                                                        disabled={this.state.pdfExportRequested}
-                                                    >
-                                                        <i className="fa fa-file-pdf-o"></i>
-                                                    </button>
-                                                </GridToolbar>
-                                            }
-                                     {
-                                        this.props.children.map(column => {
-                                            if (column.props.field) {
-                                                return (
-                                                    <Column
-                                                        key={column.key}
-                                                        field={column.props.field}
-                                                        title={column.props.title}
-                                                        width={column.width}
-                                                    />
-                                                )
-                                            }
-                                        })
-                                    }
-
-                                    {this.props.children}
-
-                                    {/* <Column field="ProductID" title="ID" filterable={false} width="70px" />
-                                    <Column field="ProductName" title="Nombre del producto" />
-                                    <Column field="FirstOrderedOn" title="Primero ordenado en" filter="date" format="{0:D}" />
-                                    <Column field="UnitPrice" title="Precio unitario" filter="numeric" format="{0:c}" />
-                                </Grid>
-                                {/* <Grid
-                                                ref={(grid) => this._grid = grid}
-                                                style={{ maxHeight: '400px' }}
-                                                data={sampleProducts}
-
-                                            >
-                                                <Column field="ProductID" title="ID" width="40px" />
-                                                <Column field="ProductName" title="Name" width="250px" />
-                                                <Column field="Category.CategoryName" title="CategoryName" />
-                                                <Column field="UnitPrice" title="Price" width="80px" />
-                                                <Column field="UnitsInStock" title="In stock" width="80px" />
-                                            </Grid>
-                                {/* </PDFExport>
-                            </ExcelExport>
-                        </IntlProvider>
-                    </LocalizationProvider>
-                );
-        */
-
-        //#endregion
-
         return (
             <div>
-
                 <ExcelExport
                     data={this.state.dataResult}
                     ref={(exporter) => { this._export = exporter }}
                     fileName={`${fileNameExport}.xlsx`}
                     filterable={filterable}
                 >
-
                     {
                         this.props.children.map(column => {
                             return (
@@ -362,8 +224,8 @@ export default class App extends Component {
                             scale={0.5}
                             margin="5mm"
                             title={fileNameExport}
-                            author="Tron Informártica - Laris"
-                            creator="Tron Informártica - Laris"
+                            author="Tron Informártica"
+                            creator="Tron Informártica"
 
                             repeatHeaders={this.state.repeatHeader}
                             ref={(element) => { this.gridPDFExport = element; }}
@@ -398,7 +260,6 @@ export default class App extends Component {
 
     }
 }
-
 
 class PageTemplate extends React.Component {
     render() {

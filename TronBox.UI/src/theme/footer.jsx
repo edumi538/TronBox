@@ -5,7 +5,7 @@ import logo from './assets/images/footer/logo-tron.png';
 export default class Footer extends Component {
     render() {
         return (
-            <div className="footer">
+            <div className="footer fixed">
                 <div className="pull-right">
                     <a target="_blank" href="http://www.tron.com.br">
                         <img alt="image" src={logo} />

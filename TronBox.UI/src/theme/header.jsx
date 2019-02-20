@@ -8,7 +8,7 @@ export default class Header extends Component {
                     <h2>{this.props.title}</h2>
                     <ol className="breadcrumb">
                         <li>
-                            <a href="#/home">Home</a>
+                            <a href="#/">Home</a>
                         </li>
 
                         {(() => {

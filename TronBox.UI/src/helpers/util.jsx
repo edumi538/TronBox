@@ -2,11 +2,9 @@ import _ from 'lodash'
 
 class Util {
     static getBaseUrl() {
-        debugger
         return location.href.indexOf('localhost') > 0 ? 'http://localhost:6004/api' : '/api';
     }
     static getBaseUrlSentinela() {
-        debugger
         return location.href.indexOf('localhost') > 0 ? 'http://localhost:6005/api' : 'http://login.tron.com.br/api';
     }
 

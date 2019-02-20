@@ -11,8 +11,8 @@ export default function cellWithEditing(edit, remove) {
             if (edit) {
                 botaoEditar = (
                     <Tooltip title="Editar">
-                        <button className="btn btn-info btn-xs" style={{ marginRight: 10 }} onClick={() => { edit(this.props.dataItem); }} >
-                            <i className="fa fa-edit fa-fw"></i>
+                        <button className="btn btn-sm btn-success" style={{ marginRight: 5 }} onClick={() => { edit(this.props.dataItem); }} >
+                            <i className="fa fa-pencil"></i>
                         </button>
                     </Tooltip>
                 );
@@ -23,8 +23,8 @@ export default function cellWithEditing(edit, remove) {
             if (remove) {
                 botaoRemover = (
                     <Tooltip title="Excluir">
-                        <button className="btn btn-danger btn-xs" style={{ marginRight: 10 }} onClick={() => { remove(this.props.dataItem); }} >
-                            <i className="fa fa-times fa-fw"></i>
+                        <button className="btn btn-sm btn-danger" onClick={() => { remove(this.props.dataItem); }} >
+                            <i className="fa fa-close"></i>
                         </button>
                     </Tooltip>
                 );
