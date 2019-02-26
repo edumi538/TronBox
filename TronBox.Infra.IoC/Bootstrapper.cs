@@ -9,6 +9,10 @@ using Comum.Infra.Data.Repositories;
 using Comum.Infra.IoC.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using TronBox.Application.Services;
+using TronBox.Application.Services.Interfaces;
+using TronBox.Domain.Aggregates.CustomerAgg.Repository;
+using TronBox.Infra.Data.Repositories;
 using TronBox.Infra.IoC.Extensions;
 using TronCore.Dominio.Notifications;
 using TronCore.Persistencia.Context;
@@ -29,6 +33,7 @@ namespace TronBox.Infra.IoC
             services.AddScoped<IDomainNotificationHandler<DomainNotification>, DomainNotificationHandler>();
 
             // Services
+            services.AddScoped<ICustomerAppService, CustomerAppService>();
             
 			//Services base
             services.AddScoped<IPessoaAppService, PessoaNoSqlAppService>();
@@ -36,7 +41,7 @@ namespace TronBox.Infra.IoC
             services.AddScoped<IPessoaEmpresaAppService, PessoaEmpresaNoSqlAppService>();
 
             // Repositorios
-            
+            services.AddScoped<ICustomerRepository, CustomerRepository>();
 
             //Acesso aos conceitos base
             services.AddScoped<IPessoaRepository, PessoaRepositoryNoSql>();

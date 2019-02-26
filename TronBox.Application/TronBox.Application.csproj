@@ -6,16 +6,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Services\Interfaces\IEmpresaAppService.cs" />
-    <Compile Remove="Services\Interfaces\IPermissaoAcessoAppService.cs" />
-    <Compile Remove="Services\Interfaces\IPessoaAppService.cs" />
-    <Compile Remove="Services\Interfaces\IPessoaDispositivoAppService.cs" />
-    <Compile Remove="Services\PessoaDispositivoAppService.cs" />
-    <Compile Remove="Services\RegistroLoggingAppService.cs" />
-    <Compile Remove="Services\TarefaObrigacaoAppService.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Folder Include="Automapper\" />
     <Folder Include="ViewModels\" />
   </ItemGroup>

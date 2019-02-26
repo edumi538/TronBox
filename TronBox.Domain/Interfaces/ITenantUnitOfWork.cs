@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace TronConnect.Domain.Interfaces
+namespace TronBox.Domain.Interfaces
 {
     public interface ITenantUnitOfWork : IDisposable
     {

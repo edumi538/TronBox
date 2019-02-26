@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace TronConnect.Models
+namespace TronBox.Models
 {
     public class PushModel
     {

@@ -19,26 +19,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Remove="Controllers\AutenticacaoController.cs" />
-    <Compile Remove="Controllers\BaseController.cs" />
-    <Compile Remove="Controllers\CidadeController.cs" />
-    <Compile Remove="Controllers\CidadeEstadoController.cs" />
-    <Compile Remove="Controllers\CnaeController.cs" />
-    <Compile Remove="Controllers\HomeController.cs" />
-    <Compile Remove="Controllers\InquilinoController.cs" />
-    <Compile Remove="Controllers\PermissaoAcessoController.cs" />
-    <Compile Remove="Controllers\PessoaController.cs" />
-    <Compile Remove="Controllers\PessoaDispositivoController.cs" />
-    <Compile Remove="Controllers\PessoaEmpresaController.cs" />
-    <Compile Remove="Controllers\RegimeTributacaoController.cs" />
-    <Compile Remove="Controllers\RegistroLoggingController.cs" />
-    <Compile Remove="Controllers\TesteController.cs" />
-    <Compile Remove="Controllers\TipoInscricaoController.cs" />
-    <Compile Remove="Controllers\TipoInscricaoEmpresaController.cs" />
-    <Compile Remove="Controllers\TipoLogradouroController.cs" />
-    <Compile Remove="Controllers\TipoOperacaoController.cs" />
-    <Compile Remove="Controllers\TipoPessoaController.cs" />
-    <Compile Remove="Controllers\UsuarioController.cs" />
     <Compile Remove="Helpers\EnvioDeArquivo\AzureBlobStorage.cs" />
     <Compile Remove="Helpers\EnvioDeArquivo\Interface\IAzureBlobStorage.cs" />
     <Compile Remove="Helpers\SessionExtensions.cs" />

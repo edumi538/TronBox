@@ -1,8 +1,8 @@
-﻿using TronCore.Dominio.Base;
-using Comum.Infra.Data.Context;
-using TronCore.Persistencia.Interfaces;
+﻿using Comum.Infra.Data.Context;
+using TronCore.Dominio.Base;
 using TronCore.InjecaoDependencia;
 using TronCore.Persistencia;
+using TronCore.Persistencia.Interfaces;
 
 namespace TronBox.Infra.Data.Repositories
 {

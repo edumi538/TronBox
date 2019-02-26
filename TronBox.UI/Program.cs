@@ -1,9 +1,9 @@
-﻿using Comum.Domain.Automapper;
-using Microsoft.AspNetCore.Hosting;
+﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.IO;
 using System.Reflection;
+using TronBox.Domain.Automapper;
 using TronBox.Domain.Enums;
 using TronCore.DefinicoesConfiguracoes;
 using Utilitarios.Atualizacao;

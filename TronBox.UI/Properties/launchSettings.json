@@ -8,7 +8,7 @@
     }
   },
   "profiles": {
-    "TronConnect": {
+    "TronBox": {
       "commandName": "Project",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
