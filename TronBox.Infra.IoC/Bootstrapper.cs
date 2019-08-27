@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Comum.Application.Services;
 using Comum.Application.Services.Interfaces;
+using Comum.Domain.Aggregates.EmpresaAgg.Repository;
 using Comum.Domain.Aggregates.PessoaAgg.Repository;
 using Comum.Domain.Interfaces;
 using Comum.Domain.Services.Interfaces;
@@ -9,13 +10,11 @@ using Comum.Infra.Data.Repositories;
 using Comum.Infra.IoC.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using TronBox.Application.Services;
-using TronBox.Application.Services.Interfaces;
-using TronBox.Domain.Aggregates.CustomerAgg.Repository;
-using TronBox.Infra.Data.Repositories;
 using TronBox.Infra.IoC.Extensions;
 using TronCore.Dominio.Notifications;
+using TronCore.Enumeradores;
 using TronCore.Persistencia.Context;
+using TronCore.Utilitarios.EnvioDeArquivo;
 
 namespace TronBox.Infra.IoC
 {
@@ -33,23 +32,25 @@ namespace TronBox.Infra.IoC
             services.AddScoped<IDomainNotificationHandler<DomainNotification>, DomainNotificationHandler>();
 
             // Services
-            services.AddScoped<ICustomerAppService, CustomerAppService>();
-            
-			//Services base
-            services.AddScoped<IPessoaAppService, PessoaNoSqlAppService>();
-            services.AddScoped<IPessoaUsuarioAppService, PessoaUsuarioNoSqlAppService>();            
-            services.AddScoped<IPessoaEmpresaAppService, PessoaEmpresaNoSqlAppService>();
 
             // Repositorios
-            services.AddScoped<ICustomerRepository, CustomerRepository>();
 
-            //Acesso aos conceitos base
+            #region Add Comum
+            services.AddScoped<IEmpresaAppService, EmpresaNoSqlAppService>();
+            services.AddScoped<IPessoaAppService, PessoaNoSqlAppService>();
+            services.AddScoped<IPessoaUsuarioAppService, PessoaUsuarioNoSqlAppService>();
+            services.AddScoped<IPessoaEmpresaAppService, PessoaEmpresaNoSqlAppService>();
+
+            services.AddScoped<IEmpresaRepository, EmpresaRepositoryNoSql>();
             services.AddScoped<IPessoaRepository, PessoaRepositoryNoSql>();
             services.AddScoped<IPessoaEmpresaRepository, PessoaEmpresaRepositoryNoSql>();
             services.AddScoped<IPessoaUsuarioRepository, PessoaUsuarioRepositoryNoSql>();
 
-            //Invoca a construção do container da plataforma comum.
-            Comum.Infra.IoC.Bootstrapper.RegisterServices(services, configuration);
+            Comum.Infra.IoC.Bootstrapper.RegisterServices(services, configuration, new AzureBlobSettings(
+                    storageAccount: ConstantsEnvioArquivo.storageAccountNovo,
+                    storageKey: ConstantsEnvioArquivo.storageKeyNovo,
+                    containerName: Modulo.Box.ContainerName));
+            #endregion
 
             //// UnitOfWork
 

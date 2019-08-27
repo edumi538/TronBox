@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
@@ -9,19 +9,17 @@
 
   <ItemGroup>
     <Compile Remove="NewFolder1\**" />
+    <Compile Remove="ViewModels\**" />
     <Compile Remove="wwwroot\js\**" />
     <Content Remove="NewFolder1\**" />
+    <Content Remove="ViewModels\**" />
     <Content Remove="wwwroot\js\**" />
     <EmbeddedResource Remove="NewFolder1\**" />
+    <EmbeddedResource Remove="ViewModels\**" />
     <EmbeddedResource Remove="wwwroot\js\**" />
     <None Remove="NewFolder1\**" />
+    <None Remove="ViewModels\**" />
     <None Remove="wwwroot\js\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Remove="Helpers\EnvioDeArquivo\AzureBlobStorage.cs" />
-    <Compile Remove="Helpers\EnvioDeArquivo\Interface\IAzureBlobStorage.cs" />
-    <Compile Remove="Helpers\SessionExtensions.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -44,7 +42,7 @@
     <PackageReference Include="Microsoft.Azure.Management.Fluent" Version="1.16.0" />
     <PackageReference Include="Microsoft.Azure.Management.Sql.Fluent" Version="1.16.0" />
     <PackageReference Include="Microsoft.VisualStudio.Web.BrowserLink" Version="2.1.1" />
-    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.1.5" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.1.9" />
     <PackageReference Include="React.AspNet" Version="3.4.1" />
     <PackageReference Include="SendGrid" Version="9.10.0" />
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.5.0" />
@@ -57,12 +55,6 @@
 
   <ItemGroup>
     <Folder Include="Properties\PublishProfiles\" />
-    <Folder Include="ViewModels\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="Views\Home\Erro.cshtml" />
-    <None Include="Views\Home\Index.cshtml" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,19 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using TGCW.Domain.Enums;
 using TronCore.Enumeradores;
 
 namespace TronBox.Domain.Enums
 {
     public class eFuncaoTronBox : eFuncao
     {
-        #region Funcoes
-        
-        #endregion
-
-        #region Agrupadores
-        
-        #endregion
+        public const string ID_DASHBOARD = "11E7F776-3BCF-462E-8388-1807472C2B0B";
 
         /// <summary>
         /// Construtor padrão para a chamada do construtor da classe base.
@@ -27,20 +22,8 @@ namespace TronBox.Domain.Enums
         {
         }
 
-        #region Propriedades - Funções
+        public static eFuncao Dashboard { get { return new eFuncao(Guid.Parse(ID_DASHBOARD), "Dashboard", Modulo.Box, "/dashboards", "area-chart", eTipoFuncao.ROTA_MENU, 1); } }
 
-        #region Apenas API
-        #endregion
-
-        #endregion
-
-        #region Propriedades - Agrupadores
-
-        #endregion
-
-        public new static IList<eFuncao> ObtenhaTodos()
-        {
-            return ObtenhaTodos(typeof(eFuncaoTronBox)).ToList();
-        }
+        public new static IList<eFuncao> ObtenhaTodos() => ObtenhaTodos(typeof(eFuncaoTronBox)).ToList();
     }
 }

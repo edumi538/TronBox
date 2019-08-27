@@ -4,6 +4,7 @@ using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
@@ -11,11 +12,11 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
-using React.AspNet;
 using System;
+using System.Net;
 using System.Text;
 using TronBox.Infra.IoC;
+using TronBox.UI.Helpers;
 using TronCore.DefinicoesConfiguracoes;
 using TronCore.Infra.Bus;
 using TronCore.InjecaoDependencia;
@@ -34,6 +35,7 @@ namespace TronBox
         {
             Configuration = configuration;
         }
+
         public IServiceProvider ConfigureServices(IServiceCollection services)
         //public void ConfigureServices(IServiceCollection services)
         {
@@ -44,30 +46,20 @@ namespace TronBox
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
             #region Contexts
-
             services.AddScoped<SuiteMongoDbContext>();
-
-            services.AddEntityFrameworkSqlServer()
-                .AddDbContext<SuiteDbContext>(ServiceLifetime.Scoped);
-
+            services.AddEntityFrameworkSqlServer().AddDbContext<SuiteDbContext>(ServiceLifetime.Scoped);
             #endregion
 
             Bootstrapper.RegisterServices(services, Configuration);
             services.AddScoped<AuditarAttribute>();
 
             #region Mvc
+            services.AddMvc(options => options.Filters.Add(typeof(AutorizacaoActionFilter)))
+                .AddFluentValidation()
+                .AddControllersAsServices()
+                .AddJsonOptions(options => options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore);
 
-            services.AddMvc(options =>
-            {
-                options.Filters.Add(typeof(AutorizacaoActionFilter));
-            })
-            .AddFluentValidation()
-            .AddControllersAsServices()
-            .AddJsonOptions(options =>
-            {
-                options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
-            });
-            services.AddNodeServices();// this is in package Microsoft.AspNetCore.NodeServices 
+            services.AddNodeServices();
 
             var jwtAppSettingOptions = Configuration.GetSection(nameof(JwtIssuerOptions));
             var tokenValidationParameters = new TokenValidationParameters
@@ -87,15 +79,9 @@ namespace TronBox
                 ClockSkew = TimeSpan.Zero
             };
 
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(o =>
-            {
-                o.TokenValidationParameters = tokenValidationParameters;
-            });
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(o => o.TokenValidationParameters = tokenValidationParameters);
 
-            services.AddAuthorization(o =>
-            {
-                o.DefaultPolicy = new AuthorizationPolicyBuilder(JwtBearerDefaults.AuthenticationScheme).RequireAuthenticatedUser().Build();
-            });
+            services.AddAuthorization(o => o.DefaultPolicy = new AuthorizationPolicyBuilder(JwtBearerDefaults.AuthenticationScheme).RequireAuthenticatedUser().Build());
 
             services.Configure<JwtIssuerOptions>(o =>
             {
@@ -104,66 +90,46 @@ namespace TronBox
 
                 o.SigningCredentials = new SigningCredentials(_signingKey, SecurityAlgorithms.HmacSha256);
             });
-
             #endregion
 
-            services.AddReact();
-            
-            //services.AddJsEngineSwitcher(options => options.DefaultEngineName = ChakraCoreJsEngine.EngineName).AddChakraCore();
-            
             // Publicação servidor de testes
-            services.Configure<IISOptions>(options =>
-            {
-                options.ForwardClientCertificate = false;
-            });
+            services.Configure<IISOptions>(options => options.ForwardClientCertificate = false);
 
             return services.BuildServiceProvider();
         }
 
-
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, IHttpContextAccessor accessor)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-                app.UseBrowserLink();
+#if DEBUG
+            app.UseCors(builder => builder.WithOrigins("http://localhost:3000", "http://beta.tronbox.com.br").AllowAnyMethod().AllowAnyHeader());
+#else
+            app.UseCors(builder => builder.WithOrigins("http://box.tron.com.br").AllowAnyMethod().AllowAnyHeader());
+#endif
 
-                loggerFactory.AddConsole(Configuration.GetSection("Logging"));
-                loggerFactory.AddDebug();
-            }
-            else
+            app.UseExceptionHandler(builder =>
             {
-                app.UseExceptionHandler("/Home/Error");
-            }
+                builder.Run(async context =>
+                {
+                    context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
 
-            // Initialise ReactJS.NET. Must be before static files.
-            app.UseReact(config =>
-            {
-                config
-                  .AddScript("~/js/remarkable.min.js")
-                  .AddScript("~/js/tutorial.jsx")
-                  .AddScript("~/bundle/app.js")
-                  .AddScript("~/bundle/app.css")
-                  .SetJsonSerializerSettings(new JsonSerializerSettings
-                  {
-                      StringEscapeHandling = StringEscapeHandling.EscapeHtml,
-                      ContractResolver = new CamelCasePropertyNamesContractResolver()
-                  });
+                    var error = context.Features.Get<IExceptionHandlerFeature>();
+
+                    if (error != null)
+                    {
+                        var result = JsonConvert.SerializeObject(new { sucesso = false, erro = error.Error.Message });
+                        context.Response.ContentType = "application/json";
+
+                        context.Response.AddApplicationError(error.Error.Message);
+                        await context.Response.WriteAsync(result);
+                    }
+                });
             });
 
-            app.UseStaticFiles();
             app.UseAuthentication();
-
-            app.UseMvc(routes =>
-            {
-                routes.MapRoute(
-                    name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
-            });
+            app.UseMvc();
 
             InMemoryBus.ContainerAccessor = () => accessor.HttpContext.RequestServices;
             ContainerInjecaoDependencia.Instancia.ContainerAccessor = () => accessor.HttpContext.RequestServices;
         }
-
     }
 }
