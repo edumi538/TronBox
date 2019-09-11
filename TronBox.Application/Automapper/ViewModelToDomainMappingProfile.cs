@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
+using Comum.Domain.ViewModels;
 using Sentinela.Domain.Aggregates.TenantAgg;
 using Sentinela.Domain.DTO.ViewModels;
+using TronBox.Domain.DTO;
 
 namespace TronBox.Domain.Automapper
 {
@@ -14,6 +16,7 @@ namespace TronBox.Domain.Automapper
 
             #endregion
 
+            CreateMap<EmpresaDTO, EmpresaViewModel> ();
         }
     }
 }
