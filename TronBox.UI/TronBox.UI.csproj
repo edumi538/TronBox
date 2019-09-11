@@ -8,26 +8,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="NewFolder1\**" />
     <Compile Remove="ViewModels\**" />
-    <Compile Remove="wwwroot\js\**" />
-    <Content Remove="NewFolder1\**" />
-    <Content Remove="ViewModels\**" />
     <Content Remove="wwwroot\js\**" />
-    <EmbeddedResource Remove="NewFolder1\**" />
     <EmbeddedResource Remove="ViewModels\**" />
     <EmbeddedResource Remove="wwwroot\js\**" />
-    <None Remove="NewFolder1\**" />
     <None Remove="ViewModels\**" />
     <None Remove="wwwroot\js\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Remove="bundleconfig.json" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Remove="Properties\PublishProfiles\gc-web - Web Deploy.pubxml" />
   </ItemGroup>
 
   <ItemGroup>

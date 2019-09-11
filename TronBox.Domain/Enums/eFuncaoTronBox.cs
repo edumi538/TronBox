@@ -8,7 +8,7 @@ namespace TronBox.Domain.Enums
 {
     public class eFuncaoTronBox : eFuncao
     {
-        public const string ID_DASHBOARD = "11E7F776-3BCF-462E-8388-1807472C2B0B";
+        public const string ID_EMPRESA = "11E7F776-3BCF-462E-8388-1807472C2B0B";
 
         /// <summary>
         /// Construtor padrão para a chamada do construtor da classe base.
@@ -22,7 +22,7 @@ namespace TronBox.Domain.Enums
         {
         }
 
-        public static eFuncao Dashboard { get { return new eFuncao(Guid.Parse(ID_DASHBOARD), "Dashboard", Modulo.Box, "/dashboards", "area-chart", eTipoFuncao.ROTA_MENU, 1); } }
+        public static eFuncao Empresa { get { return new eFuncao(Guid.Parse(ID_EMPRESA), "Empresa", Modulo.Box, "/empresas", "building", eTipoFuncao.ROTA_MENU, 1); } }
 
         public new static IList<eFuncao> ObtenhaTodos() => ObtenhaTodos(typeof(eFuncaoTronBox)).ToList();
     }
