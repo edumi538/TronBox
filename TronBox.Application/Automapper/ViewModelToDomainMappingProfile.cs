@@ -1,7 +1,8 @@
 ﻿using AutoMapper;
-using Comum.Domain.ViewModels;
+using Comum.Domain.Aggregates.EmpresaAgg;
 using Sentinela.Domain.Aggregates.TenantAgg;
 using Sentinela.Domain.DTO.ViewModels;
+using TronBox.Domain.Aggregates.ConfiguracaoEmpresaAgg;
 using TronBox.Domain.DTO;
 
 namespace TronBox.Domain.Automapper
@@ -10,13 +11,10 @@ namespace TronBox.Domain.Automapper
     {
         public ViewModelToDomainMappingProfile()
         {
-            #region Tenant
-
             CreateMap<TenantViewModel, Tenant>();
 
-            #endregion
-
-            CreateMap<EmpresaDTO, EmpresaViewModel> ();
+            CreateMap<EmpresaDTO, Empresa>();
+            CreateMap<ConfiguracaoEmpresaDTO, ConfiguracaoEmpresa> ();
         }
     }
 }

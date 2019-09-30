@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27703.2042
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29306.81
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1 - Domain", "1 - Domain", "{2700AA86-B3CF-4A30-90ED-3590AE840622}"
 EndProject
@@ -19,7 +19,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TronBox.Infra.IoC", "TronBo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TronBox.Application", "TronBox.Application\TronBox.Application.csproj", "{CC8FA1A6-9013-4A38-9860-C9B18385A5B8}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TronBox.UI", "TronBox.UI\TronBox.UI.csproj", "{F8A6E516-9CC6-4AB4-B977-E1E8430F62A8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TronBox.API", "TronBox.API\TronBox.API.csproj", "{F8A6E516-9CC6-4AB4-B977-E1E8430F62A8}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "9 - TronCore", "9 - TronCore", "{9FBA6F6F-17A1-4BBD-BD9F-CF65D126077A}"
 EndProject

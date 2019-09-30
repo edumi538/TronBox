@@ -5,7 +5,6 @@ namespace TronBox.Domain.DTO
     public class EmpresaDTO
     {
         public string Id { get; set; }
-        public int Codigo { get; private set; }
         public eTipoInscricaoEmpresa TipoInscricao { get; set; }
         public string Inscricao { get; set; }
         public string RazaoSocial { get; set; }
@@ -14,5 +13,6 @@ namespace TronBox.Domain.DTO
         public string Celular { get; set; }
         public string EmailPrincipal { get; set; }        
         public bool Status { get; set; }
+        public ConfiguracaoEmpresaDTO ConfiguracaoEmpresa { get; set; }
     }
 }
