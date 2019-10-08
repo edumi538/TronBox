@@ -3,6 +3,7 @@ using Comum.Domain.Aggregates.EmpresaAgg;
 using Sentinela.Domain.Aggregates.TenantAgg;
 using Sentinela.Domain.DTO.ViewModels;
 using TronBox.Domain.Aggregates.ConfiguracaoEmpresaAgg;
+using TronBox.Domain.Aggregates.DocumentoFiscalAgg;
 using TronBox.Domain.Aggregates.ManifestoAgg;
 using TronBox.Domain.DTO;
 
@@ -16,6 +17,7 @@ namespace TronBox.Domain.Automapper
 
             CreateMap<EmpresaDTO, Empresa>();
             CreateMap<ConfiguracaoEmpresaDTO, ConfiguracaoEmpresa>();
+            CreateMap<DocumentoFiscalDTO, DocumentoFiscal>();
             CreateMap<ManifestoDTO, Manifesto>();
         }
     }
