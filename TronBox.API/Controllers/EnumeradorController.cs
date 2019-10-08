@@ -29,5 +29,32 @@ namespace TronBox.API.Controllers
 
             return Ok(tiposAcesso);
         }
+
+        [HttpGet("origens-manifesto")]
+        public IActionResult GetOrigemManifesto()
+        {
+            var origensManifesto = from OrigemManifesto d in Enum.GetValues(typeof(OrigemManifesto))
+                              select new { value = (int)d, label = EnumHelper<OrigemManifesto>.GetDisplayValue(d) };
+
+            return Ok(origensManifesto);
+        }
+
+        [HttpGet("situacoes-documento")]
+        public IActionResult GetSituacaoDocumento()
+        {
+            var situacoesDocumento = from SituacaoDocumentoFiscal d in Enum.GetValues(typeof(SituacaoDocumentoFiscal))
+                                   select new { value = (int)d, label = EnumHelper<SituacaoDocumentoFiscal>.GetDisplayValue(d) };
+
+            return Ok(situacoesDocumento);
+        }
+
+        [HttpGet("situacoes-manifesto")]
+        public IActionResult GetSituacaoManifesto()
+        {
+            var situacoesManifesto = from SituacaoManifesto d in Enum.GetValues(typeof(SituacaoManifesto))
+                                     select new { value = (int)d, label = EnumHelper<SituacaoManifesto>.GetDisplayValue(d) };
+
+            return Ok(situacoesManifesto);
+        }
     }
 }

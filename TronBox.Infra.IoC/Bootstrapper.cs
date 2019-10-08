@@ -13,6 +13,7 @@ using Microsoft.Extensions.DependencyInjection;
 using TronBox.Application.Services;
 using TronBox.Application.Services.Interfaces;
 using TronBox.Domain.Aggregates.ConfiguracaoEmpresaAgg.Repository;
+using TronBox.Domain.Aggregates.ManifestoAgg.Repository;
 using TronBox.Infra.Data.Repositories;
 using TronBox.Infra.IoC.Extensions;
 using TronCore.Dominio.Notifications;
@@ -37,9 +38,11 @@ namespace TronBox.Infra.IoC
 
             // Services
             services.AddScoped<IConfiguracaoEmpresaAppService, ConfiguracaoEmpresaAppService>();
+            services.AddScoped<IManifestoAppService, ManifestoAppService>();
 
             // Repositorios
             services.AddScoped<IConfiguracaoEmpresaRepository, ConfiguracaoEmpresaRepository>();
+            services.AddScoped<IManifestoRepository, ManifestoRepository>();
 
             #region Add Comum
             services.AddScoped<IEmpresaAppService, EmpresaNoSqlAppService>();

@@ -11,6 +11,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
+using MongoDB.Bson;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using System;
@@ -51,6 +52,7 @@ namespace TronBox
             #endregion
 
             Bootstrapper.RegisterServices(services, Configuration);
+            BsonDefaults.GuidRepresentation = GuidRepresentation.Standard;
             services.AddScoped<AuditarAttribute>();
 
             #region Mvc
