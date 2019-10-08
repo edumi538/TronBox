@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
 using MongoDB.Bson.Serialization.Attributes;
 using TronBox.Domain.Enums;
+using TronBox.Domain.InnerClass;
 using TronCore.Dominio.Base;
 
 namespace TronBox.Domain.Aggregates.ManifestoAgg
@@ -18,32 +19,13 @@ namespace TronBox.Domain.Aggregates.ManifestoAgg
         public SituacaoDocumentoFiscal SituacaoDocumentoFiscal { get; set; }
         public bool Cancelado { get; set; }
         public bool Rejeitado { get; set; }
-        public DadosOrigem DadosOrigem { get; set; }
+        public DadosOrigemManifesto DadosOrigem { get; set; }
         [BsonIgnoreIfDefault]
         public DadosFornecedor DadosFornecedor { get; set; }
         [BsonIgnoreIfDefault]
         public DadosRetorno DadosManifestacao { get; set; }
         [BsonIgnoreIfDefault]
         public DadosRetorno DadosDownload { get; set; }
-    }
-
-    public class DadosOrigem
-    {
-        public OrigemManifesto Origem { get; set; }
-        public string Originador { get; set; }
-    }
-
-    public class DadosFornecedor
-    {
-        public string Inscricao { get; set; }
-        public string RazaoSocial { get; set; }
-    }
-
-    public class DadosRetorno
-    {
-        public string CodigoRetorno { get; set; }
-        public string Motivo { get; set; }
-        public bool Rejeitado { get; set; }
     }
 
     public class ManifestoValidator : AbstractValidator<Manifesto>

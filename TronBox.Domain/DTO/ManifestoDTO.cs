@@ -1,4 +1,5 @@
-﻿using TronBox.Domain.Enums;
+﻿using TronBox.Domain.DTO.InnerClassDTO;
+using TronBox.Domain.Enums;
 
 namespace TronBox.Domain.DTO
 {
@@ -15,28 +16,9 @@ namespace TronBox.Domain.DTO
         public SituacaoDocumentoFiscal SituacaoDocumentoFiscal { get; set; }
         public bool Cancelado { get; set; }
         public bool Rejeitado { get; set; }
-        public DadosOrigemDTO DadosOrigem { get; set; }
+        public DadosOrigemManifestoDTO DadosOrigem { get; set; }
         public DadosFornecedorDTO DadosFornecedor { get; set; }
         public DadosRetornoDTO DadosManifestacao { get; set; }
         public DadosRetornoDTO DadosDownload { get; set; }
-    }
-
-    public class DadosOrigemDTO
-    {
-        public OrigemManifesto Origem { get; set; }
-        public string Originador { get; set; }
-    }
-
-    public class DadosFornecedorDTO
-    {
-        public string Inscricao { get; set; }
-        public string RazaoSocial { get; set; }
-    }
-
-    public class DadosRetornoDTO
-    {
-        public string CodigoRetorno { get; set; }
-        public string Motivo { get; set; }
-        public bool Rejeitado { get; set; }
     }
 }
