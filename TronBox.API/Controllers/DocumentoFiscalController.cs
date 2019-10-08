@@ -61,7 +61,7 @@ namespace TronBox.UI.Controllers
         }
 
         [HttpPost]
-        [IdentificadorOperacao(eFuncaoTronBox.ID_DOCUMENTO_FISCAL, "Inserir Documento Fiscal", eOperacaoSuite.ID_OP_EDITAR, typeof(eOperacaoSuite), typeof(eFuncaoTronBox), "/documentos-fiscais/adicionar")]
+        [IdentificadorOperacao(eFuncaoTronBox.ID_DOCUMENTO_FISCAL, "Inserir Documento Fiscal", eOperacaoSuite.ID_OP_INSERIR, typeof(eOperacaoSuite), typeof(eFuncaoTronBox), "/documentos-fiscais/adicionar")]
         public IActionResult Post([FromBody]DocumentoFiscalDTO documentoFiscalDTO)
         {
             if (documentoFiscalDTO.Id == null)

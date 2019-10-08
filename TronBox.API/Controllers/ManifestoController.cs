@@ -61,7 +61,7 @@ namespace TronBox.UI.Controllers
         }
 
         [HttpPost]
-        [IdentificadorOperacao(eFuncaoTronBox.ID_MANIFESTO, "Inserir Manifesto", eOperacaoSuite.ID_OP_EDITAR, typeof(eOperacaoSuite), typeof(eFuncaoTronBox), "/manifestos/adicionar")]
+        [IdentificadorOperacao(eFuncaoTronBox.ID_MANIFESTO, "Inserir Manifesto", eOperacaoSuite.ID_OP_INSERIR, typeof(eOperacaoSuite), typeof(eFuncaoTronBox), "/manifestos/adicionar")]
         public IActionResult Post([FromBody]ManifestoDTO manifestoDTO)
         {
             if (manifestoDTO.Id == null)
