@@ -1,6 +1,10 @@
 ﻿using AutoMapper;
+using Comum.Domain.Aggregates.EmpresaAgg.Repository;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using TronBox.Application.Services.Interfaces;
 using TronBox.Domain.Aggregates.DocumentoFiscalAgg;
 using TronBox.Domain.Aggregates.DocumentoFiscalAgg.Repository;
@@ -8,6 +12,8 @@ using TronBox.Domain.DTO;
 using TronCore.Dominio.Bus;
 using TronCore.Dominio.Notifications;
 using TronCore.Persistencia.Interfaces;
+using TronCore.Utilitarios;
+using TronCore.Utilitarios.EnvioDeArquivo.Interface;
 using TronCore.Utilitarios.Specifications;
 
 namespace TronBox.Application.Services
@@ -17,14 +23,16 @@ namespace TronBox.Application.Services
         #region Membros
         private readonly IBus _bus;
         private readonly IMapper _mapper;
+        private readonly IAzureBlobStorage _azureBlobStorage;
         private readonly IRepositoryFactory _repositoryFactory;
         #endregion
 
         #region Construtor
-        public DocumentoFiscalAppService(IBus bus, IMapper mapper, IRepositoryFactory repositoryFactory)
+        public DocumentoFiscalAppService(IBus bus, IMapper mapper, IAzureBlobStorage azureBlobStorage, IRepositoryFactory repositoryFactory)
         {
             _bus = bus;
             _mapper = mapper;
+            _azureBlobStorage = azureBlobStorage;
             _repositoryFactory = repositoryFactory;
         }
         #endregion
@@ -47,22 +55,69 @@ namespace TronBox.Application.Services
 
         public void Deletar(Guid id) => _repositoryFactory.Instancie<IDocumentoFiscalRepository>().Excluir(id);
 
-        public void Inserir(DocumentoFiscalDTO documentoFiscalDTO)
+        public async Task<IEnumerable<string>> Inserir(EnviarArquivosDTO arquivos)
         {
-            var documentoFiscal = _mapper.Map<DocumentoFiscal>(documentoFiscalDTO);
+            var empresa = _mapper.Map<EmpresaDTO>(_repositoryFactory.Instancie<IEmpresaRepository>().BuscarTodos().FirstOrDefault());
 
-            if (EhValido(documentoFiscal)) _repositoryFactory.Instancie<IDocumentoFiscalRepository>().Inserir(documentoFiscal);
+            var documentosGerados = await ObterDocumentosMicroservico(arquivos, empresa);
+
+            var documentosValidos = DocumentosValidos(documentosGerados.DocumentosProcessados);
+
+            if (documentosValidos.Count > 0)
+                _repositoryFactory.Instancie<IDocumentoFiscalRepository>().InserirTodos(documentosValidos);
+
+            // TODO - Tratar documentos não processados
+            // documentosGerados.DocumentosNaoProcessados
+
+            return documentosValidos.Select(c => c.ChaveDocumentoFiscal);
         }
 
         #region Private Methods
+        private List<DocumentoFiscal> DocumentosValidos(List<DocumentoFiscalDTO> documentosGerados)
+        {
+            var documentosFiscais = new List<DocumentoFiscal>();
+
+            foreach (var documentoGerado in documentosGerados)
+            {
+                var documentoFiscal = _mapper.Map<DocumentoFiscal>(documentoGerado);
+
+                if (EhValido(documentoFiscal)) documentosFiscais.Add(documentoFiscal);
+            }
+
+            return documentosFiscais;
+        }
+
         private bool EhValido(DocumentoFiscal documentoFiscal)
         {
             var validator = new DocumentoFiscalValidator().Validate(documentoFiscal);
 
-            foreach (var error in validator.Errors)
-                _bus.RaiseEvent(new DomainNotification(error.PropertyName, error.ErrorMessage));
+            if (validator.Errors.Any())
+            {
+                var erros = validator.Errors.Select(c => new
+                {
+                    Chave = c.PropertyName,
+                    Mensagem = c.ErrorMessage
+                });
+
+                _bus.RaiseEvent(new DomainNotification(documentoFiscal.ChaveDocumentoFiscal, erros));
+            }
 
             return validator.IsValid;
+        }
+
+        private async Task<DocumentosGeradosDTO> ObterDocumentosMicroservico(EnviarArquivosDTO arquivos, EmpresaDTO empresa)
+        {
+            var dictionary = new Dictionary<string, dynamic>
+            {
+                { "empresaSelecionada", empresa.Inscricao },
+                { "origem", ((int) arquivos.Origem).ToString() },
+                { "originador", arquivos.Originador },
+                { "arquivos", arquivos.Arquivos }
+            };
+
+            var result = await UtilitarioHttpClient.PostRequest(string.Empty, "http://localhost:3000", "api/uploads", dictionary, "documento.xml");
+
+            return JsonConvert.DeserializeObject<DocumentosGeradosDTO>(result);
         }
         #endregion
     }

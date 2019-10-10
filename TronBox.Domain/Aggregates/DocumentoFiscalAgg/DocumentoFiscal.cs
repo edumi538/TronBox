@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using MongoDB.Bson.Serialization.Attributes;
 using TronBox.Domain.Enums;
 using TronBox.Domain.InnerClass;
 using TronCore.Dominio.Base;
@@ -18,9 +19,34 @@ namespace TronBox.Domain.Aggregates.DocumentoFiscalAgg
         public bool Rejeitado { get; set; }
         public bool Denegada { get; set; }
         public DadosOrigemDocumentoFiscal DadosOrigem { get; set; }
+        [BsonIgnoreIfDefault]
         public DadosImportacao DadosImportacao { get; set; }
         public DadosFornecedor DadosEmitente { get; set; }
         public DadosFornecedor DadosDestinatario { get; set; }
+        [BsonIgnore]
+        public virtual string TipoDocumento
+        {
+            get
+            {
+                switch (TipoDocumentoFiscal)
+                {
+                    case TipoDocumentoFiscal.NfeEntrada:
+                        return "NFe";
+                    case TipoDocumentoFiscal.NfeSaida:
+                        return "NFe";
+                    case TipoDocumentoFiscal.CteEntrada:
+                        return "CTe";
+                    case TipoDocumentoFiscal.CteSaida:
+                        return "CTe";
+                    case TipoDocumentoFiscal.NfseEntrada:
+                        return "NFse";
+                    case TipoDocumentoFiscal.NfseSaida:
+                        return "NFse";
+                    default:
+                        return "";
+                }
+            }
+        }
     }
 
     public class DocumentoFiscalValidator : AbstractValidator<DocumentoFiscal>

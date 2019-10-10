@@ -67,7 +67,7 @@ namespace TronBox.UI.Controllers
             if (documentoFiscalDTO.Id == null)
                 documentoFiscalDTO.Id = Guid.NewGuid().ToString();
 
-            AppServiceFactory.Instancie<IDocumentoFiscalAppService>().Inserir(documentoFiscalDTO);
+            //AppServiceFactory.Instancie<IDocumentoFiscalAppService>().Inserir(documentoFiscalDTO);
 
             if (_notifications.HasNotifications())
             {
