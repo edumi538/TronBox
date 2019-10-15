@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using Comum.Domain.ViewModels;
+using Comum.Domain.Aggregates.EmpresaAgg;
 using Sentinela.Domain.Aggregates.TenantAgg;
 using Sentinela.Domain.DTO.ViewModels;
 using System.Collections.Generic;
@@ -17,14 +17,14 @@ namespace TronBox.Domain.Automapper
             CreateMap<Tenant, TenantViewModel>();
 
             #region Modelos
-            CreateMap<EmpresaViewModel, EmpresaDTO>();
+            CreateMap<Empresa, EmpresaDTO>();
             CreateMap<ConfiguracaoEmpresa, ConfiguracaoEmpresaDTO>();
             CreateMap<DocumentoFiscal, DocumentoFiscalDTO>();
             CreateMap<Manifesto, ManifestoDTO>();
             #endregion
 
             #region Listas
-            CreateMap<List<EmpresaViewModel>, List<EmpresaDTO>>();
+            CreateMap<List<Empresa>, List<EmpresaDTO>>();
             CreateMap<List<ConfiguracaoEmpresa>, List<ConfiguracaoEmpresaDTO>>();
             CreateMap<List<DocumentoFiscal>, List<DocumentoFiscalDTO>>();
             CreateMap<List<Manifesto>, List<ManifestoDTO>>();

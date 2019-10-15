@@ -18,8 +18,7 @@ namespace TronBox.Domain.DTO
         public bool Denegada { get; set; }
         public DadosOrigemDocumentoFiscalDTO DadosOrigem { get; set; }
         public DadosImportacaoDTO DadosImportacao { get; set; }
-        public DadosFornecedorDTO DadosEmitente { get; set; }
-        public DadosFornecedorDTO DadosDestinatario { get; set; }
+        public DadosFornecedorDTO DadosEmitenteDestinatario { get; set; }
         public string CaminhoArquivo { get; set; }
     }
 }

@@ -21,8 +21,7 @@ namespace TronBox.Domain.Aggregates.DocumentoFiscalAgg
         public DadosOrigemDocumentoFiscal DadosOrigem { get; set; }
         [BsonIgnoreIfDefault]
         public DadosImportacao DadosImportacao { get; set; }
-        public DadosFornecedor DadosEmitente { get; set; }
-        public DadosFornecedor DadosDestinatario { get; set; }
+        public DadosFornecedor DadosEmitenteDestinatario { get; set; }
         [BsonIgnore]
         public virtual string TipoDocumento
         {
@@ -78,11 +77,8 @@ namespace TronBox.Domain.Aggregates.DocumentoFiscalAgg
             RuleFor(a => a.DadosOrigem)
                 .NotNull().WithMessage(MensagensValidacao.Requerido("Dados de Origem"));
 
-            RuleFor(a => a.DadosEmitente)
-                .NotNull().WithMessage(MensagensValidacao.Requerido("Dados do Emitente"));
-
-            RuleFor(a => a.DadosDestinatario)
-                .NotNull().WithMessage(MensagensValidacao.Requerido("Dados do Destinatario"));
+            RuleFor(a => a.DadosEmitenteDestinatario)
+                .NotNull().WithMessage(MensagensValidacao.Requerido("Dados do Emitente ou Destinatario"));
         }
 
     }

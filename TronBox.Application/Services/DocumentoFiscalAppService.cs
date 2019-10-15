@@ -77,9 +77,20 @@ namespace TronBox.Application.Services
         {
             var documentosFiscais = new List<DocumentoFiscal>();
 
+            var chavesGeradas = documentosGerados.Select(c => c.ChaveDocumentoFiscal);
+
+            var documentosExistentes = _repositoryFactory.Instancie<IDocumentoFiscalRepository>()
+                .BuscarTodos(d => chavesGeradas.Contains(d.ChaveDocumentoFiscal));
+
             foreach (var documentoGerado in documentosGerados)
             {
                 var documentoFiscal = _mapper.Map<DocumentoFiscal>(documentoGerado);
+
+                if (documentosExistentes.Any(d => d.ChaveDocumentoFiscal == documentoFiscal.ChaveDocumentoFiscal))
+                {
+                    _bus.RaiseEvent(new DomainNotification(documentoFiscal.ChaveDocumentoFiscal, "Documento já existente na base de dados."));
+                    continue;
+                }
 
                 if (EhValido(documentoFiscal)) documentosFiscais.Add(documentoFiscal);
             }

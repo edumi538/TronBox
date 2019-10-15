@@ -37,6 +37,7 @@ namespace TronBox.API.Controllers
                 .Select(c => new
                     {
                         ChaveDocumentoFiscal = c.Key,
+                        Mensagem = c.Value,
                         Erros = c.Object
                     });
 
