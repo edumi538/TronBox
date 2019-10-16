@@ -12,5 +12,6 @@ namespace TronBox.Application.Services.Interfaces
         void Deletar(Guid id);
         IEnumerable<DocumentoFiscalDTO> BuscarTodos(string filtro);
         DocumentoFiscalDTO BuscarPorId(Guid id);
+        Task<byte[]> Download(List<string> chaves);
     }
 }

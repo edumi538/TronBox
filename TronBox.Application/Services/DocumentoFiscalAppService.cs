@@ -3,6 +3,8 @@ using Comum.Domain.Aggregates.EmpresaAgg.Repository;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Threading.Tasks;
 using TronBox.Application.Services.Interfaces;
@@ -20,6 +22,8 @@ namespace TronBox.Application.Services
 {
     public class DocumentoFiscalAppService : IDocumentoFiscalAppService
     {
+        public static string folderName = "documentosfiscais/{tipo}/{anomes}";
+
         #region Membros
         private readonly IBus _bus;
         private readonly IMapper _mapper;
@@ -68,6 +72,43 @@ namespace TronBox.Application.Services
                 _repositoryFactory.Instancie<IDocumentoFiscalRepository>().InserirTodos(documentosValidos);
 
             return documentosValidos.Select(c => c.ChaveDocumentoFiscal);
+        }
+
+        public async Task<byte[]> Download(List<string> chaves)
+        {
+            byte[] fileBytes = null;
+
+            using (MemoryStream memoryStream = new MemoryStream())
+            {
+                using (ZipArchive zip = new ZipArchive(memoryStream, ZipArchiveMode.Create, true))
+                {
+                    foreach (var chave in chaves)
+                    {
+                        var folder = folderName
+                            .Replace("{tipo}", chave.Substring(20, 2) == "55" ? "nfe" : "cte")
+                            .Replace("{anomes}", chave.Substring(2, 4));
+
+                        var arquivoExiste = await _azureBlobStorage.ExistsAsync(chave, folder);
+
+                        if (arquivoExiste)
+                        {
+                            var anexoDownloaded = await _azureBlobStorage.DownloadAsync(chave, folder);
+
+                            ZipArchiveEntry zipItem = zip.CreateEntry($"{chave}.xml");
+
+                            using (MemoryStream originalFileMemoryStream = new MemoryStream(anexoDownloaded.ToArray()))
+                            {
+                                using (Stream entryStream = zipItem.Open())
+                                    originalFileMemoryStream.CopyTo(entryStream);
+                            }
+                        }
+                    }
+                }
+
+                fileBytes = memoryStream.ToArray();
+            }
+
+            return fileBytes;
         }
 
         #region Private Methods

@@ -3,7 +3,9 @@ using Comum.UI.Controllers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using TronBox.Application.Services.Interfaces;
 using TronBox.Domain.DTO;
 using TronBox.Domain.Enums;
@@ -29,6 +31,14 @@ namespace TronBox.UI.Controllers
         [HttpGet]
         [IdentificadorOperacao(eFuncaoTronBox.ID_DOCUMENTO_FISCAL, "Carregar Documentos Fiscais", eOperacaoSuite.ID_OP_ACESSO, typeof(eOperacaoSuite), typeof(eFuncaoTronBox), "/documentos-fiscais")]
         public IActionResult Get(string filtro) => Ok(AppServiceFactory.Instancie<IDocumentoFiscalAppService>().BuscarTodos(filtro));
+
+        [HttpPost("download")]
+        public async Task<IActionResult> Download([FromBody]List<string> chaves)
+        {
+            var fileBytes = await AppServiceFactory.Instancie<IDocumentoFiscalAppService>().Download(chaves);
+
+            return File(fileBytes, "application/zip");
+        }
 
         [HttpGet("{id:GUID}")]
         public IActionResult Get(Guid id) => Ok(AppServiceFactory.Instancie<IDocumentoFiscalAppService>().BuscarPorId(id));
