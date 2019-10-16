@@ -30,6 +30,15 @@ namespace TronBox.API.Controllers
             return Ok(tiposAcesso);
         }
 
+        [HttpGet("tipos-documento-fiscal")]
+        public IActionResult GetTipoDocumentoFiscal()
+        {
+            var tiposDocumentoFiscal = from TipoDocumentoFiscal d in Enum.GetValues(typeof(TipoDocumentoFiscal))
+                              select new { value = (int)d, label = EnumHelper<TipoDocumentoFiscal>.GetDisplayValue(d) };
+
+            return Ok(tiposDocumentoFiscal);
+        }
+
         [HttpGet("origens-manifesto")]
         public IActionResult GetOrigemManifesto()
         {
@@ -37,6 +46,15 @@ namespace TronBox.API.Controllers
                               select new { value = (int)d, label = EnumHelper<OrigemManifesto>.GetDisplayValue(d) };
 
             return Ok(origensManifesto);
+        }
+
+        [HttpGet("origens-documento-fiscal")]
+        public IActionResult GetOrigemDocumentoFiscal()
+        {
+            var origensDocumentoFiscal = from OrigemDocumentoFiscal d in Enum.GetValues(typeof(OrigemDocumentoFiscal))
+                                         select new { value = (int)d, label = EnumHelper<OrigemDocumentoFiscal>.GetDisplayValue(d) };
+
+            return Ok(origensDocumentoFiscal);
         }
 
         [HttpGet("situacoes-documento")]

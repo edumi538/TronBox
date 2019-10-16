@@ -62,12 +62,10 @@ namespace TronBox.Application.Services
             var documentosGerados = await ObterDocumentosMicroservico(arquivos, empresa);
 
             var documentosValidos = DocumentosValidos(documentosGerados.DocumentosProcessados);
+            NotificarDocumentoInvalidos(documentosGerados.DocumentosNaoProcessados);
 
             if (documentosValidos.Count > 0)
                 _repositoryFactory.Instancie<IDocumentoFiscalRepository>().InserirTodos(documentosValidos);
-
-            // TODO - Tratar documentos não processados
-            // documentosGerados.DocumentosNaoProcessados
 
             return documentosValidos.Select(c => c.ChaveDocumentoFiscal);
         }
@@ -96,6 +94,13 @@ namespace TronBox.Application.Services
             }
 
             return documentosFiscais;
+        }
+
+        // TODO MELHORAR
+        private void NotificarDocumentoInvalidos(List<string> documentosNaoProcessados)
+        {
+            foreach (var documentoNaoProcessado in documentosNaoProcessados)
+                _bus.RaiseEvent(new DomainNotification("CHAVE TAL", documentoNaoProcessado));
         }
 
         private bool EhValido(DocumentoFiscal documentoFiscal)

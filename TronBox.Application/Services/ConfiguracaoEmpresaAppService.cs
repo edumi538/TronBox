@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Comum.Domain.Aggregates.EmpresaAgg;
+using Comum.Domain.Aggregates.EmpresaAgg.Repository;
 using Comum.Domain.Services.Interfaces;
 using Comum.Domain.ViewModels;
 using FluentValidation.Results;
@@ -38,7 +39,7 @@ namespace TronBox.Application.Services
 
         public EmpresaDTO BuscarEmpresa()
         {
-            var empresa = _mapper.Map<EmpresaDTO>(FabricaGeral.Instancie<IEmpresaAppService>().BuscarTodos().FirstOrDefault());
+            var empresa = _mapper.Map<EmpresaDTO>(_repositoryFactory.Instancie<IEmpresaRepository>().BuscarTodos().FirstOrDefault());
 
             empresa.ConfiguracaoEmpresa = _mapper.Map<ConfiguracaoEmpresaDTO>(BuscarConfiguracaoEmpresa());
 
