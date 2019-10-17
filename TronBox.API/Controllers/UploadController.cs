@@ -1,7 +1,10 @@
-﻿using Comum.Enums;
+﻿using Comum.Domain.Interfaces;
+using Comum.Enums;
 using Comum.UI.Controllers;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using TronBox.Application.Services.Interfaces;
@@ -20,13 +23,15 @@ namespace TronBox.API.Controllers
     public class UploadController : BaseController
     {
         readonly IDomainNotificationHandler<DomainNotification> _notifications;
+        readonly IPessoaUsuarioLogado _usuarioLogado;
 
-        public UploadController(IDomainNotificationHandler<DomainNotification> notifications, IAppServiceFactory appServiceFactory) : base(notifications, appServiceFactory)
+        public UploadController(IDomainNotificationHandler<DomainNotification> notifications, IAppServiceFactory appServiceFactory, IPessoaUsuarioLogado usuarioLogado) : base(notifications, appServiceFactory)
         {
             _notifications = notifications;
+            _usuarioLogado = usuarioLogado;
         }
 
-        [HttpPost]
+        [HttpPost("multiple")]
         [Consumes("application/json", "application/json-patch+json", "multipart/form-data")]
         [IdentificadorOperacao(eFuncaoTronBox.ID_UPLOAD, "Upload Documentos Fiscais", eOperacaoSuite.ID_OP_UPLOAD, typeof(eOperacaoSuite), typeof(eFuncaoTronBox), "/enviar-documentos")]
         public async Task<IActionResult> Upload([FromForm]EnviarArquivosDTO arquivos)
@@ -45,6 +50,42 @@ namespace TronBox.API.Controllers
             {
                 documentosInseridos,
                 documentosNaoInseridos
+            });
+        }
+
+        [HttpPost("single")]
+        [Consumes("application/json", "application/json-patch+json", "multipart/form-data")]
+        [IdentificadorOperacao(eFuncaoTronBox.ID_UPLOAD, "Upload Documentos Fiscais", eOperacaoSuite.ID_OP_UPLOAD, typeof(eOperacaoSuite), typeof(eFuncaoTronBox), "/enviar-documentos")]
+        public async Task<IActionResult> Upload([FromForm]IFormFile arquivo)
+        {
+            var arquivoEnviado = new EnviarArquivosDTO()
+            {
+                Origem = OrigemDocumentoFiscal.UploadManual,
+                Originador = _usuarioLogado.ObtenhaPessoa().Pessoa.Nome,
+                Arquivos = new List<IFormFile>() { arquivo }
+            };
+
+            await AppServiceFactory.Instancie<IDocumentoFiscalAppService>().Inserir(arquivoEnviado);
+
+            if (_notifications.HasNotifications())
+            {
+                return BadRequest(new
+                {
+                    sucesso = false,
+                    erros = _notifications.GetNotifications()
+                        .Select(c => new
+                        {
+                            Chave = c.Key,
+                            Mensagem = c.Value,
+                            Erros = c.Object
+                        })
+                });
+            }
+
+            return Ok(new
+            {
+                sucesso = true,
+                mensagem = "Operação realizada com sucesso."
             });
         }
     }
