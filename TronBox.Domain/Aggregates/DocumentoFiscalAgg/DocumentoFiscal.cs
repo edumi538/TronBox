@@ -2,6 +2,7 @@
 using MongoDB.Bson.Serialization.Attributes;
 using TronBox.Domain.Enums;
 using TronBox.Domain.InnerClass;
+using TronCore.DefinicoesConfiguracoes;
 using TronCore.Dominio.Base;
 
 namespace TronBox.Domain.Aggregates.DocumentoFiscalAgg
@@ -23,7 +24,7 @@ namespace TronBox.Domain.Aggregates.DocumentoFiscalAgg
         public DadosImportacao DadosImportacao { get; set; }
         public DadosFornecedor DadosEmitenteDestinatario { get; set; }
         [BsonIgnore]
-        public virtual string TipoDocumento
+        public string TipoDocumento
         {
             get
             {
@@ -44,6 +45,17 @@ namespace TronBox.Domain.Aggregates.DocumentoFiscalAgg
                     default:
                         return "";
                 }
+            }
+        }
+        [BsonIgnore]
+        public string CaminhoArquivo
+        {
+            get
+            {
+                var tipo = ChaveDocumentoFiscal.Substring(20, 2) == "55" ? "nfe" : "cte";
+                var anomes = ChaveDocumentoFiscal.Substring(2, 4);
+
+                return $"{Constantes.URL_AZURE}/box/documentosfiscais/{tipo}/{anomes}/{ChaveDocumentoFiscal}";
             }
         }
     }
