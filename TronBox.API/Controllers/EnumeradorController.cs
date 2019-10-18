@@ -12,15 +12,6 @@ namespace TronBox.API.Controllers
     [Route("api/v1/enumeradores")]
     public class EnumeradorController : Controller
     {
-        [HttpGet("arquitetura-downloads")]
-        public IActionResult GetArquiteturaDownload()
-        {
-            var arquiteturas = from ArquiteturaDownload d in Enum.GetValues(typeof(ArquiteturaDownload))
-                               select new { value = (int)d, label = EnumHelper<ArquiteturaDownload>.GetDisplayValue(d) };
-
-            return Ok(arquiteturas);
-        }
-
         [HttpGet("tipos-acesso")]
         public IActionResult GetAcessoMatoGrosso()
         {
