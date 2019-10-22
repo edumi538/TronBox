@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 using Comum.Domain.Aggregates.EmpresaAgg.Repository;
 using Newtonsoft.Json;
+using NFe.Classes;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using TronBox.Application.Services.Interfaces;
@@ -15,11 +17,15 @@ using TronCore.Persistencia.Interfaces;
 using TronCore.Utilitarios;
 using TronCore.Utilitarios.EnvioDeArquivo.Interface;
 using TronCore.Utilitarios.Specifications;
+using ZionDanfe;
+using ZionDanfe.Modelo;
 
 namespace TronBox.Application.Services
 {
     public class DocumentoFiscalAppService : IDocumentoFiscalAppService
     {
+        public static string path = "documentosfiscais/{tipo}/{anomes}";
+
         #region Membros
         private readonly IBus _bus;
         private readonly IMapper _mapper;
@@ -37,6 +43,27 @@ namespace TronBox.Application.Services
         }
         #endregion
 
+        public async Task<byte[]> DownloadDanfe(string chaveDocumentoFiscal)
+        {
+            var modelo = await BuscarNfeViewModel(chaveDocumentoFiscal);
+
+            if (modelo != null)
+            {
+                using (var danfe = new Danfe(modelo))
+                {
+                    danfe.Gerar();
+
+                    MemoryStream pdfContent = new MemoryStream();
+
+                    danfe.Salvar(pdfContent);
+
+                    return pdfContent.ToArray();
+                }
+            }
+
+            return null;
+        }
+
         public void Dispose()
         {
         }
@@ -48,12 +75,15 @@ namespace TronBox.Application.Services
             if (EhValido(documentoFiscal)) _repositoryFactory.Instancie<IDocumentoFiscalRepository>().Atualizar(documentoFiscal);
         }
 
-        public DocumentoFiscalDTO BuscarPorId(Guid id) => _mapper.Map<DocumentoFiscalDTO>(_repositoryFactory.Instancie<IDocumentoFiscalRepository>().BuscarPorId(id));
+        public async Task<nfeProc> BuscarPorChave(string chaveDocumentoFiscal)
+        {
+            var conteudoXML = await BuscarConteudoXML(chaveDocumentoFiscal);
+
+            return new nfeProc().CarregarDeXmlString(conteudoXML);
+        }
 
         public IEnumerable<DocumentoFiscalDTO> BuscarTodos(string filtro) => _mapper.Map<IEnumerable<DocumentoFiscalDTO>>(_repositoryFactory.Instancie<IDocumentoFiscalRepository>()
             .BuscarTodos(new UtilitarioSpecification<DocumentoFiscal>().CriarEspecificacaoFiltro(filtro)));
-
-        public void Deletar(Guid id) => _repositoryFactory.Instancie<IDocumentoFiscalRepository>().Excluir(id);
 
         public async Task<IEnumerable<string>> Inserir(EnviarArquivosDTO arquivos)
         {
@@ -134,6 +164,35 @@ namespace TronBox.Application.Services
             var result = await UtilitarioHttpClient.PostRequest(string.Empty, "http://localhost:3000", "api/uploads", dictionary, "documento.xml");
 
             return JsonConvert.DeserializeObject<DocumentosGeradosDTO>(result);
+        }
+
+        private async Task<string> BuscarConteudoXML(string chaveDocumentoFiscal)
+        {
+            var tipoDocumento = chaveDocumentoFiscal.Substring(20, 2) == "55" ? "nfe" : "cte";
+
+            var folderName = path.Replace("{tipo}", tipoDocumento).Replace("{anomes}", chaveDocumentoFiscal.Substring(2, 4));
+
+            var arquivoExiste = await _azureBlobStorage.ExistsAsync(chaveDocumentoFiscal, folderName);
+
+            if (arquivoExiste)
+            {
+                var anexoDownloaded = await _azureBlobStorage.DownloadAsync(chaveDocumentoFiscal, folderName);
+
+                using (MemoryStream originalFileMemoryStream = new MemoryStream(anexoDownloaded.ToArray()))
+                {
+                    using (StreamReader reader = new StreamReader(originalFileMemoryStream))
+                        return reader.ReadToEnd();
+                }
+            }
+
+            return string.Empty;
+        }
+
+        private async Task<DanfeViewModel> BuscarNfeViewModel(string chaveDocumentoFiscal)
+        {
+            var conteudoXML = await BuscarConteudoXML(chaveDocumentoFiscal);
+
+            return DanfeViewModelCreator.CriarDeStringXml(conteudoXML);
         }
         #endregion
     }

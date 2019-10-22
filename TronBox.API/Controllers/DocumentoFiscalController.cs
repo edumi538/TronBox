@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using TronBox.Application.Services.Interfaces;
 using TronBox.Domain.DTO;
 using TronBox.Domain.Enums;
@@ -30,11 +31,11 @@ namespace TronBox.UI.Controllers
         [IdentificadorOperacao(eFuncaoTronBox.ID_DOCUMENTO_FISCAL, "Carregar Documentos Fiscais", eOperacaoSuite.ID_OP_ACESSO, typeof(eOperacaoSuite), typeof(eFuncaoTronBox), "/documentos-fiscais")]
         public IActionResult Get(string filtro) => Ok(AppServiceFactory.Instancie<IDocumentoFiscalAppService>().BuscarTodos(filtro));
 
-        [HttpGet("{id:GUID}")]
-        public IActionResult Get(Guid id) => Ok(AppServiceFactory.Instancie<IDocumentoFiscalAppService>().BuscarPorId(id));
+        [HttpGet("{chave}")]
+        [IdentificadorOperacao(eFuncaoTronBox.ID_DOCUMENTO_FISCAL, "Ver Detalhes Documento Fiscal", eOperacaoSuite.ID_OP_EDITAR, typeof(eOperacaoSuite), typeof(eFuncaoTronBox), "/documentos-fiscais/:id")]
+        public async Task<IActionResult> BuscarPorChave(string chave) => Ok(await AppServiceFactory.Instancie<IDocumentoFiscalAppService>().BuscarPorChave(chave));
 
         [HttpPut]
-        [IdentificadorOperacao(eFuncaoTronBox.ID_DOCUMENTO_FISCAL, "Atualizar Documento Fiscal", eOperacaoSuite.ID_OP_EDITAR, typeof(eOperacaoSuite), typeof(eFuncaoTronBox), "/documentos-fiscais/editar/:id")]
         public IActionResult Put([FromBody]DocumentoFiscalDTO documentoFiscalDTO)
         {
             AppServiceFactory.Instancie<IDocumentoFiscalAppService>().Atualizar(documentoFiscalDTO);
@@ -61,7 +62,6 @@ namespace TronBox.UI.Controllers
         }
 
         [HttpPost]
-        [IdentificadorOperacao(eFuncaoTronBox.ID_DOCUMENTO_FISCAL, "Inserir Documento Fiscal", eOperacaoSuite.ID_OP_INSERIR, typeof(eOperacaoSuite), typeof(eFuncaoTronBox), "/documentos-fiscais/adicionar")]
         public IActionResult Post([FromBody]DocumentoFiscalDTO documentoFiscalDTO)
         {
             if (documentoFiscalDTO.Id == null)
@@ -92,31 +92,12 @@ namespace TronBox.UI.Controllers
             );
         }
 
-        [HttpDelete("{id:GUID}")]
-        [IdentificadorOperacao(eFuncaoTronBox.ID_DOCUMENTO_FISCAL, "Excluir Documento Fiscal", eOperacaoSuite.ID_OP_EXCLUIR, typeof(eOperacaoSuite), typeof(eFuncaoTronBox), "/documentos-fiscais/excluir")]
-        public IActionResult Delete(Guid id)
+        [HttpGet("danfe/{chave}")]
+        public async Task<IActionResult> Delete(string chave)
         {
-            AppServiceFactory.Instancie<IDocumentoFiscalAppService>().Deletar(id);
+            var fileBytes = await AppServiceFactory.Instancie<IDocumentoFiscalAppService>().DownloadDanfe(chave);
 
-            if (_notifications.HasNotifications())
-            {
-                return BadRequest(new
-                {
-                    sucesso = false,
-                    erros = _notifications.GetNotifications()
-                        .Select(c => new
-                        {
-                            Chave = c.Key,
-                            Mensagem = c.Value
-                        })
-                });
-            }
-
-            return Ok(new
-            {
-                sucesso = true,
-                mensagem = "Operação realizada com sucesso."
-            });
+            return File(fileBytes, "application/pdf");
         }
     }
 }

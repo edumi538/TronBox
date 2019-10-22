@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NFe.Classes;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using TronBox.Domain.DTO;
@@ -9,8 +10,8 @@ namespace TronBox.Application.Services.Interfaces
     {
         Task<IEnumerable<string>> Inserir(EnviarArquivosDTO arquivos);
         void Atualizar(DocumentoFiscalDTO documentoFiscalDTO);
-        void Deletar(Guid id);
+        Task<byte[]> DownloadDanfe(string chaveDocumentoFiscal);
         IEnumerable<DocumentoFiscalDTO> BuscarTodos(string filtro);
-        DocumentoFiscalDTO BuscarPorId(Guid id);
+        Task<nfeProc> BuscarPorChave(string chaveDocumentoFiscal);
     }
 }
