@@ -31,9 +31,9 @@ namespace TronBox.UI.Controllers
         [IdentificadorOperacao(eFuncaoTronBox.ID_DOCUMENTO_FISCAL, "Carregar Documentos Fiscais", eOperacaoSuite.ID_OP_ACESSO, typeof(eOperacaoSuite), typeof(eFuncaoTronBox), "/documentos-fiscais")]
         public IActionResult Get(string filtro) => Ok(AppServiceFactory.Instancie<IDocumentoFiscalAppService>().BuscarTodos(filtro));
 
-        [HttpGet("{chave}")]
+        [HttpGet("{id:GUID}")]
         [IdentificadorOperacao(eFuncaoTronBox.ID_DOCUMENTO_FISCAL, "Ver Detalhes Documento Fiscal", eOperacaoSuite.ID_OP_EDITAR, typeof(eOperacaoSuite), typeof(eFuncaoTronBox), "/documentos-fiscais/:id")]
-        public async Task<IActionResult> BuscarPorChave(string chave) => Ok(await AppServiceFactory.Instancie<IDocumentoFiscalAppService>().BuscarPorChave(chave));
+        public async Task<IActionResult> Get(Guid id) => Ok(await AppServiceFactory.Instancie<IDocumentoFiscalAppService>().BuscarPorId(id));
 
         [HttpPut]
         public IActionResult Put([FromBody]DocumentoFiscalDTO documentoFiscalDTO)
@@ -93,7 +93,7 @@ namespace TronBox.UI.Controllers
         }
 
         [HttpGet("danfe/{chave}")]
-        public async Task<IActionResult> Delete(string chave)
+        public async Task<IActionResult> Download(string chave)
         {
             var fileBytes = await AppServiceFactory.Instancie<IDocumentoFiscalAppService>().DownloadDanfe(chave);
 

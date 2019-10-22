@@ -12,6 +12,6 @@ namespace TronBox.Application.Services.Interfaces
         void Atualizar(DocumentoFiscalDTO documentoFiscalDTO);
         Task<byte[]> DownloadDanfe(string chaveDocumentoFiscal);
         IEnumerable<DocumentoFiscalDTO> BuscarTodos(string filtro);
-        Task<nfeProc> BuscarPorChave(string chaveDocumentoFiscal);
+        Task<DetalhesDocumentoFiscalDTO> BuscarPorId(Guid id);
     }
 }

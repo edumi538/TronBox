@@ -11,6 +11,7 @@ using TronBox.Application.Services.Interfaces;
 using TronBox.Domain.Aggregates.DocumentoFiscalAgg;
 using TronBox.Domain.Aggregates.DocumentoFiscalAgg.Repository;
 using TronBox.Domain.DTO;
+using TronBox.Domain.Enums;
 using TronCore.Dominio.Bus;
 using TronCore.Dominio.Notifications;
 using TronCore.Persistencia.Interfaces;
@@ -75,11 +76,29 @@ namespace TronBox.Application.Services
             if (EhValido(documentoFiscal)) _repositoryFactory.Instancie<IDocumentoFiscalRepository>().Atualizar(documentoFiscal);
         }
 
-        public async Task<nfeProc> BuscarPorChave(string chaveDocumentoFiscal)
+        public async Task<DetalhesDocumentoFiscalDTO> BuscarPorId(Guid id)
         {
-            var conteudoXML = await BuscarConteudoXML(chaveDocumentoFiscal);
+            var documentoFiscal = _mapper.Map<DocumentoFiscalDTO>(_repositoryFactory.Instancie<IDocumentoFiscalRepository>().BuscarPorId(id));
 
-            return new nfeProc().CarregarDeXmlString(conteudoXML);
+            if (documentoFiscal == null) return null;
+
+            var conteudoXML = await BuscarConteudoXML(documentoFiscal.ChaveDocumentoFiscal);
+
+            var detalhesDocumento = new DetalhesDocumentoFiscalDTO()
+            {
+                DataArmazenamento = documentoFiscal.DataArmazenamento,
+                Cancelado = documentoFiscal.Cancelado,
+                Denegada = documentoFiscal.Denegada,
+                Rejeitado = documentoFiscal.Rejeitado,
+                DadosOrigem = documentoFiscal.DadosOrigem,
+                DadosImportacao = documentoFiscal.DadosImportacao
+            };
+
+            if ((documentoFiscal.TipoDocumentoFiscal == TipoDocumentoFiscal.NfeEntrada) || (documentoFiscal.TipoDocumentoFiscal == TipoDocumentoFiscal.NfeSaida))
+                detalhesDocumento.NotaFiscalEletronica = new nfeProc().CarregarDeXmlString(conteudoXML);
+
+            // TODO RETORNAR CTe
+            return detalhesDocumento;
         }
 
         public IEnumerable<DocumentoFiscalDTO> BuscarTodos(string filtro) => _mapper.Map<IEnumerable<DocumentoFiscalDTO>>(_repositoryFactory.Instancie<IDocumentoFiscalRepository>()

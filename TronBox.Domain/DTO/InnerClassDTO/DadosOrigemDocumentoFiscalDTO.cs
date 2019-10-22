@@ -1,4 +1,5 @@
 ﻿using TronBox.Domain.Enums;
+using TronCore.Enumeradores.Helpers;
 
 namespace TronBox.Domain.DTO.InnerClassDTO
 {
@@ -6,5 +7,13 @@ namespace TronBox.Domain.DTO.InnerClassDTO
     {
         public OrigemDocumentoFiscal Origem { get; set; }
         public string Originador { get; set; }
+
+        public string OrigemDescricao
+        {
+            get
+            {
+                return EnumHelper<OrigemDocumentoFiscal>.GetDisplayValue(Origem);
+            }
+        }
     }
 }
