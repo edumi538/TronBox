@@ -1,8 +1,14 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Comum.UI.Controllers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using NFe.Classes.Informacoes.Detalhe.Tributacao.Estadual.Tipos;
+using NFe.Utils;
 using System;
 using System.Linq;
+using TronBox.Application.Services.Interfaces;
 using TronBox.Domain.Enums;
+using TronCore.Domain.Factories;
+using TronCore.Dominio.Notifications;
 using TronCore.Enumeradores.Helpers;
 
 namespace TronBox.API.Controllers
@@ -10,8 +16,12 @@ namespace TronBox.API.Controllers
     [Authorize]
     [Produces("application/json")]
     [Route("api/v1/enumeradores")]
-    public class EnumeradorController : Controller
+    public class EnumeradorController : BaseController
     {
+        public EnumeradorController(IDomainNotificationHandler<DomainNotification> notifications, IAppServiceFactory appServiceFactory) : base(notifications, appServiceFactory)
+        {
+        }
+
         [HttpGet("tipos-acesso")]
         public IActionResult GetAcessoMatoGrosso()
         {
@@ -65,5 +75,8 @@ namespace TronBox.API.Controllers
 
             return Ok(situacoesManifesto);
         }
+
+        [HttpGet("cst-icms/{csticms}")]
+        public IActionResult GetCSTICMS(Csticms csticms) => Ok(AppServiceFactory.Instancie<IEnumeradorAppService>().ObterCSTICMS(csticms));
     }
 }
