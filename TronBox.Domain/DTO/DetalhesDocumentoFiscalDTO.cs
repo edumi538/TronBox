@@ -1,4 +1,5 @@
-﻿using NFe.Classes;
+﻿using CTe.Classes;
+using NFe.Classes;
 using TronBox.Domain.DTO.InnerClassDTO;
 
 namespace TronBox.Domain.DTO
@@ -12,5 +13,6 @@ namespace TronBox.Domain.DTO
         public DadosOrigemDocumentoFiscalDTO DadosOrigem { get; set; }
         public DadosImportacaoDTO DadosImportacao { get; set; }
         public nfeProc NotaFiscalEletronica { get; set; }
+        public cteProc ConhecimentoTransporteEletronico { get; set; }
     }
 }

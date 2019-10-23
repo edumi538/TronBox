@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
 using Comum.Domain.Aggregates.EmpresaAgg.Repository;
+using CTe.Classes;
+using DFe.Utils;
 using Newtonsoft.Json;
 using NFe.Classes;
 using System;
@@ -95,9 +97,10 @@ namespace TronBox.Application.Services
             };
 
             if ((documentoFiscal.TipoDocumentoFiscal == TipoDocumentoFiscal.NfeEntrada) || (documentoFiscal.TipoDocumentoFiscal == TipoDocumentoFiscal.NfeSaida))
-                detalhesDocumento.NotaFiscalEletronica = new nfeProc().CarregarDeXmlString(conteudoXML);
+                detalhesDocumento.NotaFiscalEletronica = FuncoesXml.XmlStringParaClasse<nfeProc>(conteudoXML);
+            else if ((documentoFiscal.TipoDocumentoFiscal == TipoDocumentoFiscal.CteEntrada) || (documentoFiscal.TipoDocumentoFiscal == TipoDocumentoFiscal.CteSaida))
+                detalhesDocumento.ConhecimentoTransporteEletronico = FuncoesXml.XmlStringParaClasse<cteProc>(conteudoXML);
 
-            // TODO RETORNAR CTe
             return detalhesDocumento;
         }
 
@@ -145,11 +148,10 @@ namespace TronBox.Application.Services
             return documentosFiscais;
         }
 
-        // TODO MELHORAR
-        private void NotificarDocumentoInvalidos(List<string> documentosNaoProcessados)
+        private void NotificarDocumentoInvalidos(List<DocumentoFiscalNaoGeradoDTO> documentosNaoProcessados)
         {
             foreach (var documentoNaoProcessado in documentosNaoProcessados)
-                _bus.RaiseEvent(new DomainNotification("CHAVE TAL", documentoNaoProcessado));
+                _bus.RaiseEvent(new DomainNotification(documentoNaoProcessado.ChaveDocumentoFiscal, documentoNaoProcessado.Mensagem));
         }
 
         private bool EhValido(DocumentoFiscal documentoFiscal)
