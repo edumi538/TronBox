@@ -16,10 +16,13 @@ namespace TronBox.Domain.Enums
         [Display(Name = "CTe Saída")]
         CteSaida = 4,
 
+        [Display(Name = "NFCe")]
+        Nfce = 5,
+
         [Display(Name = "NFse Entrada")]
-        NfseEntrada = 5,
+        NfseEntrada = 6,
 
         [Display(Name = "NFse Saída")]
-        NfseSaida = 6,
+        NfseSaida = 7,
     }
 }

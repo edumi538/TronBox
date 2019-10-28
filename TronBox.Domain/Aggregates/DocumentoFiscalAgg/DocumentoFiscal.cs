@@ -38,6 +38,8 @@ namespace TronBox.Domain.Aggregates.DocumentoFiscalAgg
                         return "CTe";
                     case TipoDocumentoFiscal.CteSaida:
                         return "CTe";
+                    case TipoDocumentoFiscal.Nfce:
+                        return "NFCe";
                     case TipoDocumentoFiscal.NfseEntrada:
                         return "NFse";
                     case TipoDocumentoFiscal.NfseSaida:
@@ -52,7 +54,13 @@ namespace TronBox.Domain.Aggregates.DocumentoFiscalAgg
         {
             get
             {
-                var tipo = ChaveDocumentoFiscal.Substring(20, 2) == "55" ? "nfe" : "cte";
+                var tipo = "cte";
+                var modelo = ChaveDocumentoFiscal.Substring(20, 2);
+
+                if (modelo == "55") tipo = "nfe";
+
+                if (modelo == "65") tipo = "nfce";
+
                 var anomes = ChaveDocumentoFiscal.Substring(2, 4);
 
                 return $"{Constantes.URL_AZURE}/box/documentosfiscais/{tipo}/{anomes}/{ChaveDocumentoFiscal}";

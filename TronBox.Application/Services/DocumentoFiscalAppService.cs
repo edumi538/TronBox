@@ -96,7 +96,7 @@ namespace TronBox.Application.Services
                 DadosImportacao = documentoFiscal.DadosImportacao
             };
 
-            if ((documentoFiscal.TipoDocumentoFiscal == TipoDocumentoFiscal.NfeEntrada) || (documentoFiscal.TipoDocumentoFiscal == TipoDocumentoFiscal.NfeSaida))
+            if ((documentoFiscal.TipoDocumentoFiscal == TipoDocumentoFiscal.NfeEntrada) || (documentoFiscal.TipoDocumentoFiscal == TipoDocumentoFiscal.NfeSaida) || (documentoFiscal.TipoDocumentoFiscal == TipoDocumentoFiscal.Nfce))
                 detalhesDocumento.NotaFiscalEletronica = FuncoesXml.XmlStringParaClasse<nfeProc>(conteudoXML);
             else if ((documentoFiscal.TipoDocumentoFiscal == TipoDocumentoFiscal.CteEntrada) || (documentoFiscal.TipoDocumentoFiscal == TipoDocumentoFiscal.CteSaida))
                 detalhesDocumento.ConhecimentoTransporteEletronico = FuncoesXml.XmlStringParaClasse<cteProc>(conteudoXML);
@@ -189,7 +189,7 @@ namespace TronBox.Application.Services
 
         private async Task<string> BuscarConteudoXML(string chaveDocumentoFiscal)
         {
-            var tipoDocumento = chaveDocumentoFiscal.Substring(20, 2) == "55" ? "nfe" : "cte";
+            var tipoDocumento = GetTipoDocumento(chaveDocumentoFiscal);
 
             var folderName = path.Replace("{tipo}", tipoDocumento).Replace("{anomes}", chaveDocumentoFiscal.Substring(2, 4));
 
@@ -207,6 +207,17 @@ namespace TronBox.Application.Services
             }
 
             return string.Empty;
+        }
+
+        private static string GetTipoDocumento(string chaveDocumentoFiscal)
+        {
+            var modelo = chaveDocumentoFiscal.Substring(20, 2);
+
+            if (modelo == "55") return "nfe";
+
+            if (modelo == "65") return "nfce";
+
+            return "cte";
         }
 
         private async Task<DanfeViewModel> BuscarNfeViewModel(string chaveDocumentoFiscal)
