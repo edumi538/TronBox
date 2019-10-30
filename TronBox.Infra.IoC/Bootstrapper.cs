@@ -39,6 +39,7 @@ namespace TronBox.Infra.IoC
 
             // Services
             services.AddScoped<IConfiguracaoEmpresaAppService, ConfiguracaoEmpresaAppService>();
+            services.AddScoped<IDashboardAppService, DashboardAppService>();
             services.AddScoped<IDocumentoFiscalAppService, DocumentoFiscalAppService>();
             services.AddScoped<IEnumeradorAppService, EnumeradorAppService>();
             services.AddScoped<IManifestoAppService, ManifestoAppService>();

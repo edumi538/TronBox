@@ -1,5 +1,4 @@
-﻿using NFe.Classes;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using TronBox.Domain.DTO;
