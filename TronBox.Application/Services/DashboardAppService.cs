@@ -32,6 +32,8 @@ namespace TronBox.Application.Services
         {
         }
 
+        public long Contar() => _repositoryFactory.Instancie<IDocumentoFiscalRepository>().Contar(new DirectSpecification<DocumentoFiscal>(c => true));
+
         public List<DashboardDocumentosDTO> ObterDadosDocumentosArmazenados(int dataInicial, int dataFinal)
         {
             var documentosFiscais = BuscarDocumentos(dataInicial, dataFinal);

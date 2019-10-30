@@ -20,8 +20,11 @@ namespace TronBox.API.Controllers
         {
         }
 
-        [HttpGet("documento-fiscal")]
+        [HttpGet]
         [IdentificadorOperacao(eFuncaoTronBox.ID_DASHBOARD, "Obter Dados do Dashboard", eOperacaoSuite.ID_OP_ACESSO, typeof(eOperacaoSuite), typeof(eFuncaoTronBox), "/dashboards")]
+        public IActionResult Get() => Ok(AppServiceFactory.Instancie<IDashboardAppService>().Contar());
+
+        [HttpGet("documento-fiscal")]
         public IActionResult GetDocumentosArmazenados(int dataInicial, int dataFinal) => Ok(AppServiceFactory.Instancie<IDashboardAppService>().ObterDadosDocumentosArmazenados(dataInicial, dataFinal));
 
         [HttpGet("origem")]
