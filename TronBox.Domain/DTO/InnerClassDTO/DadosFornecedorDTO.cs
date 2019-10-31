@@ -6,9 +6,9 @@ namespace TronBox.Domain.DTO.InnerClassDTO
     {
         public string Inscricao { get; set; }
         public string RazaoSocial { get; set; }
-        public string InscricaoRazaoSocialFormatada
+        public string InscricaoFormatada
         {
-            get => $"{Inscricao.AdicionarMascaraInscricao()} - {RazaoSocial}";
+            get => Inscricao.AdicionarMascaraInscricao();
         }
     }
 }
