@@ -95,9 +95,16 @@ namespace TronBox.UI.Controllers
         [HttpGet("danfe/{chave}")]
         public async Task<IActionResult> Download(string chave)
         {
-            var fileBytes = await AppServiceFactory.Instancie<IDocumentoFiscalAppService>().DownloadDanfe(chave);
+            try
+            {
+                var fileBytes = await AppServiceFactory.Instancie<IDocumentoFiscalAppService>().DownloadDanfe(chave);
 
-            return File(fileBytes, "application/pdf");
+                return File(fileBytes, "application/pdf");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { sucesso = false, erro = ex.Message });
+            }
         }
     }
 }

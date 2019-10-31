@@ -1,5 +1,8 @@
-﻿using TronBox.Domain.DTO.InnerClassDTO;
+﻿using System;
+using TronBox.Domain.DTO.InnerClassDTO;
 using TronBox.Domain.Enums;
+using TronCore.Enumeradores.Helpers;
+using TronCore.Utilitarios;
 
 namespace TronBox.Domain.DTO
 {
@@ -20,5 +23,18 @@ namespace TronBox.Domain.DTO
         public DadosImportacaoDTO DadosImportacao { get; set; }
         public DadosFornecedorDTO DadosEmitenteDestinatario { get; set; }
         public string CaminhoArquivo { get; set; }
+        public DateTime DataArmazenamentoFormatada
+        {
+            get => UtilitarioDatas.ConvertIntToDate(DataArmazenamento);
+        }
+        public DateTime DataEmissaoDocumentoFormatada
+        {
+            get => UtilitarioDatas.ConvertIntToDate(DataEmissaoDocumento);
+        }
+        public string DescricaoTipo
+        {
+            get => EnumHelper<TipoDocumentoFiscal>.GetDisplayValue(TipoDocumentoFiscal);
+        }
+        public bool Processado { get => DadosImportacao != null && DadosImportacao.DataImportacao > 0; }
     }
 }

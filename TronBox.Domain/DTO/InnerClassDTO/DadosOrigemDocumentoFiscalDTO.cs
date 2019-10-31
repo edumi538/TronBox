@@ -10,10 +10,7 @@ namespace TronBox.Domain.DTO.InnerClassDTO
 
         public string OrigemDescricao
         {
-            get
-            {
-                return EnumHelper<OrigemDocumentoFiscal>.GetDisplayValue(Origem);
-            }
+            get => EnumHelper<OrigemDocumentoFiscal>.GetDisplayValue(Origem);
         }
     }
 }

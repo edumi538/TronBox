@@ -168,7 +168,9 @@ namespace TronBox.Application.Services
         {
             return new List<DashboardOrigemDocumentoDTO>()
             {
-                new DashboardOrigemDocumentoDTO() { Origem = OrigemDocumentoFiscal.Agente, Quantidade = 0 },
+                new DashboardOrigemDocumentoDTO() { Origem = OrigemDocumentoFiscal.AgenteManifestacao, Quantidade = 0 },
+                new DashboardOrigemDocumentoDTO() { Origem = OrigemDocumentoFiscal.DownloadAgente, Quantidade = 0 },
+                new DashboardOrigemDocumentoDTO() { Origem = OrigemDocumentoFiscal.PortalEstadual, Quantidade = 0 },
                 new DashboardOrigemDocumentoDTO() { Origem = OrigemDocumentoFiscal.Email, Quantidade = 0 },
                 new DashboardOrigemDocumentoDTO() { Origem = OrigemDocumentoFiscal.Monitor, Quantidade = 0 },
                 new DashboardOrigemDocumentoDTO() { Origem = OrigemDocumentoFiscal.UploadManual, Quantidade = 0 },
