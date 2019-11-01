@@ -128,6 +128,8 @@ namespace TronBox.Application.Services
             return documentosValidos.Select(c => c.ChaveDocumentoFiscal);
         }
 
+        public void Deletar(Guid id) => _repositoryFactory.Instancie<IDocumentoFiscalRepository>().Excluir(id);
+
         #region Private Methods
         private async Task<List<DocumentoFiscalDTO>> ProcessarArquivosEnviados(EnviarArquivosDTO arquivos, EmpresaDTO empresa)
         {

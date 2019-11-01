@@ -12,5 +12,6 @@ namespace TronBox.Application.Services.Interfaces
         Task<byte[]> DownloadDanfe(string chaveDocumentoFiscal);
         IEnumerable<DocumentoFiscalDTO> BuscarTodos(string filtro);
         Task<DetalhesDocumentoFiscalDTO> BuscarPorId(Guid id);
+        void Deletar(Guid id);
     }
 }

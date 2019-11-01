@@ -92,6 +92,33 @@ namespace TronBox.UI.Controllers
             );
         }
 
+        [HttpDelete("{id:GUID}")]
+        [IdentificadorOperacao(eFuncaoTronBox.ID_DOCUMENTO_FISCAL, "Excluir Documento Fiscal", eOperacaoSuite.ID_OP_EXCLUIR, typeof(eOperacaoSuite), typeof(eFuncaoTronBox), "/documentos-fiscais/excluir")]
+        public IActionResult Delete(Guid id)
+        {
+            AppServiceFactory.Instancie<IDocumentoFiscalAppService>().Deletar(id);
+
+            if (_notifications.HasNotifications())
+            {
+                return BadRequest(new
+                {
+                    sucesso = false,
+                    erros = _notifications.GetNotifications()
+                        .Select(c => new
+                        {
+                            Chave = c.Key,
+                            Mensagem = c.Value
+                        })
+                });
+            }
+
+            return Ok(new
+            {
+                sucesso = true,
+                mensagem = "Operação realizada com sucesso."
+            });
+        }
+
         [HttpGet("danfe/{chave}")]
         public async Task<IActionResult> Download(string chave)
         {
