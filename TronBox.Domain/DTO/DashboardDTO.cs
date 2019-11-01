@@ -7,21 +7,21 @@ namespace TronBox.Domain.DTO
 {
     public class DashboardDocumentosDTO
     {
-        public TipoDocumentoFiscal Tipo { get; set; }
+        public ETipoDocumentoFiscal Tipo { get; set; }
         public int Quantidade { get; set; }
         public string DescricaoTipo
         {
-            get => EnumHelper<TipoDocumentoFiscal>.GetDisplayValue(Tipo);
+            get => EnumHelper<ETipoDocumentoFiscal>.GetDisplayValue(Tipo);
         }
     }
 
     public class DashboardOrigemDocumentoDTO
     {
-        public OrigemDocumentoFiscal Origem { get; set; }
+        public EOrigemDocumentoFiscal Origem { get; set; }
         public int Quantidade { get; set; }
         public string DescricaoOrigem
         {
-            get => EnumHelper<OrigemDocumentoFiscal>.GetDisplayValue(Origem);
+            get => EnumHelper<EOrigemDocumentoFiscal>.GetDisplayValue(Origem);
         }
     }
 

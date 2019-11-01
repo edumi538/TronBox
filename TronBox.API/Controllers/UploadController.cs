@@ -60,7 +60,7 @@ namespace TronBox.API.Controllers
         {
             var arquivoEnviado = new EnviarArquivosDTO()
             {
-                Origem = OrigemDocumentoFiscal.UploadManual,
+                Origem = EOrigemDocumentoFiscal.UploadManual,
                 Originador = _usuarioLogado.ObtenhaPessoa().Pessoa.Nome,
                 Arquivos = new List<IFormFile>() { arquivo }
             };

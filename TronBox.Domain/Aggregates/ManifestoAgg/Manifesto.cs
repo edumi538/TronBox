@@ -15,8 +15,8 @@ namespace TronBox.Domain.Aggregates.ManifestoAgg
         public int DataEmissaoManifesto { get; set; }
         [BsonIgnoreIfDefault]
         public int DataManifesto { get; set; }
-        public SituacaoManifesto SituacaoManifesto { get; set; }
-        public SituacaoDocumentoFiscal SituacaoDocumentoFiscal { get; set; }
+        public ESituacaoManifesto SituacaoManifesto { get; set; }
+        public ESituacaoDocumentoFiscal SituacaoDocumentoFiscal { get; set; }
         public bool Cancelado { get; set; }
         public bool Rejeitado { get; set; }
         public DadosOrigemManifesto DadosOrigem { get; set; }

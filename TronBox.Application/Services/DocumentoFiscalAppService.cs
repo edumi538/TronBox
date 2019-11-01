@@ -103,9 +103,9 @@ namespace TronBox.Application.Services
                 DadosImportacao = documentoFiscal.DadosImportacao
             };
 
-            if ((documentoFiscal.TipoDocumentoFiscal == TipoDocumentoFiscal.NfeEntrada) || (documentoFiscal.TipoDocumentoFiscal == TipoDocumentoFiscal.NfeSaida) || (documentoFiscal.TipoDocumentoFiscal == TipoDocumentoFiscal.Nfce))
+            if ((documentoFiscal.TipoDocumentoFiscal == ETipoDocumentoFiscal.NfeEntrada) || (documentoFiscal.TipoDocumentoFiscal == ETipoDocumentoFiscal.NfeSaida) || (documentoFiscal.TipoDocumentoFiscal == ETipoDocumentoFiscal.Nfce))
                 detalhesDocumento.NotaFiscalEletronica = FuncoesXml.XmlStringParaClasse<nfeProc>(conteudoXML);
-            else if ((documentoFiscal.TipoDocumentoFiscal == TipoDocumentoFiscal.CteEntrada) || (documentoFiscal.TipoDocumentoFiscal == TipoDocumentoFiscal.CteSaida))
+            else if ((documentoFiscal.TipoDocumentoFiscal == ETipoDocumentoFiscal.CteEntrada) || (documentoFiscal.TipoDocumentoFiscal == ETipoDocumentoFiscal.CteSaida))
                 detalhesDocumento.ConhecimentoTransporteEletronico = FuncoesXml.XmlStringParaClasse<cteProc>(conteudoXML);
 
             return detalhesDocumento;
@@ -241,7 +241,7 @@ namespace TronBox.Application.Services
                 NumeroDocumentoFiscal = cte.CTe.infCte.ide.nCT.ToString(),
                 ValorDocumentoFiscal = (double)cte.CTe.infCte.vPrest.vTPrest,
                 TipoDocumentoFiscal = inscricaoEmpresa == cte.CTe.infCte.emit.CNPJ
-                    ? TipoDocumentoFiscal.CteSaida
+                    ? ETipoDocumentoFiscal.CteSaida
                     : ObterTipoConhecimentoTransporte(inscricaoEmpresa, cte),
                 DadosEmitenteDestinatario = new DadosFornecedorDTO()
                 {
@@ -266,7 +266,7 @@ namespace TronBox.Application.Services
                 NumeroDocumentoFiscal = nfe.NFe.infNFe.ide.nNF.ToString(),
                 ValorDocumentoFiscal = (double)nfe.NFe.infNFe.total.ICMSTot.vNF,
                 TipoDocumentoFiscal = nfe.NFe.infNFe.ide.mod == ModeloDocumento.NFCe
-                    ? TipoDocumentoFiscal.Nfce
+                    ? ETipoDocumentoFiscal.Nfce
                     : ObterTipoNotaFiscal(inscricaoEmpresa, nfe.NFe.infNFe.ide.tpNF, nfe.NFe.infNFe.emit, nfe.NFe.infNFe.dest, nfe.NFe.infNFe.det.FirstOrDefault())
             };
 
@@ -276,7 +276,7 @@ namespace TronBox.Application.Services
             var inscricaoEmitente = nfe.NFe.infNFe.emit.CNPJ ?? nfe.NFe.infNFe.emit.CPF;
             var empresaNaoEmitente = inscricaoEmpresa != inscricaoEmitente;
 
-            if ((documentoFiscal.TipoDocumentoFiscal == TipoDocumentoFiscal.Nfce) || (empresaNaoEmitente))
+            if ((documentoFiscal.TipoDocumentoFiscal == ETipoDocumentoFiscal.Nfce) || (empresaNaoEmitente))
             {
                 documentoFiscal.DadosEmitenteDestinatario = new DadosFornecedorDTO()
                 {
@@ -296,39 +296,39 @@ namespace TronBox.Application.Services
             return documentoFiscal;
         }
 
-        private TipoDocumentoFiscal ObterTipoConhecimentoTransporte(string inscricaoEmpresa, cteProc cte)
+        private ETipoDocumentoFiscal ObterTipoConhecimentoTransporte(string inscricaoEmpresa, cteProc cte)
         {
             switch (cte.CTe.infCte.ide.tomaBase3.toma)
             {
                 case CTe.Classes.Informacoes.Tipos.toma.Remetente:
-                    return inscricaoEmpresa == (cte.CTe.infCte.rem.CNPJ ?? cte.CTe.infCte.rem.CPF) ? TipoDocumentoFiscal.CteEntrada : TipoDocumentoFiscal.CteSaida;
+                    return inscricaoEmpresa == (cte.CTe.infCte.rem.CNPJ ?? cte.CTe.infCte.rem.CPF) ? ETipoDocumentoFiscal.CteEntrada : ETipoDocumentoFiscal.CteSaida;
                 case CTe.Classes.Informacoes.Tipos.toma.Expedidor:
-                    return inscricaoEmpresa == (cte.CTe.infCte.exped.CNPJ ?? cte.CTe.infCte.exped.CPF) ? TipoDocumentoFiscal.CteEntrada : TipoDocumentoFiscal.CteSaida;
+                    return inscricaoEmpresa == (cte.CTe.infCte.exped.CNPJ ?? cte.CTe.infCte.exped.CPF) ? ETipoDocumentoFiscal.CteEntrada : ETipoDocumentoFiscal.CteSaida;
                 case CTe.Classes.Informacoes.Tipos.toma.Recebedor:
-                    return inscricaoEmpresa == (cte.CTe.infCte.receb.CNPJ ?? cte.CTe.infCte.receb.CPF) ? TipoDocumentoFiscal.CteEntrada : TipoDocumentoFiscal.CteSaida;
+                    return inscricaoEmpresa == (cte.CTe.infCte.receb.CNPJ ?? cte.CTe.infCte.receb.CPF) ? ETipoDocumentoFiscal.CteEntrada : ETipoDocumentoFiscal.CteSaida;
                 case CTe.Classes.Informacoes.Tipos.toma.Destinatario:
-                    return inscricaoEmpresa == (cte.CTe.infCte.dest.CNPJ ?? cte.CTe.infCte.dest.CPF) ? TipoDocumentoFiscal.CteEntrada : TipoDocumentoFiscal.CteSaida;
+                    return inscricaoEmpresa == (cte.CTe.infCte.dest.CNPJ ?? cte.CTe.infCte.dest.CPF) ? ETipoDocumentoFiscal.CteEntrada : ETipoDocumentoFiscal.CteSaida;
                 case CTe.Classes.Informacoes.Tipos.toma.Outros:
-                    return inscricaoEmpresa == (cte.CTe.infCte.ide.toma4.CNPJ ?? cte.CTe.infCte.ide.toma4.CPF) ? TipoDocumentoFiscal.CteEntrada : TipoDocumentoFiscal.CteSaida;
+                    return inscricaoEmpresa == (cte.CTe.infCte.ide.toma4.CNPJ ?? cte.CTe.infCte.ide.toma4.CPF) ? ETipoDocumentoFiscal.CteEntrada : ETipoDocumentoFiscal.CteSaida;
                 default:
                     return 0;
             };
         }
 
-        private TipoDocumentoFiscal ObterTipoNotaFiscal(string inscricaoEmpresa, TipoNFe tpNF, emit emit, dest dest, det det)
+        private ETipoDocumentoFiscal ObterTipoNotaFiscal(string inscricaoEmpresa, TipoNFe tpNF, emit emit, dest dest, det det)
         {
             var inscricaoEmitente = emit.CNPJ ?? emit.CPF;
             var inscricaoDestinatario = dest.CNPJ ?? dest.CPF;
 
-            if (inscricaoEmpresa == inscricaoDestinatario) return tpNF == TipoNFe.tnEntrada ? TipoDocumentoFiscal.NfeSaida : TipoDocumentoFiscal.NfeEntrada;
+            if (inscricaoEmpresa == inscricaoDestinatario) return tpNF == TipoNFe.tnEntrada ? ETipoDocumentoFiscal.NfeSaida : ETipoDocumentoFiscal.NfeEntrada;
 
             if (inscricaoEmpresa == inscricaoEmitente)
             {
                 var CFOP = Convert.ToInt32(det.prod.CFOP.ToString().Substring(0, 1));
 
-                if (CFOP <= 3) return TipoDocumentoFiscal.NfeEntrada;
+                if (CFOP <= 3) return ETipoDocumentoFiscal.NfeEntrada;
 
-                return tpNF == TipoNFe.tnSaida ? TipoDocumentoFiscal.NfeSaida : TipoDocumentoFiscal.NfeEntrada;
+                return tpNF == TipoNFe.tnSaida ? ETipoDocumentoFiscal.NfeSaida : ETipoDocumentoFiscal.NfeEntrada;
             }
 
             return 0;

@@ -9,7 +9,7 @@ namespace TronBox.Domain.DTO
     public class DocumentoFiscalDTO
     {
         public string Id { get; set; }
-        public TipoDocumentoFiscal TipoDocumentoFiscal { get; set; }
+        public ETipoDocumentoFiscal TipoDocumentoFiscal { get; set; }
         public string ChaveDocumentoFiscal { get; set; }
         public string NumeroDocumentoFiscal { get; set; }
         public double ValorDocumentoFiscal { get; set; }
@@ -33,7 +33,7 @@ namespace TronBox.Domain.DTO
         }
         public string DescricaoTipo
         {
-            get => EnumHelper<TipoDocumentoFiscal>.GetDisplayValue(TipoDocumentoFiscal);
+            get => EnumHelper<ETipoDocumentoFiscal>.GetDisplayValue(TipoDocumentoFiscal);
         }
         public bool Processado { get => DadosImportacao != null && DadosImportacao.DataImportacao > 0; }
     }

@@ -9,7 +9,7 @@ namespace TronBox.Domain.Aggregates.DocumentoFiscalAgg
 {
     public class DocumentoFiscal : Entity<DocumentoFiscal>
     {
-        public TipoDocumentoFiscal TipoDocumentoFiscal { get; set; }
+        public ETipoDocumentoFiscal TipoDocumentoFiscal { get; set; }
         public string ChaveDocumentoFiscal { get; set; }
         public string NumeroDocumentoFiscal { get; set; }
         public double ValorDocumentoFiscal { get; set; }
@@ -30,19 +30,19 @@ namespace TronBox.Domain.Aggregates.DocumentoFiscalAgg
             {
                 switch (TipoDocumentoFiscal)
                 {
-                    case TipoDocumentoFiscal.NfeEntrada:
+                    case ETipoDocumentoFiscal.NfeEntrada:
                         return "NFe";
-                    case TipoDocumentoFiscal.NfeSaida:
+                    case ETipoDocumentoFiscal.NfeSaida:
                         return "NFe";
-                    case TipoDocumentoFiscal.CteEntrada:
+                    case ETipoDocumentoFiscal.CteEntrada:
                         return "CTe";
-                    case TipoDocumentoFiscal.CteSaida:
+                    case ETipoDocumentoFiscal.CteSaida:
                         return "CTe";
-                    case TipoDocumentoFiscal.Nfce:
+                    case ETipoDocumentoFiscal.Nfce:
                         return "NFCe";
-                    case TipoDocumentoFiscal.NfseEntrada:
+                    case ETipoDocumentoFiscal.NfseEntrada:
                         return "NFse";
-                    case TipoDocumentoFiscal.NfseSaida:
+                    case ETipoDocumentoFiscal.NfseSaida:
                         return "NFse";
                     default:
                         return "";

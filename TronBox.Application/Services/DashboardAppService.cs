@@ -94,25 +94,25 @@ namespace TronBox.Application.Services
 
                 switch (documentoFiscal.TipoDocumentoFiscal)
                 {
-                    case TipoDocumentoFiscal.NfeEntrada:
+                    case ETipoDocumentoFiscal.NfeEntrada:
                         dus.NfeEntrada++;
                         break;
-                    case TipoDocumentoFiscal.NfeSaida:
+                    case ETipoDocumentoFiscal.NfeSaida:
                         dus.NfeSaida++;
                         break;
-                    case TipoDocumentoFiscal.CteEntrada:
+                    case ETipoDocumentoFiscal.CteEntrada:
                         dus.CteEntrada++;
                         break;
-                    case TipoDocumentoFiscal.CteSaida:
+                    case ETipoDocumentoFiscal.CteSaida:
                         dus.CteSaida++;
                         break;
-                    case TipoDocumentoFiscal.Nfce:
+                    case ETipoDocumentoFiscal.Nfce:
                         dus.Nfce++;
                         break;
-                    case TipoDocumentoFiscal.NfseEntrada:
+                    case ETipoDocumentoFiscal.NfseEntrada:
                         dus.NfseEntrada++;
                         break;
-                    case TipoDocumentoFiscal.NfseSaida:
+                    case ETipoDocumentoFiscal.NfseSaida:
                         dus.NfseSaida++;
                         break;
                     default:
@@ -140,13 +140,13 @@ namespace TronBox.Application.Services
         {
             return new List<DashboardDocumentosDTO>()
             {
-                new DashboardDocumentosDTO() { Tipo = TipoDocumentoFiscal.NfeEntrada, Quantidade = 0 },
-                new DashboardDocumentosDTO() { Tipo = TipoDocumentoFiscal.NfeSaida, Quantidade = 0 },
-                new DashboardDocumentosDTO() { Tipo = TipoDocumentoFiscal.CteEntrada, Quantidade = 0 },
-                new DashboardDocumentosDTO() { Tipo = TipoDocumentoFiscal.CteSaida, Quantidade = 0 },
-                new DashboardDocumentosDTO() { Tipo = TipoDocumentoFiscal.Nfce, Quantidade = 0 },
-                new DashboardDocumentosDTO() { Tipo = TipoDocumentoFiscal.NfseEntrada, Quantidade = 0 },
-                new DashboardDocumentosDTO() { Tipo = TipoDocumentoFiscal.NfseSaida, Quantidade = 0 },
+                new DashboardDocumentosDTO() { Tipo = ETipoDocumentoFiscal.NfeEntrada, Quantidade = 0 },
+                new DashboardDocumentosDTO() { Tipo = ETipoDocumentoFiscal.NfeSaida, Quantidade = 0 },
+                new DashboardDocumentosDTO() { Tipo = ETipoDocumentoFiscal.CteEntrada, Quantidade = 0 },
+                new DashboardDocumentosDTO() { Tipo = ETipoDocumentoFiscal.CteSaida, Quantidade = 0 },
+                new DashboardDocumentosDTO() { Tipo = ETipoDocumentoFiscal.Nfce, Quantidade = 0 },
+                new DashboardDocumentosDTO() { Tipo = ETipoDocumentoFiscal.NfseEntrada, Quantidade = 0 },
+                new DashboardDocumentosDTO() { Tipo = ETipoDocumentoFiscal.NfseSaida, Quantidade = 0 },
             };
         }
 
@@ -168,12 +168,12 @@ namespace TronBox.Application.Services
         {
             return new List<DashboardOrigemDocumentoDTO>()
             {
-                new DashboardOrigemDocumentoDTO() { Origem = OrigemDocumentoFiscal.AgenteManifestacao, Quantidade = 0 },
-                new DashboardOrigemDocumentoDTO() { Origem = OrigemDocumentoFiscal.DownloadAgente, Quantidade = 0 },
-                new DashboardOrigemDocumentoDTO() { Origem = OrigemDocumentoFiscal.PortalEstadual, Quantidade = 0 },
-                new DashboardOrigemDocumentoDTO() { Origem = OrigemDocumentoFiscal.Email, Quantidade = 0 },
-                new DashboardOrigemDocumentoDTO() { Origem = OrigemDocumentoFiscal.Monitor, Quantidade = 0 },
-                new DashboardOrigemDocumentoDTO() { Origem = OrigemDocumentoFiscal.UploadManual, Quantidade = 0 },
+                new DashboardOrigemDocumentoDTO() { Origem = EOrigemDocumentoFiscal.AgenteManifestacao, Quantidade = 0 },
+                new DashboardOrigemDocumentoDTO() { Origem = EOrigemDocumentoFiscal.DownloadAgente, Quantidade = 0 },
+                new DashboardOrigemDocumentoDTO() { Origem = EOrigemDocumentoFiscal.PortalEstadual, Quantidade = 0 },
+                new DashboardOrigemDocumentoDTO() { Origem = EOrigemDocumentoFiscal.Email, Quantidade = 0 },
+                new DashboardOrigemDocumentoDTO() { Origem = EOrigemDocumentoFiscal.Monitor, Quantidade = 0 },
+                new DashboardOrigemDocumentoDTO() { Origem = EOrigemDocumentoFiscal.UploadManual, Quantidade = 0 },
             };
         }
         #endregion

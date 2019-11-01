@@ -6,7 +6,7 @@ namespace TronBox.Domain.InnerClass
 {
     public class DadosOrigemManifesto
     {
-        public OrigemManifesto Origem { get; set; }
+        public EOrigemManifesto Origem { get; set; }
         public string Originador { get; set; }
     }
 

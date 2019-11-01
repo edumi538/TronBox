@@ -2,7 +2,7 @@
 
 namespace TronBox.Domain.Enums
 {
-    public enum TipoDocumentoFiscal
+    public enum ETipoDocumentoFiscal
     {
         [Display(Name = "NFe Entrada")]
         NfeEntrada = 1,

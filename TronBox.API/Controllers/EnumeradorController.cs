@@ -25,8 +25,8 @@ namespace TronBox.API.Controllers
         [HttpGet("tipos-acesso")]
         public IActionResult GetAcessoMatoGrosso()
         {
-            var tiposAcesso = from TipoAcessoMatoGrosso d in Enum.GetValues(typeof(TipoAcessoMatoGrosso))
-                              select new { value = (int)d, label = EnumHelper<TipoAcessoMatoGrosso>.GetDisplayValue(d) };
+            var tiposAcesso = from ETipoAcessoMatoGrosso d in Enum.GetValues(typeof(ETipoAcessoMatoGrosso))
+                              select new { value = (int)d, label = EnumHelper<ETipoAcessoMatoGrosso>.GetDisplayValue(d) };
 
             return Ok(tiposAcesso);
         }
@@ -34,8 +34,8 @@ namespace TronBox.API.Controllers
         [HttpGet("tipos-documento-fiscal")]
         public IActionResult GetTipoDocumentoFiscal()
         {
-            var tiposDocumentoFiscal = from TipoDocumentoFiscal d in Enum.GetValues(typeof(TipoDocumentoFiscal))
-                              select new { value = (int)d, label = EnumHelper<TipoDocumentoFiscal>.GetDisplayValue(d) };
+            var tiposDocumentoFiscal = from ETipoDocumentoFiscal d in Enum.GetValues(typeof(ETipoDocumentoFiscal))
+                              select new { value = (int)d, label = EnumHelper<ETipoDocumentoFiscal>.GetDisplayValue(d) };
 
             return Ok(tiposDocumentoFiscal);
         }
@@ -43,8 +43,8 @@ namespace TronBox.API.Controllers
         [HttpGet("origens-manifesto")]
         public IActionResult GetOrigemManifesto()
         {
-            var origensManifesto = from OrigemManifesto d in Enum.GetValues(typeof(OrigemManifesto))
-                              select new { value = (int)d, label = EnumHelper<OrigemManifesto>.GetDisplayValue(d) };
+            var origensManifesto = from EOrigemManifesto d in Enum.GetValues(typeof(EOrigemManifesto))
+                              select new { value = (int)d, label = EnumHelper<EOrigemManifesto>.GetDisplayValue(d) };
 
             return Ok(origensManifesto);
         }
@@ -52,8 +52,8 @@ namespace TronBox.API.Controllers
         [HttpGet("origens-documento-fiscal")]
         public IActionResult GetOrigemDocumentoFiscal()
         {
-            var origensDocumentoFiscal = from OrigemDocumentoFiscal d in Enum.GetValues(typeof(OrigemDocumentoFiscal))
-                                         select new { value = (int)d, label = EnumHelper<OrigemDocumentoFiscal>.GetDisplayValue(d) };
+            var origensDocumentoFiscal = from EOrigemDocumentoFiscal d in Enum.GetValues(typeof(EOrigemDocumentoFiscal))
+                                         select new { value = (int)d, label = EnumHelper<EOrigemDocumentoFiscal>.GetDisplayValue(d) };
 
             return Ok(origensDocumentoFiscal);
         }
@@ -61,8 +61,8 @@ namespace TronBox.API.Controllers
         [HttpGet("situacoes-documento")]
         public IActionResult GetSituacaoDocumento()
         {
-            var situacoesDocumento = from SituacaoDocumentoFiscal d in Enum.GetValues(typeof(SituacaoDocumentoFiscal))
-                                   select new { value = (int)d, label = EnumHelper<SituacaoDocumentoFiscal>.GetDisplayValue(d) };
+            var situacoesDocumento = from ESituacaoDocumentoFiscal d in Enum.GetValues(typeof(ESituacaoDocumentoFiscal))
+                                   select new { value = (int)d, label = EnumHelper<ESituacaoDocumentoFiscal>.GetDisplayValue(d) };
 
             return Ok(situacoesDocumento);
         }
@@ -70,8 +70,8 @@ namespace TronBox.API.Controllers
         [HttpGet("situacoes-manifesto")]
         public IActionResult GetSituacaoManifesto()
         {
-            var situacoesManifesto = from SituacaoManifesto d in Enum.GetValues(typeof(SituacaoManifesto))
-                                     select new { value = (int)d, label = EnumHelper<SituacaoManifesto>.GetDisplayValue(d) };
+            var situacoesManifesto = from ESituacaoManifesto d in Enum.GetValues(typeof(ESituacaoManifesto))
+                                     select new { value = (int)d, label = EnumHelper<ESituacaoManifesto>.GetDisplayValue(d) };
 
             return Ok(situacoesManifesto);
         }

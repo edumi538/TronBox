@@ -19,7 +19,7 @@ namespace TronBox.Domain.Aggregates.ConfiguracaoEmpresaAgg
 
     public class DadosMatoGrosso
     {
-        public TipoAcessoMatoGrosso Tipo { get; set; }
+        public ETipoAcessoMatoGrosso Tipo { get; set; }
         public string Usuario { get; set; }
         public string Senha { get; set; }
     }

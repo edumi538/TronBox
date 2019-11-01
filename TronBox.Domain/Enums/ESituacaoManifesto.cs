@@ -2,7 +2,7 @@
 
 namespace TronBox.Domain.Enums
 {
-    public enum SituacaoManifesto
+    public enum ESituacaoManifesto
     {
         [Display(Name = "Sem Manifesto")]
         SemManifesto = 1,

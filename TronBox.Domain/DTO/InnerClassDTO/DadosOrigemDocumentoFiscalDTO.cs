@@ -5,12 +5,12 @@ namespace TronBox.Domain.DTO.InnerClassDTO
 {
     public class DadosOrigemDocumentoFiscalDTO
     {
-        public OrigemDocumentoFiscal Origem { get; set; }
+        public EOrigemDocumentoFiscal Origem { get; set; }
         public string Originador { get; set; }
 
         public string OrigemDescricao
         {
-            get => EnumHelper<OrigemDocumentoFiscal>.GetDisplayValue(Origem);
+            get => EnumHelper<EOrigemDocumentoFiscal>.GetDisplayValue(Origem);
         }
     }
 }

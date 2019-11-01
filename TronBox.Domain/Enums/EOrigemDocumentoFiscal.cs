@@ -2,7 +2,7 @@
 
 namespace TronBox.Domain.Enums
 {
-    public enum OrigemDocumentoFiscal
+    public enum EOrigemDocumentoFiscal
     {
         [Display(Name = "E-mail")]
         Email = 1,

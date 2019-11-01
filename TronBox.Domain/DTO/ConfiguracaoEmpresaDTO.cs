@@ -18,7 +18,7 @@ namespace TronBox.Domain.DTO
 
     public class DadosMatoGrossoDTO
     {
-        public TipoAcessoMatoGrosso Tipo { get; set; }
+        public ETipoAcessoMatoGrosso Tipo { get; set; }
         public string Usuario { get; set; }
         public string Senha { get; set; }
     }

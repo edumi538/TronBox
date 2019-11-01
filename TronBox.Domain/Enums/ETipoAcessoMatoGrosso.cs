@@ -2,7 +2,7 @@
 
 namespace TronBox.Domain.Enums
 {
-    public enum TipoAcessoMatoGrosso
+    public enum ETipoAcessoMatoGrosso
     {
         [Display(Name = "Contabilista")]
         Contabilista = 1,

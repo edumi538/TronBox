@@ -6,7 +6,7 @@ namespace TronBox.Domain.DTO
 {
     public class EnviarArquivosDTO
     {
-        public OrigemDocumentoFiscal Origem { get; set; }
+        public EOrigemDocumentoFiscal Origem { get; set; }
         public string Originador { get; set; }
         public List<IFormFile> Arquivos { get; set; }
     }
