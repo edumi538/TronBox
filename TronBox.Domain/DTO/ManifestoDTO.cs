@@ -1,6 +1,9 @@
 ﻿using MongoDB.Bson.Serialization.Attributes;
+using System;
 using TronBox.Domain.DTO.InnerClassDTO;
 using TronBox.Domain.Enums;
+using TronCore.Enumeradores.Helpers;
+using TronCore.Utilitarios;
 
 namespace TronBox.Domain.DTO
 {
@@ -28,5 +31,21 @@ namespace TronBox.Domain.DTO
         public DadosRetornoDTO DadosManifestacao { get; set; }
         [BsonIgnoreIfDefault]
         public DadosRetornoDTO DadosDownload { get; set; }
+        public DateTime DataArmazenamentoFormatada
+        {
+            get => UtilitarioDatas.ConvertIntToDate(DataArmazenamento);
+        }
+        public DateTime DataEmissaoManifestoFormatada
+        {
+            get => UtilitarioDatas.ConvertIntToDate(DataEmissaoManifesto);
+        }
+        public DateTime DataManifestoFormatada
+        {
+            get => UtilitarioDatas.ConvertIntToDate(DataManifesto);
+        }
+        public string DescricaoSituacaoManifesto
+        {
+            get => EnumHelper<ESituacaoManifesto>.GetDisplayValue(SituacaoManifesto);
+        }
     }
 }
