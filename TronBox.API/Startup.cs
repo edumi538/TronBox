@@ -106,11 +106,7 @@ namespace TronBox
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, IHttpContextAccessor accessor)
         {
-#if DEBUG
-            app.UseCors(builder => builder.WithOrigins("http://localhost:3000", "http://localhost:6006", "http://beta.tronbox.com.br").AllowAnyMethod().AllowAnyHeader());
-#else
-            app.UseCors(builder => builder.WithOrigins("http://box.tron.com.br").AllowAnyMethod().AllowAnyHeader());
-#endif
+            app.UseCors(builder => builder.WithOrigins(Constantes.URI_BASE_BX_PORTAL).AllowAnyMethod().AllowAnyHeader());
 
             app.UseExceptionHandler(builder =>
             {
