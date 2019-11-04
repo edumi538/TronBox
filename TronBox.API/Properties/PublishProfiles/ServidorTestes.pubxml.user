@@ -7,6 +7,6 @@ by editing this MSBuild file. In order to learn more about this please visit htt
   <PropertyGroup>
     <TimeStampOfAssociatedLegacyPublishXmlFile />
     <_PublishTargetUrl>\\192.168.10.80\TronSmart</_PublishTargetUrl>
-    <EncryptedPassword>AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAO9uHmHO5yUuOzTcUb/pRhgAAAAACAAAAAAADZgAAwAAAABAAAACLmvagELisstbE5YNz80sPAAAAAASAAACgAAAAEAAAAG7AF1ZjLMhqhCHwTYw/zs4YAAAAukX145nwfCwnR5J5fwYQBtHIr8AdIeQ5FAAAAEkANotFsWaw1D2/oMa05xiqSOf8</EncryptedPassword>
+    <EncryptedPassword>AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAduM7zacaTEmLAGK0zbKKOwAAAAACAAAAAAAQZgAAAAEAACAAAAAyEeKZWo7WDFAuodjPPKQINbL+e6FJr//QDW3dsC2CfgAAAAAOgAAAAAIAACAAAAAVs8v9Vi/Ju6p4O4dNKmKeG7Eqj482mHnvbxmmd+0agzAAAAA1ACCKyyTFl8oHsTVhILvqqVyMaCLATCoxhbJ+KFKDo6mXYVbejgNRqtzxNRvqHdtAAAAAzvZiScajeEwlENDQhDFSbVGjWBfjVFw4yUdwPeeuOoD30aLL1CDgMJ43akX1XhffxCjcBpXEgaP6ckkAVZS3gw==</EncryptedPassword>
   </PropertyGroup>
 </Project>
