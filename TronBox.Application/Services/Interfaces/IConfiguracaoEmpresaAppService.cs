@@ -9,6 +9,7 @@ namespace TronBox.Application.Services.Interfaces
     public interface IConfiguracaoEmpresaAppService : IDisposable
     {
         Task<Resposta> Upload(CertificadoCreateDTO certificadoCreateDTO);
+        Task<Resposta> DeletarCertificado(Guid id);
         EmpresaDTO BuscarEmpresa();
         void AtualizarEmpresa(EmpresaDTO empresaDto);
     }

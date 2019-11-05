@@ -3,6 +3,7 @@ using Comum.Enums;
 using Comum.UI.Controllers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using TronBox.Application.Services.Interfaces;
@@ -58,10 +59,21 @@ namespace TronBox.UI.Controllers
             });
         }
 
-        [HttpPost("upload")]
+        [HttpPost("certificado/upload")]
         public async Task<IActionResult> Upload([FromForm] CertificadoCreateDTO certificadoCreateDTO)
         {
             var resposta = await AppServiceFactory.Instancie<IConfiguracaoEmpresaAppService>().Upload(certificadoCreateDTO);
+
+            if (!resposta.Sucesso)
+                return BadRequest(resposta);
+
+            return Ok(resposta);
+        }
+
+        [HttpDelete("certificado/{id:GUID}")]
+        public async Task<IActionResult> DeleteCertificado(Guid id)
+        {
+            var resposta = await AppServiceFactory.Instancie<IConfiguracaoEmpresaAppService>().DeletarCertificado(id);
 
             if (!resposta.Sucesso)
                 return BadRequest(resposta);

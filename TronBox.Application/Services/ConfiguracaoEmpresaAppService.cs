@@ -5,6 +5,7 @@ using Comum.Domain.Interfaces;
 using Comum.DTO;
 using FluentValidation.Results;
 using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -89,7 +90,14 @@ namespace TronBox.Application.Services
                 { "arquivo", certificadoCreateDTO.Arquivo }
             };
 
-            var result = await UtilitarioHttpClient.PostRequest(_usuarioLogado.GetToken(), Constantes.URI_BASE_CT, $"api/v1/certificados", dictionary, "certificado.pfx");
+            var result = await UtilitarioHttpClient.PostRequest(_usuarioLogado.GetToken(), Constantes.URI_BASE_CT, "api/v1/certificados", dictionary, "certificado.pfx");
+
+            return JsonConvert.DeserializeObject<Resposta>(result);
+        }
+
+        public async Task<Resposta> DeletarCertificado(Guid id)
+        {
+            var result = await UtilitarioHttpClient.DeleteRequest(_usuarioLogado.GetToken(), Constantes.URI_BASE_CT, $"api/v1/certificados/{id}");
 
             return JsonConvert.DeserializeObject<Resposta>(result);
         }
