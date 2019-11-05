@@ -1,10 +1,14 @@
-﻿using System;
+﻿using Comum.DTO;
+using System;
+using System.Threading.Tasks;
 using TronBox.Domain.DTO;
+using TronCore.Dominio.Base;
 
 namespace TronBox.Application.Services.Interfaces
 {
     public interface IConfiguracaoEmpresaAppService : IDisposable
     {
+        Task<Resposta> Upload(CertificadoCreateDTO certificadoCreateDTO);
         EmpresaDTO BuscarEmpresa();
         void AtualizarEmpresa(EmpresaDTO empresaDto);
     }

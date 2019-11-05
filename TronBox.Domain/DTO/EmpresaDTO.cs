@@ -1,4 +1,5 @@
 ﻿using Comum.Domain.Enums;
+using Comum.DTO;
 
 namespace TronBox.Domain.DTO
 {
@@ -14,5 +15,6 @@ namespace TronBox.Domain.DTO
         public string EmailPrincipal { get; set; }        
         public bool Status { get; set; }
         public ConfiguracaoEmpresaDTO ConfiguracaoEmpresa { get; set; }
+        public CertificadoSimplificadoDTO Certificado { get; set; }
     }
 }

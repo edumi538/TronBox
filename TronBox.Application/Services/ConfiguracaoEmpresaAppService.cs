@@ -1,18 +1,23 @@
 ﻿using AutoMapper;
 using Comum.Domain.Aggregates.EmpresaAgg;
 using Comum.Domain.Aggregates.EmpresaAgg.Repository;
-using Comum.Domain.Services.Interfaces;
-using Comum.Domain.ViewModels;
+using Comum.Domain.Interfaces;
+using Comum.DTO;
 using FluentValidation.Results;
+using Newtonsoft.Json;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using TronBox.Application.Services.Interfaces;
 using TronBox.Domain.Aggregates.ConfiguracaoEmpresaAgg;
 using TronBox.Domain.Aggregates.ConfiguracaoEmpresaAgg.Repository;
 using TronBox.Domain.DTO;
+using TronCore.DefinicoesConfiguracoes;
+using TronCore.Dominio.Base;
 using TronCore.Dominio.Bus;
 using TronCore.Dominio.Notifications;
-using TronCore.InjecaoDependencia;
 using TronCore.Persistencia.Interfaces;
+using TronCore.Utilitarios;
 
 namespace TronBox.Application.Services
 {
@@ -21,14 +26,16 @@ namespace TronBox.Application.Services
         #region Membros
         private readonly IBus _bus;
         private readonly IMapper _mapper;
+        private readonly IPessoaUsuarioLogado _usuarioLogado;
         private readonly IRepositoryFactory _repositoryFactory;
         #endregion
 
         #region Construtor
-        public ConfiguracaoEmpresaAppService(IBus bus, IMapper mapper, IRepositoryFactory repositoryFactory)
+        public ConfiguracaoEmpresaAppService(IBus bus, IMapper mapper, IRepositoryFactory repositoryFactory, IPessoaUsuarioLogado usuarioLogado)
         {
             _bus = bus;
             _mapper = mapper;
+            _usuarioLogado = usuarioLogado;
             _repositoryFactory = repositoryFactory;
         }
         #endregion
@@ -42,6 +49,12 @@ namespace TronBox.Application.Services
             var empresa = _mapper.Map<EmpresaDTO>(_repositoryFactory.Instancie<IEmpresaRepository>().BuscarTodos().FirstOrDefault());
 
             empresa.ConfiguracaoEmpresa = _mapper.Map<ConfiguracaoEmpresaDTO>(BuscarConfiguracaoEmpresa());
+
+            var certificado = UtilitarioHttpClient.GetRequest(_usuarioLogado.GetToken(), Constantes.URI_BASE_CT,
+                $"api/v1/certificados/{empresa.Inscricao}").GetAwaiter().GetResult();
+
+            if (certificado != null)
+                empresa.Certificado = JsonConvert.DeserializeObject<CertificadoSimplificadoDTO>(certificado);
 
             return empresa;
         }
@@ -63,8 +76,22 @@ namespace TronBox.Application.Services
                 }
                 else _repositoryFactory.Instancie<IConfiguracaoEmpresaRepository>().Inserir(configuracaoEmpresa);
 
-                FabricaGeral.Instancie<IEmpresaAppService>().Atualizar(_mapper.Map<EmpresaViewModel>(empresa));
+                _repositoryFactory.Instancie<IEmpresaRepository>().Atualizar(empresa);
             }
+        }
+
+        public async Task<Resposta> Upload(CertificadoCreateDTO certificadoCreateDTO)
+        {
+            var dictionary = new Dictionary<string, dynamic>
+            {
+                { "inscricaoEmpresa", certificadoCreateDTO.InscricaoEmpresa },
+                { "senha", certificadoCreateDTO.Senha },
+                { "arquivo", certificadoCreateDTO.Arquivo }
+            };
+
+            var result = await UtilitarioHttpClient.PostRequest(_usuarioLogado.GetToken(), Constantes.URI_BASE_CT, $"api/v1/certificados", dictionary, "certificado.pfx");
+
+            return JsonConvert.DeserializeObject<Resposta>(result);
         }
 
         #region Private Methods

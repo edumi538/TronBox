@@ -1,8 +1,10 @@
-﻿using Comum.Enums;
+﻿using Comum.DTO;
+using Comum.Enums;
 using Comum.UI.Controllers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
+using System.Threading.Tasks;
 using TronBox.Application.Services.Interfaces;
 using TronBox.Domain.DTO;
 using TronBox.Domain.Enums;
@@ -54,6 +56,17 @@ namespace TronBox.UI.Controllers
                 sucesso = true,
                 mensagem = "Operação realizada com sucesso."
             });
+        }
+
+        [HttpPost("upload")]
+        public async Task<IActionResult> Upload([FromForm] CertificadoCreateDTO certificadoCreateDTO)
+        {
+            var resposta = await AppServiceFactory.Instancie<IConfiguracaoEmpresaAppService>().Upload(certificadoCreateDTO);
+
+            if (!resposta.Sucesso)
+                return BadRequest(resposta);
+
+            return Ok(resposta);
         }
     }
 }
