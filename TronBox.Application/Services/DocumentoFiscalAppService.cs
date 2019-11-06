@@ -21,14 +21,13 @@ using TronBox.Domain.Aggregates.DocumentoFiscalAgg.Repository;
 using TronBox.Domain.DTO;
 using TronBox.Domain.DTO.InnerClassDTO;
 using TronBox.Domain.Enums;
+using TronCore.DefinicoesConfiguracoes;
 using TronCore.Dominio.Bus;
 using TronCore.Dominio.Notifications;
 using TronCore.Persistencia.Interfaces;
 using TronCore.Utilitarios;
 using TronCore.Utilitarios.EnvioDeArquivo.Interface;
 using TronCore.Utilitarios.Specifications;
-using ZionDanfe;
-using ZionDanfe.Modelo;
 
 namespace TronBox.Application.Services
 {
@@ -53,25 +52,22 @@ namespace TronBox.Application.Services
         }
         #endregion
 
-        public async Task<byte[]> DownloadDanfe(string chaveDocumentoFiscal)
+        public async Task<byte[]> DownloadPDF(Guid id)
         {
-            var modelo = await BuscarNfeViewModel(chaveDocumentoFiscal);
+            var documentoFiscal = _mapper.Map<DocumentoFiscalDTO>(_repositoryFactory.Instancie<IDocumentoFiscalRepository>().BuscarPorId(id));
 
-            if (modelo != null)
+            if (documentoFiscal == null) return null;
+
+            var conteudoXML = await BuscarConteudoXML(documentoFiscal.ChaveDocumentoFiscal);
+
+            var documentoToDownload = new
             {
-                using (var danfe = new Danfe(modelo))
-                {
-                    danfe.Gerar();
+                docType = (int)documentoFiscal.TipoDocumentoFiscal,
+                key = documentoFiscal.ChaveDocumentoFiscal,
+                attachment = conteudoXML
+            };
 
-                    MemoryStream pdfContent = new MemoryStream();
-
-                    danfe.Salvar(pdfContent);
-
-                    return pdfContent.ToArray();
-                }
-            }
-
-            return null;
+            return await UtilitarioHttpClient.PostRequest(Constantes.URI_BASE_PDF,  "api/invoices/download", documentoToDownload);
         }
 
         public void Dispose()
@@ -417,13 +413,6 @@ namespace TronBox.Application.Services
             if (modelo == "65") return "nfce";
 
             return "cte";
-        }
-
-        private async Task<DanfeViewModel> BuscarNfeViewModel(string chaveDocumentoFiscal)
-        {
-            var conteudoXML = await BuscarConteudoXML(chaveDocumentoFiscal);
-
-            return DanfeViewModelCreator.CriarDeStringXml(conteudoXML);
         }
         #endregion
     }

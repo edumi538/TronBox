@@ -9,7 +9,7 @@ namespace TronBox.Application.Services.Interfaces
     {
         Task<IEnumerable<string>> Inserir(EnviarArquivosDTO arquivos);
         void Atualizar(DocumentoFiscalDTO documentoFiscalDTO);
-        Task<byte[]> DownloadDanfe(string chaveDocumentoFiscal);
+        Task<byte[]> DownloadPDF(Guid id);
         IEnumerable<DocumentoFiscalDTO> BuscarTodos(string filtro);
         Task<DetalhesDocumentoFiscalDTO> BuscarPorId(Guid id);
         void Deletar(Guid id);
