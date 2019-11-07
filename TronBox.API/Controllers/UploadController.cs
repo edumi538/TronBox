@@ -1,10 +1,7 @@
-﻿using Comum.Domain.Interfaces;
-using Comum.Enums;
+﻿using Comum.Enums;
 using Comum.UI.Controllers;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using TronBox.Application.Services.Interfaces;
@@ -23,12 +20,10 @@ namespace TronBox.API.Controllers
     public class UploadController : BaseController
     {
         readonly IDomainNotificationHandler<DomainNotification> _notifications;
-        readonly IPessoaUsuarioLogado _usuarioLogado;
 
-        public UploadController(IDomainNotificationHandler<DomainNotification> notifications, IAppServiceFactory appServiceFactory, IPessoaUsuarioLogado usuarioLogado) : base(notifications, appServiceFactory)
+        public UploadController(IDomainNotificationHandler<DomainNotification> notifications, IAppServiceFactory appServiceFactory) : base(notifications, appServiceFactory)
         {
             _notifications = notifications;
-            _usuarioLogado = usuarioLogado;
         }
 
         [HttpPost("multiple")]
@@ -55,17 +50,9 @@ namespace TronBox.API.Controllers
 
         [HttpPost("single")]
         [Consumes("application/json", "application/json-patch+json", "multipart/form-data")]
-        [IdentificadorOperacao(eFuncaoTronBox.ID_UPLOAD, "Upload Documentos Fiscais", eOperacaoSuite.ID_OP_UPLOAD, typeof(eOperacaoSuite), typeof(eFuncaoTronBox), "/enviar-documentos")]
-        public async Task<IActionResult> Upload([FromForm]IFormFile arquivo)
+        public async Task<IActionResult> UploadSingle([FromForm]EnviarArquivosDTO arquivos)
         {
-            var arquivoEnviado = new EnviarArquivosDTO()
-            {
-                Origem = EOrigemDocumentoFiscal.UploadManual,
-                Originador = _usuarioLogado.ObtenhaPessoa().Pessoa.Nome,
-                Arquivos = new List<IFormFile>() { arquivo }
-            };
-
-            await AppServiceFactory.Instancie<IDocumentoFiscalAppService>().Inserir(arquivoEnviado);
+            await AppServiceFactory.Instancie<IDocumentoFiscalAppService>().Inserir(arquivos);
 
             if (_notifications.HasNotifications())
             {

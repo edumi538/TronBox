@@ -73,7 +73,7 @@ namespace TronBox.Application.Services
         public void Dispose()
         {
         }
-
+        
         public void Atualizar(DocumentoFiscalDTO documentoFiscalDTO)
         {
             var documentoFiscal = _mapper.Map<DocumentoFiscal>(documentoFiscalDTO);
@@ -116,12 +116,18 @@ namespace TronBox.Application.Services
 
             var documentosFiscais = await ProcessarArquivosEnviados(arquivos, empresa);
 
-            var documentosValidos = DocumentosValidos(documentosFiscais);
+            var documentosValidos = new List<DocumentoFiscal>();
+            var documentosCancelamento = new List<DocumentoFiscal>();
+                       
+            DocumentosValidos(documentosFiscais, ref documentosValidos, ref documentosCancelamento);
 
             if (documentosValidos.Count > 0)
                 _repositoryFactory.Instancie<IDocumentoFiscalRepository>().InserirTodos(documentosValidos);
 
-            return documentosValidos.Select(c => c.ChaveDocumentoFiscal);
+            if (documentosCancelamento.Count > 0)
+                _repositoryFactory.Instancie<IDocumentoFiscalRepository>().AtualizarTodos(documentosCancelamento);
+
+            return documentosValidos.Select(c => c.ChaveDocumentoFiscal).Concat(documentosCancelamento.Select(c => c.ChaveDocumentoFiscal));
         }
 
         public void Deletar(Guid id) => _repositoryFactory.Instancie<IDocumentoFiscalRepository>().Excluir(id);
@@ -143,7 +149,8 @@ namespace TronBox.Application.Services
 
                         if (notaFiscal != null)
                         {
-                            await UploadFileToBlobStorage(arquivos, arquivo, notaFiscal);
+                            if (!notaFiscal.Cancelado)
+                                await UploadFileToBlobStorage(arquivos, arquivo, notaFiscal);
 
                             documentosFiscais.Add(notaFiscal);
                         }
@@ -154,7 +161,8 @@ namespace TronBox.Application.Services
 
                         if (conhecimentoTransporte != null)
                         {
-                            await UploadFileToBlobStorage(arquivos, arquivo, conhecimentoTransporte);
+                            if (!conhecimentoTransporte.Cancelado)
+                                await UploadFileToBlobStorage(arquivos, arquivo, conhecimentoTransporte);
 
                             documentosFiscais.Add(conhecimentoTransporte);
                         }
@@ -198,8 +206,13 @@ namespace TronBox.Application.Services
             {
                 var cte = FuncoesXml.XmlStringParaClasse<procEventoCTe>(conteudoXML);
 
-                // TODO PROCESSAR CANCELADOS
-                return null;
+                if (cte == null) return null;
+
+                return new DocumentoFiscalDTO()
+                {
+                    Cancelado = true,
+                    ChaveDocumentoFiscal = cte.eventoCTe.infEvento.chCTe
+                };
             }
         }
 
@@ -223,8 +236,13 @@ namespace TronBox.Application.Services
             {
                 var nfe = FuncoesXml.XmlStringParaClasse<procEventoNFe>(conteudoXML);
 
-                // TODO PROCESSAR CANCELADOS
-                return null;
+                if (nfe == null) return null;
+
+                return new DocumentoFiscalDTO()
+                {
+                    Cancelado = true,
+                    ChaveDocumentoFiscal = nfe.retEvento.infEvento.chNFe
+                };
             }
         }
 
@@ -332,29 +350,44 @@ namespace TronBox.Application.Services
             return 0;
         }
 
-        private List<DocumentoFiscal> DocumentosValidos(List<DocumentoFiscalDTO> documentosGerados)
+        private void DocumentosValidos(List<DocumentoFiscalDTO> documentosGerados, ref List<DocumentoFiscal> documentosValidos, ref List<DocumentoFiscal> documentosCancelamento)
         {
-            var documentosFiscais = new List<DocumentoFiscal>();
-
             var chavesGeradas = documentosGerados.Select(c => c.ChaveDocumentoFiscal);
 
             var documentosExistentes = _repositoryFactory.Instancie<IDocumentoFiscalRepository>()
-                .BuscarTodos(d => chavesGeradas.Contains(d.ChaveDocumentoFiscal));
+                .BuscarTodos(d => chavesGeradas.Contains(d.ChaveDocumentoFiscal)).ToList();
 
             foreach (var documentoGerado in documentosGerados)
             {
-                var documentoFiscal = _mapper.Map<DocumentoFiscal>(documentoGerado);
-
-                if (documentosExistentes.Any(d => d.ChaveDocumentoFiscal == documentoFiscal.ChaveDocumentoFiscal))
+                if (documentosExistentes.Any(d => d.ChaveDocumentoFiscal == documentoGerado.ChaveDocumentoFiscal))
                 {
-                    _bus.RaiseEvent(new DomainNotification(documentoFiscal.ChaveDocumentoFiscal, "Documento já existente na base de dados."));
+                    if (documentoGerado.Cancelado)
+                    {
+                        var documentoParaCancelar = documentosExistentes.Where(d => d.ChaveDocumentoFiscal == documentoGerado.ChaveDocumentoFiscal).FirstOrDefault();
+
+                        documentoParaCancelar.Cancelado = true;
+
+                        documentosCancelamento.Add(documentoParaCancelar);
+                    }
+                    else _bus.RaiseEvent(new DomainNotification(documentoGerado.ChaveDocumentoFiscal, "Documento já existente na base de dados."));
+
                     continue;
                 }
 
-                if (EhValido(documentoFiscal)) documentosFiscais.Add(documentoFiscal);
-            }
+                if (documentoGerado.Cancelado && documentoGerado.NumeroDocumentoFiscal == null)
+                {
+                    _bus.RaiseEvent(new DomainNotification(documentoGerado.ChaveDocumentoFiscal, "Não foi encontrado documento para o cancelamento enviado."));
+                    continue;
+                }
+               
+                var documentoFiscal = _mapper.Map<DocumentoFiscal>(documentoGerado);
 
-            return documentosFiscais;
+                if (EhValido(documentoFiscal))
+                {
+                    documentosExistentes.Add(documentoFiscal);
+                    documentosValidos.Add(documentoFiscal);
+                }
+            }
         }
 
         private void NotificarDocumentoInvalidos(string chaveDocumentoFiscal, string mensagem) => _bus.RaiseEvent(new DomainNotification(chaveDocumentoFiscal, mensagem));
