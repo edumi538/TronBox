@@ -145,7 +145,7 @@ namespace TronBox.Application.Services
 
                     try
                     {
-                        var notaFiscal = ProcessarXMLparaNFe(empresa.Inscricao, conteudoXML);
+                        var notaFiscal = ProcessarXMLparaNFe(empresa.Inscricao, conteudoXML, arquivo.FileName);
 
                         if (notaFiscal != null)
                         {
@@ -159,7 +159,7 @@ namespace TronBox.Application.Services
                     }
                     catch (Exception)
                     {
-                        var conhecimentoTransporte = ProcessarXMLparaCTe(empresa.Inscricao, conteudoXML);
+                        var conhecimentoTransporte = ProcessarXMLparaCTe(empresa.Inscricao, conteudoXML, arquivo.FileName);
 
                         if (conhecimentoTransporte != null)
                         {
@@ -190,7 +190,7 @@ namespace TronBox.Application.Services
             await _azureBlobStorage.UploadAsync(documentoFiscal.ChaveDocumentoFiscal, folderName, arquivo.OpenReadStream());
         }
 
-        private DocumentoFiscalDTO ProcessarXMLparaCTe(string inscricaoEmpresa, string conteudoXML)
+        private DocumentoFiscalDTO ProcessarXMLparaCTe(string inscricaoEmpresa, string conteudoXML, string nomeArquivo)
         {
             try
             {
@@ -200,7 +200,7 @@ namespace TronBox.Application.Services
 
                 if (conhecimentoTransporte == null)
                 {
-                    NotificarDocumentoInvalidos(cte.protCTe.infProt.chCTe, "Documento não pertence a empresa selecionada.");
+                    NotificarDocumentoInvalidos(nomeArquivo, "Documento não pertence a empresa selecionada.");
                     return null;
                 }
 
@@ -220,7 +220,7 @@ namespace TronBox.Application.Services
             }
         }
 
-        private DocumentoFiscalDTO ProcessarXMLparaNFe(string inscricaoEmpresa, string conteudoXML)
+        private DocumentoFiscalDTO ProcessarXMLparaNFe(string inscricaoEmpresa, string conteudoXML, string nomeArquivo)
         {
             try
             {
@@ -230,7 +230,7 @@ namespace TronBox.Application.Services
 
                 if (notaFiscal == null)
                 {
-                    NotificarDocumentoInvalidos(nfe.protNFe.infProt.chNFe, "Documento não pertence a empresa selecionada.");
+                    NotificarDocumentoInvalidos(nomeArquivo, "Documento não pertence a empresa selecionada.");
                     return null;
                 }
 
@@ -394,7 +394,7 @@ namespace TronBox.Application.Services
             }
         }
 
-        private void NotificarDocumentoInvalidos(string chaveDocumentoFiscal, string mensagem) => _bus.RaiseEvent(new DomainNotification(chaveDocumentoFiscal, mensagem));
+        private void NotificarDocumentoInvalidos(string nomeArquivo, string mensagem) => _bus.RaiseEvent(new DomainNotification(nomeArquivo, mensagem));
 
         private bool EhValido(DocumentoFiscal documentoFiscal)
         {
@@ -408,7 +408,7 @@ namespace TronBox.Application.Services
                     Mensagem = c.ErrorMessage
                 });
 
-                _bus.RaiseEvent(new DomainNotification(documentoFiscal.ChaveDocumentoFiscal, erros));
+                _bus.RaiseEvent(new DomainNotification(documentoFiscal.NomeArquivo, erros));
             }
 
             return validator.IsValid;
