@@ -66,6 +66,8 @@ namespace TronBox.Domain.Aggregates.DocumentoFiscalAgg
                 return $"{Constantes.URL_AZURE}/box/documentosfiscais/{tipo}/{anomes}/{ChaveDocumentoFiscal}";
             }
         }
+        [BsonIgnore]
+        public string NomeArquivo { get; set; }
     }
 
     public class DocumentoFiscalValidator : AbstractValidator<DocumentoFiscal>

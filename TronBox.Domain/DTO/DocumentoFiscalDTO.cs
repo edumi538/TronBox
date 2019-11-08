@@ -23,6 +23,7 @@ namespace TronBox.Domain.DTO
         public DadosImportacaoDTO DadosImportacao { get; set; }
         public DadosFornecedorDTO DadosEmitenteDestinatario { get; set; }
         public string CaminhoArquivo { get; set; }
+        public string NomeArquivo { get; set; }
         public DateTime DataArmazenamentoFormatada
         {
             get => UtilitarioDatas.ConvertIntToDate(DataArmazenamento);

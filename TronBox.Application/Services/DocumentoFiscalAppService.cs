@@ -127,7 +127,7 @@ namespace TronBox.Application.Services
             if (documentosCancelamento.Count > 0)
                 _repositoryFactory.Instancie<IDocumentoFiscalRepository>().AtualizarTodos(documentosCancelamento);
 
-            return documentosValidos.Select(c => c.ChaveDocumentoFiscal).Concat(documentosCancelamento.Select(c => c.ChaveDocumentoFiscal));
+            return documentosValidos.Select(c => c.NomeArquivo).Concat(documentosCancelamento.Select(c => c.NomeArquivo));
         }
 
         public void Deletar(Guid id) => _repositoryFactory.Instancie<IDocumentoFiscalRepository>().Excluir(id);
@@ -149,6 +149,8 @@ namespace TronBox.Application.Services
 
                         if (notaFiscal != null)
                         {
+                            notaFiscal.NomeArquivo = arquivo.FileName;
+
                             if (!notaFiscal.Cancelado)
                                 await UploadFileToBlobStorage(arquivos, arquivo, notaFiscal);
 
@@ -161,6 +163,8 @@ namespace TronBox.Application.Services
 
                         if (conhecimentoTransporte != null)
                         {
+                            conhecimentoTransporte.NomeArquivo = arquivo.FileName;
+
                             if (!conhecimentoTransporte.Cancelado)
                                 await UploadFileToBlobStorage(arquivos, arquivo, conhecimentoTransporte);
 
@@ -369,14 +373,14 @@ namespace TronBox.Application.Services
 
                         documentosCancelamento.Add(documentoParaCancelar);
                     }
-                    else _bus.RaiseEvent(new DomainNotification(documentoGerado.ChaveDocumentoFiscal, "Documento já existente na base de dados."));
+                    else _bus.RaiseEvent(new DomainNotification(documentoGerado.NomeArquivo, "Documento já existente na base de dados."));
 
                     continue;
                 }
 
                 if (documentoGerado.Cancelado && documentoGerado.NumeroDocumentoFiscal == null)
                 {
-                    _bus.RaiseEvent(new DomainNotification(documentoGerado.ChaveDocumentoFiscal, "Não foi encontrado documento para o cancelamento enviado."));
+                    _bus.RaiseEvent(new DomainNotification(documentoGerado.NomeArquivo, "Não foi encontrado documento para o cancelamento enviado."));
                     continue;
                 }
                

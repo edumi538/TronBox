@@ -36,7 +36,7 @@ namespace TronBox.API.Controllers
             var documentosNaoInseridos = _notifications.GetNotifications()
                 .Select(c => new
                     {
-                        ChaveDocumentoFiscal = c.Key,
+                        NomeArquivo = c.Key,
                         Mensagem = c.Value,
                         Erros = c.Object
                     });
@@ -62,7 +62,7 @@ namespace TronBox.API.Controllers
                     erros = _notifications.GetNotifications()
                         .Select(c => new
                         {
-                            Chave = c.Key,
+                            NomeArquivo = c.Key,
                             Mensagem = c.Value,
                             Erros = c.Object
                         })
