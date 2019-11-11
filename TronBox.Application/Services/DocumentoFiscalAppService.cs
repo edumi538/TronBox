@@ -112,7 +112,7 @@ namespace TronBox.Application.Services
         public IEnumerable<DocumentoFiscalDTO> BuscarTodos(string filtro) => _mapper.Map<IEnumerable<DocumentoFiscalDTO>>(_repositoryFactory.Instancie<IDocumentoFiscalRepository>()
             .BuscarTodos(new UtilitarioSpecification<DocumentoFiscal>().CriarEspecificacaoFiltro(filtro)));
 
-        public async Task<IEnumerable<string>> Inserir(EnviarArquivosDTO arquivos)
+        public async Task<IEnumerable<RetornoDocumentoFiscalDTO>> Inserir(EnviarArquivosDTO arquivos)
         {
             var empresa = _mapper.Map<EmpresaDTO>(_repositoryFactory.Instancie<IEmpresaRepository>().BuscarTodos().FirstOrDefault());
 
@@ -129,7 +129,10 @@ namespace TronBox.Application.Services
             if (documentosCancelamento.Count > 0)
                 _repositoryFactory.Instancie<IDocumentoFiscalRepository>().AtualizarTodos(documentosCancelamento);
 
-            return documentosValidos.Select(c => c.NomeArquivo).Concat(documentosCancelamento.Select(c => c.NomeArquivo));
+            var retornoDocumentosValidos = documentosValidos.Select(c => new RetornoDocumentoFiscalDTO() { NomeArquivo = c.NomeArquivo, ChaveDocumentoFiscal = c.ChaveDocumentoFiscal });
+            var retornoDocumentosCancelados = documentosCancelamento.Select(c => new RetornoDocumentoFiscalDTO() { NomeArquivo = c.NomeArquivo, ChaveDocumentoFiscal = c.ChaveDocumentoFiscal });
+
+            return retornoDocumentosValidos.Concat(retornoDocumentosCancelados);
         }
 
         public void Deletar(Guid id) => _repositoryFactory.Instancie<IDocumentoFiscalRepository>().Excluir(id);
@@ -147,12 +150,12 @@ namespace TronBox.Application.Services
 
             foreach (var arquivo in arquivos.Arquivos)
             {
-                using (StreamReader reader = new StreamReader(arquivo.OpenReadStream()))
+                try
                 {
-                    var conteudoXML = reader.ReadToEnd();
-
-                    try
+                    using (StreamReader reader = new StreamReader(arquivo.OpenReadStream()))
                     {
+                        var conteudoXML = reader.ReadToEnd();
+
                         if (Regex.IsMatch(conteudoXML, "<descEvento>Cancelamento</descEvento>", RegexOptions.IgnoreCase))
                         {
                             var chave = Regex.Match(conteudoXML, "(?<=>)([0-9]{44})(?=<)").Value;
@@ -177,28 +180,31 @@ namespace TronBox.Application.Services
                         {
                             var matches = Regex.Matches(conteudoXML, "<CompNfse[^>]*?>(.*?)</CompNfse>", RegexOptions.IgnoreCase | RegexOptions.Multiline | RegexOptions.Singleline);
 
-                            if (matches.Count > 0)
+                            if (matches.Count == 0)
                             {
-                                foreach (Match match in matches)
+                                NotificarDocumentoInvalidos(arquivo.FileName, "Documento não suportado.");
+                                continue;
+                            }
+
+                            foreach (Match match in matches)
+                            {
+                                var nfseConteudo = match.Value.Replace("tc:", "");
+
+                                var notaFiscalServico = ProcessarXMLparaNFse(empresa.Inscricao, nfseConteudo, arquivo.FileName);
+
+                                if (notaFiscalServico != null)
                                 {
-                                    var nfseConteudo = match.Value.Replace("tc:", "");
-
-                                    var notaFiscalServico = ProcessarXMLparaNFse(empresa.Inscricao, nfseConteudo, arquivo.FileName);
-
-                                    if (notaFiscalServico != null)
-                                    {
-                                        using (var streamFile = new MemoryStream(Encoding.UTF8.GetBytes(match.Value)))
-                                            documentosFiscais.Add(await PrepararDocumentoFiscal(dadosOrigem, notaFiscalServico, arquivo.FileName, streamFile));
-                                    }
+                                    using (var streamFile = new MemoryStream(Encoding.UTF8.GetBytes(match.Value)))
+                                        documentosFiscais.Add(await PrepararDocumentoFiscal(dadosOrigem, notaFiscalServico, arquivo.FileName, streamFile));
                                 }
                             }
                         }
                     }
-                    catch (Exception)
-                    {
-                        NotificarDocumentoInvalidos(arquivo.FileName, "Documento não suportado.");
-                        continue;
-                    }
+                }
+                catch (Exception)
+                {
+                    NotificarDocumentoInvalidos(arquivo.FileName, "Documento não suportado.");
+                    continue;
                 }
             }
 

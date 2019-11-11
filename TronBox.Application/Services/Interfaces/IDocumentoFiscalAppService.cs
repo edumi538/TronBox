@@ -7,7 +7,7 @@ namespace TronBox.Application.Services.Interfaces
 {
     public interface IDocumentoFiscalAppService : IDisposable
     {
-        Task<IEnumerable<string>> Inserir(EnviarArquivosDTO arquivos);
+        Task<IEnumerable<RetornoDocumentoFiscalDTO>> Inserir(EnviarArquivosDTO arquivos);
         void Atualizar(DocumentoFiscalDTO documentoFiscalDTO);
         Task<byte[]> DownloadPDF(Guid id);
         IEnumerable<DocumentoFiscalDTO> BuscarTodos(string filtro);
