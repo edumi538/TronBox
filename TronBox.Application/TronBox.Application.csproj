@@ -19,6 +19,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\TronBox.Domain\TronBox.Domain.csproj" />
+    <ProjectReference Include="..\TronBox.Infra.Data\TronBox.Infra.Data.csproj" />
   </ItemGroup>
 
   <ItemGroup>

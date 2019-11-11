@@ -13,6 +13,7 @@ namespace TronBox.Domain.Aggregates.DocumentoFiscalAgg
         public string ChaveDocumentoFiscal { get; set; }
         public string NumeroDocumentoFiscal { get; set; }
         public double ValorDocumentoFiscal { get; set; }
+        [BsonIgnoreIfDefault]
         public string SerieDocumentoFiscal { get; set; }
         public int DataArmazenamento { get; set; }
         public int DataEmissaoDocumento { get; set; }
@@ -54,6 +55,9 @@ namespace TronBox.Domain.Aggregates.DocumentoFiscalAgg
         {
             get
             {
+                if (TipoDocumentoFiscal == ETipoDocumentoFiscal.NfseSaida || TipoDocumentoFiscal == ETipoDocumentoFiscal.NfseEntrada)
+                    return $"{Constantes.URL_AZURE}/box/documentosfiscais/nfse/{DataEmissaoDocumento.ToString().Substring(2, 4)}/{ChaveDocumentoFiscal}";
+
                 var tipo = "cte";
                 var modelo = ChaveDocumentoFiscal.Substring(20, 2);
 
@@ -86,9 +90,6 @@ namespace TronBox.Domain.Aggregates.DocumentoFiscalAgg
             RuleFor(a => a.ValorDocumentoFiscal)
                 .NotEmpty().WithMessage(MensagensValidacao.Requerido("Valor do Documento Fiscal"))
                 .NotEqual(0).WithMessage(MensagensValidacao.NaoPodeSerIgualA("Valor do Documento Fiscal", "zero"));
-
-            RuleFor(a => a.SerieDocumentoFiscal)
-                .NotEmpty().WithMessage(MensagensValidacao.Requerido("Série do Documento Fiscal"));
 
             RuleFor(a => a.DataArmazenamento)
                 .NotEmpty().WithMessage(MensagensValidacao.Requerido("Data de Armazenamento"));

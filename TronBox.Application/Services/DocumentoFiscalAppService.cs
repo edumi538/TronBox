@@ -3,7 +3,6 @@ using Comum.Domain.Aggregates.EmpresaAgg.Repository;
 using CTe.Classes;
 using DFe.Classes.Flags;
 using DFe.Utils;
-using Microsoft.AspNetCore.Http;
 using NFe.Classes;
 using NFe.Classes.Informacoes.Destinatario;
 using NFe.Classes.Informacoes.Detalhe;
@@ -13,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using TronBox.Application.Services.Interfaces;
@@ -21,6 +21,8 @@ using TronBox.Domain.Aggregates.DocumentoFiscalAgg.Repository;
 using TronBox.Domain.DTO;
 using TronBox.Domain.DTO.InnerClassDTO;
 using TronBox.Domain.Enums;
+using TronBox.Infra.Data.Classes.NFSe;
+using TronBox.Infra.Data.Utilitarios;
 using TronCore.DefinicoesConfiguracoes;
 using TronCore.Dominio.Bus;
 using TronCore.Dominio.Notifications;
@@ -162,18 +164,34 @@ namespace TronBox.Application.Services
                             var notaFiscal = ProcessarXMLparaNFe(empresa.Inscricao, conteudoXML, arquivo.FileName);
 
                             if (notaFiscal != null)
-                                documentosFiscais.Add(await PrepararDocumentoFiscal(dadosOrigem, arquivo, notaFiscal));
+                                documentosFiscais.Add(await PrepararDocumentoFiscal(dadosOrigem, notaFiscal, arquivo.FileName, arquivo.OpenReadStream()));
                         }
                         else if (Regex.IsMatch(conteudoXML, "<chCTe>(.*?)</chCTe>", RegexOptions.IgnoreCase))
                         {
                             var conhecimentoTransporte = ProcessarXMLparaCTe(empresa.Inscricao, conteudoXML, arquivo.FileName);
 
                             if (conhecimentoTransporte != null)
-                                documentosFiscais.Add(await PrepararDocumentoFiscal(dadosOrigem, arquivo, conhecimentoTransporte));
+                                documentosFiscais.Add(await PrepararDocumentoFiscal(dadosOrigem, conhecimentoTransporte, arquivo.FileName, arquivo.OpenReadStream()));
                         }
-                        else if (Regex.IsMatch(conteudoXML, "<CompNfse[^>]*?>(.*?)</CompNfse>", RegexOptions.IgnoreCase))
+                        else
                         {
-                            // TODO IMPORTAÇÃO NFSE
+                            var matches = Regex.Matches(conteudoXML, "<CompNfse[^>]*?>(.*?)</CompNfse>", RegexOptions.IgnoreCase | RegexOptions.Multiline | RegexOptions.Singleline);
+
+                            if (matches.Count > 0)
+                            {
+                                foreach (Match match in matches)
+                                {
+                                    var nfseConteudo = match.Value.Replace("tc:", "");
+
+                                    var notaFiscalServico = ProcessarXMLparaNFse(empresa.Inscricao, nfseConteudo, arquivo.FileName);
+
+                                    if (notaFiscalServico != null)
+                                    {
+                                        using (var streamFile = new MemoryStream(Encoding.UTF8.GetBytes(match.Value)))
+                                            documentosFiscais.Add(await PrepararDocumentoFiscal(dadosOrigem, notaFiscalServico, arquivo.FileName, streamFile));
+                                    }
+                                }
+                            }
                         }
                     }
                     catch (Exception)
@@ -187,22 +205,26 @@ namespace TronBox.Application.Services
             return documentosFiscais;
         }
 
-        private async Task<DocumentoFiscalDTO> PrepararDocumentoFiscal(DadosOrigemDocumentoFiscalDTO dadosOrigem, IFormFile arquivo, DocumentoFiscalDTO documentoFiscal)
+        private async Task<DocumentoFiscalDTO> PrepararDocumentoFiscal(DadosOrigemDocumentoFiscalDTO dadosOrigem, DocumentoFiscalDTO documentoFiscal, string nomeArquivo, Stream arquivo)
         {
             documentoFiscal.DadosOrigem = dadosOrigem;
-            documentoFiscal.NomeArquivo = arquivo.FileName;
+            documentoFiscal.NomeArquivo = nomeArquivo;
 
-            if (!documentoFiscal.Cancelado)
-                await UploadFileToBlobStorage(arquivo, documentoFiscal);
+            await UploadFileToBlobStorage(arquivo, documentoFiscal);
 
             return documentoFiscal;
         }
 
-        private async Task UploadFileToBlobStorage(IFormFile arquivo, DocumentoFiscalDTO documentoFiscal)
+        private async Task UploadFileToBlobStorage(Stream arquivo, DocumentoFiscalDTO documentoFiscal)
         {
-            string folderName = ObterFolderNameFromKey(documentoFiscal.ChaveDocumentoFiscal);
+            var ehNotaFiscalServico = (documentoFiscal.TipoDocumentoFiscal == ETipoDocumentoFiscal.NfseSaida) || (documentoFiscal.TipoDocumentoFiscal == ETipoDocumentoFiscal.NfseEntrada);
 
-            await _azureBlobStorage.UploadAsync(documentoFiscal.ChaveDocumentoFiscal, folderName, arquivo.OpenReadStream());
+            if (ehNotaFiscalServico || !documentoFiscal.Cancelado)
+            {
+                string folderName = ObterFolderNameFromKey(ehNotaFiscalServico ? documentoFiscal.DataEmissaoDocumento.ToString() : documentoFiscal.ChaveDocumentoFiscal, ehNotaFiscalServico);
+
+                await _azureBlobStorage.UploadAsync(documentoFiscal.ChaveDocumentoFiscal, folderName, arquivo);
+            }
         }
 
         private DocumentoFiscalDTO ProcessarXMLparaCTe(string inscricaoEmpresa, string conteudoXML, string nomeArquivo)
@@ -233,6 +255,21 @@ namespace TronBox.Application.Services
             }
 
             return notaFiscal;
+        }
+
+        private DocumentoFiscalDTO ProcessarXMLparaNFse(string inscricaoEmpresa, string conteudoXML, string nomeArquivo)
+        {
+            var compNfse = UtilitarioXML.XmlStringParaClasse<CompNfse>(conteudoXML);
+
+            var notaFiscalServicoEletronica = ObterNotaFiscalServicoFromObject(inscricaoEmpresa, compNfse);
+
+            if (notaFiscalServicoEletronica == null)
+            {
+                NotificarDocumentoInvalidos(nomeArquivo, "Documento não pertence a empresa selecionada.");
+                return null;
+            }
+
+            return notaFiscalServicoEletronica;
         }
 
         private DocumentoFiscalDTO ObterConhecimentoTransporteFromObject(string inscricaoEmpresa, cteProc cte)
@@ -295,6 +332,54 @@ namespace TronBox.Application.Services
                 {
                     Inscricao = nfe.NFe.infNFe.dest.CPF ?? nfe.NFe.infNFe.dest.CNPJ,
                     RazaoSocial = nfe.NFe.infNFe.dest.xNome
+                };
+            }
+
+            return documentoFiscal;
+        }
+
+        private DocumentoFiscalDTO ObterNotaFiscalServicoFromObject(string inscricaoEmpresa, CompNfse compNfse)
+        {
+            var documentoFiscal = new DocumentoFiscalDTO()
+            {
+                DataArmazenamento = UtilitarioDatas.ConvertToIntDate(DateTime.Now),
+                DataEmissaoDocumento = UtilitarioDatas.ConvertToIntDate(compNfse.Nfse.InfNfse.DataEmissao),
+                ChaveDocumentoFiscal = compNfse.Nfse.InfNfse.CodigoVerificacao,
+                NumeroDocumentoFiscal = compNfse.Nfse.InfNfse.Numero,
+            };
+
+            PrestadorGenerico dadosPrestador = compNfse.Nfse.InfNfse.PrestadorServico;
+            TomadorGenerico dadosTomador = (TomadorGenerico)compNfse.Nfse.InfNfse.TomadorServico ?? compNfse.Nfse.InfNfse.DeclaracaoPrestacaoServico.InfDeclaracaoPrestacaoServico.Tomador;
+
+            var inscricaoPrestador = dadosPrestador.IdentificacaoPrestador.Cnpj ?? dadosPrestador.IdentificacaoPrestador.CpfCnpj.Cnpj ?? dadosPrestador.IdentificacaoPrestador.CpfCnpj.Cpf;
+            var inscricaoTomador = dadosTomador.IdentificacaoTomador.CpfCnpj.Cnpj ?? dadosTomador.IdentificacaoTomador.CpfCnpj.Cpf;
+
+            if (inscricaoEmpresa == inscricaoPrestador)
+                documentoFiscal.TipoDocumentoFiscal = ETipoDocumentoFiscal.NfseSaida;
+            else if (inscricaoEmpresa == inscricaoTomador)
+                documentoFiscal.TipoDocumentoFiscal = ETipoDocumentoFiscal.NfseEntrada;
+
+            if (compNfse.Nfse.InfNfse.Servico != null)
+                documentoFiscal.ValorDocumentoFiscal = (double)compNfse.Nfse.InfNfse.Servico.Valores.ValorServicos;
+            else if (compNfse.Nfse.InfNfse.DeclaracaoPrestacaoServico != null)
+                documentoFiscal.ValorDocumentoFiscal = (double)compNfse.Nfse.InfNfse.DeclaracaoPrestacaoServico.InfDeclaracaoPrestacaoServico.Servico.Valores.ValorServicos;
+
+            if (documentoFiscal.TipoDocumentoFiscal == 0) return null;
+
+            if ((documentoFiscal.TipoDocumentoFiscal == ETipoDocumentoFiscal.NfseSaida))
+            {
+                documentoFiscal.DadosEmitenteDestinatario = new DadosFornecedorDTO()
+                {
+                    Inscricao = inscricaoTomador,
+                    RazaoSocial = dadosTomador.RazaoSocial
+                };
+            }
+            else
+            {
+                documentoFiscal.DadosEmitenteDestinatario = new DadosFornecedorDTO()
+                {
+                    Inscricao = inscricaoPrestador,
+                    RazaoSocial = dadosPrestador.RazaoSocial
                 };
             }
 
@@ -401,7 +486,7 @@ namespace TronBox.Application.Services
 
         private async Task<string> BuscarConteudoXML(string chaveDocumentoFiscal)
         {
-            string folderName = ObterFolderNameFromKey(chaveDocumentoFiscal);
+            string folderName = ObterFolderNameFromKey(chaveDocumentoFiscal, false);
 
             var arquivoExiste = await _azureBlobStorage.ExistsAsync(chaveDocumentoFiscal, folderName);
 
@@ -419,11 +504,14 @@ namespace TronBox.Application.Services
             return string.Empty;
         }
 
-        private static string ObterFolderNameFromKey(string chaveDocumentoFiscal)
+        private static string ObterFolderNameFromKey(string value, bool ehNotaFiscalServico)
         {
-            var tipoDocumento = GetTipoDocumento(chaveDocumentoFiscal);
+            if (ehNotaFiscalServico)
+                return path.Replace("{tipo}", "nfse").Replace("{anomes}", value.Substring(2, 4));
 
-            return path.Replace("{tipo}", tipoDocumento).Replace("{anomes}", chaveDocumentoFiscal.Substring(2, 4));
+            var tipoDocumento = GetTipoDocumento(value);
+
+            return path.Replace("{tipo}", tipoDocumento).Replace("{anomes}", value.Substring(2, 4));
         }
 
         private static string GetTipoDocumento(string chaveDocumentoFiscal)
