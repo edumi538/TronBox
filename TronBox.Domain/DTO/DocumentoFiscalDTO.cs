@@ -37,5 +37,15 @@ namespace TronBox.Domain.DTO
             get => EnumHelper<ETipoDocumentoFiscal>.GetDisplayValue(TipoDocumentoFiscal);
         }
         public bool Processado { get => DadosImportacao != null && DadosImportacao.DataImportacao > 0; }
+
+        public DocumentoFiscalDTO()
+        {
+        }
+
+        public DocumentoFiscalDTO(bool cancelado, string chaveDocumentoFiscal)
+        {
+            Cancelado = cancelado;
+            ChaveDocumentoFiscal = chaveDocumentoFiscal;
+        }
     }
 }
