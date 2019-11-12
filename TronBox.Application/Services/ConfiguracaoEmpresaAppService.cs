@@ -66,7 +66,15 @@ namespace TronBox.Application.Services
             empresa.Inscricao = empresa.Inscricao.RemoveMascaras();
 
             var configuracaoEmpresa = _mapper.Map<ConfiguracaoEmpresa>(empresaDto.ConfiguracaoEmpresa);
-            configuracaoEmpresa.Inscricao = empresa.Inscricao;
+
+            if (configuracaoEmpresa == null)
+            {
+                configuracaoEmpresa = new ConfiguracaoEmpresa()
+                {
+                    Inscricao = empresa.Inscricao
+                };
+            }
+            else configuracaoEmpresa.Inscricao = empresa.Inscricao;
 
             if (EhValido(configuracaoEmpresa))
             {
