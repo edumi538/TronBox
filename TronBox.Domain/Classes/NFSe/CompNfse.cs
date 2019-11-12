@@ -1,6 +1,7 @@
 ﻿using System;
+using System.Xml.Serialization;
 
-namespace TronBox.Infra.Data.Classes.NFSe
+namespace TronBox.Domain.Classes.NFSe
 {
     public partial class CompNfse
     {
@@ -10,12 +11,14 @@ namespace TronBox.Infra.Data.Classes.NFSe
     public class Nfse
     {
         public InfNfse InfNfse { get; set; }
+        [XmlAttribute(AttributeName = "versao")]
+        public string Versao { get; set; }
     }
 
     public class InfNfse
     {
         public string Numero { get; set; }
-        public string CodigoVerificacao { get; set; }
+        public string CodigoVerificacao { get; set; }       
         public DateTime DataEmissao { get; set; }
         public string NaturezaOperacao { get; set; }
         public ValoresNfse ValoresNfse { get; set; }

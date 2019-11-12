@@ -6,7 +6,6 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using TronBox.Application.Services.Interfaces;
-using TronBox.Domain.DTO;
 using TronBox.Domain.Enums;
 using TronCore.Domain.Factories;
 using TronCore.Dominio.Notifications;
@@ -34,63 +33,6 @@ namespace TronBox.UI.Controllers
         [HttpGet("{id:GUID}")]
         [IdentificadorOperacao(eFuncaoTronBox.ID_DOCUMENTO_FISCAL, "Ver Detalhes Documento Fiscal", eOperacaoSuite.ID_OP_EDITAR, typeof(eOperacaoSuite), typeof(eFuncaoTronBox), "/documentos-fiscais/:id")]
         public async Task<IActionResult> Get(Guid id) => Ok(await AppServiceFactory.Instancie<IDocumentoFiscalAppService>().BuscarPorId(id));
-
-        [HttpPut]
-        public IActionResult Put([FromBody]DocumentoFiscalDTO documentoFiscalDTO)
-        {
-            AppServiceFactory.Instancie<IDocumentoFiscalAppService>().Atualizar(documentoFiscalDTO);
-
-            if (_notifications.HasNotifications())
-            {
-                return BadRequest(new
-                {
-                    sucesso = false,
-                    erros = _notifications.GetNotifications()
-                        .Select(c => new
-                        {
-                            Chave = c.Key,
-                            Mensagem = c.Value
-                        })
-                });
-            }
-
-            return Ok(new
-            {
-                sucesso = true,
-                mensagem = "Operação realizada com sucesso."
-            });
-        }
-
-        [HttpPost]
-        public IActionResult Post([FromBody]DocumentoFiscalDTO documentoFiscalDTO)
-        {
-            if (documentoFiscalDTO.Id == null)
-                documentoFiscalDTO.Id = Guid.NewGuid().ToString();
-
-            //AppServiceFactory.Instancie<IDocumentoFiscalAppService>().Inserir(documentoFiscalDTO);
-
-            if (_notifications.HasNotifications())
-            {
-                return BadRequest(new
-                {
-                    sucesso = false,
-                    erros = _notifications.GetNotifications()
-                        .Select(c => new
-                        {
-                            Chave = c.Key,
-                            Mensagem = c.Value
-                        })
-                });
-            }
-
-            return Created(documentoFiscalDTO.Id,
-                new
-                {
-                    sucesso = true,
-                    mensagem = "Operação realizada com sucesso."
-                }
-            );
-        }
 
         [HttpDelete("{id:GUID}")]
         [IdentificadorOperacao(eFuncaoTronBox.ID_DOCUMENTO_FISCAL, "Excluir Documento Fiscal", eOperacaoSuite.ID_OP_EXCLUIR, typeof(eOperacaoSuite), typeof(eFuncaoTronBox), "/documentos-fiscais/excluir")]

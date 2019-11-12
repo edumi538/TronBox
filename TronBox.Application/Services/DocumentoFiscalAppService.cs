@@ -18,10 +18,10 @@ using System.Threading.Tasks;
 using TronBox.Application.Services.Interfaces;
 using TronBox.Domain.Aggregates.DocumentoFiscalAgg;
 using TronBox.Domain.Aggregates.DocumentoFiscalAgg.Repository;
+using TronBox.Domain.Classes.NFSe;
 using TronBox.Domain.DTO;
 using TronBox.Domain.DTO.InnerClassDTO;
 using TronBox.Domain.Enums;
-using TronBox.Infra.Data.Classes.NFSe;
 using TronBox.Infra.Data.Utilitarios;
 using TronCore.DefinicoesConfiguracoes;
 using TronCore.Dominio.Bus;
@@ -60,7 +60,7 @@ namespace TronBox.Application.Services
 
             if (documentoFiscal == null) return null;
 
-            var conteudoXML = await BuscarConteudoXML(documentoFiscal.ChaveDocumentoFiscal);
+            var conteudoXML = await BuscarConteudoXML(documentoFiscal);
 
             var documentoToDownload = new
             {
@@ -76,20 +76,13 @@ namespace TronBox.Application.Services
         {
         }
 
-        public void Atualizar(DocumentoFiscalDTO documentoFiscalDTO)
-        {
-            var documentoFiscal = _mapper.Map<DocumentoFiscal>(documentoFiscalDTO);
-
-            if (EhValido(documentoFiscal)) _repositoryFactory.Instancie<IDocumentoFiscalRepository>().Atualizar(documentoFiscal);
-        }
-
         public async Task<DetalhesDocumentoFiscalDTO> BuscarPorId(Guid id)
         {
             var documentoFiscal = _mapper.Map<DocumentoFiscalDTO>(_repositoryFactory.Instancie<IDocumentoFiscalRepository>().BuscarPorId(id));
 
             if (documentoFiscal == null) return null;
 
-            var conteudoXML = await BuscarConteudoXML(documentoFiscal.ChaveDocumentoFiscal);
+            var conteudoXML = await BuscarConteudoXML(documentoFiscal);
 
             var detalhesDocumento = new DetalhesDocumentoFiscalDTO()
             {
@@ -105,6 +98,8 @@ namespace TronBox.Application.Services
                 detalhesDocumento.NotaFiscalEletronica = FuncoesXml.XmlStringParaClasse<nfeProc>(conteudoXML);
             else if ((documentoFiscal.TipoDocumentoFiscal == ETipoDocumentoFiscal.CteEntrada) || (documentoFiscal.TipoDocumentoFiscal == ETipoDocumentoFiscal.CteSaida))
                 detalhesDocumento.ConhecimentoTransporteEletronico = FuncoesXml.XmlStringParaClasse<cteProc>(conteudoXML);
+            else if ((documentoFiscal.TipoDocumentoFiscal == ETipoDocumentoFiscal.NfseEntrada) || (documentoFiscal.TipoDocumentoFiscal == ETipoDocumentoFiscal.NfseSaida))
+                detalhesDocumento.NotaFiscalServicoEletronico = UtilitarioXML.XmlStringParaClasse<CompNfse>(conteudoXML.Replace("tc:", ""));
 
             return detalhesDocumento;
         }
@@ -188,9 +183,7 @@ namespace TronBox.Application.Services
 
                             foreach (Match match in matches)
                             {
-                                var nfseConteudo = match.Value.Replace("tc:", "");
-
-                                var notaFiscalServico = ProcessarXMLparaNFse(empresa.Inscricao, nfseConteudo, arquivo.FileName);
+                                var notaFiscalServico = ProcessarXMLparaNFse(empresa.Inscricao, match.Value.Replace("tc:", ""), arquivo.FileName);
 
                                 if (notaFiscalServico != null)
                                 {
@@ -490,15 +483,17 @@ namespace TronBox.Application.Services
             return validator.IsValid;
         }
 
-        private async Task<string> BuscarConteudoXML(string chaveDocumentoFiscal)
+        private async Task<string> BuscarConteudoXML(DocumentoFiscalDTO documentoFiscal)
         {
-            string folderName = ObterFolderNameFromKey(chaveDocumentoFiscal, false);
+            var ehNotaFiscalServico = (documentoFiscal.TipoDocumentoFiscal == ETipoDocumentoFiscal.NfseSaida) || (documentoFiscal.TipoDocumentoFiscal == ETipoDocumentoFiscal.NfseEntrada);
 
-            var arquivoExiste = await _azureBlobStorage.ExistsAsync(chaveDocumentoFiscal, folderName);
+            string folderName = ObterFolderNameFromKey(ehNotaFiscalServico ? documentoFiscal.DataEmissaoDocumento.ToString() : documentoFiscal.ChaveDocumentoFiscal, ehNotaFiscalServico);
+
+            var arquivoExiste = await _azureBlobStorage.ExistsAsync(documentoFiscal.ChaveDocumentoFiscal, folderName);
 
             if (arquivoExiste)
             {
-                var anexoDownloaded = await _azureBlobStorage.DownloadAsync(chaveDocumentoFiscal, folderName);
+                var anexoDownloaded = await _azureBlobStorage.DownloadAsync(documentoFiscal.ChaveDocumentoFiscal, folderName);
 
                 using (MemoryStream originalFileMemoryStream = new MemoryStream(anexoDownloaded.ToArray()))
                 {

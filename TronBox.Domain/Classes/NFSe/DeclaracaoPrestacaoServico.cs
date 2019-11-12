@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace TronBox.Infra.Data.Classes.NFSe
+namespace TronBox.Domain.Classes.NFSe
 {
     public class DeclaracaoPrestacaoServico
     {
