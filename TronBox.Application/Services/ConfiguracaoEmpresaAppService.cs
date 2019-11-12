@@ -63,6 +63,8 @@ namespace TronBox.Application.Services
         public void AtualizarEmpresa(EmpresaDTO empresaDto)
         {
             var empresa = _mapper.Map<Empresa>(empresaDto);
+            empresa.Inscricao = empresa.Inscricao.RemoveMascaras();
+
             var configuracaoEmpresa = _mapper.Map<ConfiguracaoEmpresa>(empresaDto.ConfiguracaoEmpresa);
             configuracaoEmpresa.Inscricao = empresa.Inscricao;
 
@@ -85,7 +87,7 @@ namespace TronBox.Application.Services
         {
             var dictionary = new Dictionary<string, dynamic>
             {
-                { "inscricaoEmpresa", certificadoCreateDTO.InscricaoEmpresa },
+                { "inscricaoEmpresa", certificadoCreateDTO.InscricaoEmpresa.RemoveMascaras() },
                 { "senha", certificadoCreateDTO.Senha },
                 { "arquivo", certificadoCreateDTO.Arquivo }
             };
