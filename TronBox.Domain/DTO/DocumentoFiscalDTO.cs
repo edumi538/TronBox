@@ -14,6 +14,7 @@ namespace TronBox.Domain.DTO
         public string NumeroDocumentoFiscal { get; set; }
         public double ValorDocumentoFiscal { get; set; }
         public string SerieDocumentoFiscal { get; set; }
+        public string NsuDocumentoFiscal { get; set; }
         public int DataArmazenamento { get; set; }
         public int DataEmissaoDocumento { get; set; }
         public bool Cancelado { get; set; }

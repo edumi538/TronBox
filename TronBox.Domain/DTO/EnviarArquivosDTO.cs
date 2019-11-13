@@ -9,5 +9,11 @@ namespace TronBox.Domain.DTO
         public EOrigemDocumentoFiscal Origem { get; set; }
         public string Originador { get; set; }
         public List<IFormFile> Arquivos { get; set; }
+        public List<DetalhesEnvioDTO> DetalhesEnvio { get; set; }
+        public class DetalhesEnvioDTO
+        {
+            public string ChaveDocumentoFiscal { get; set; }
+            public string NsuDocumentoFiscal { get; set; }
+        }
     }
 }

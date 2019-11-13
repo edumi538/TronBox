@@ -15,6 +15,8 @@ namespace TronBox.Domain.Aggregates.DocumentoFiscalAgg
         public double ValorDocumentoFiscal { get; set; }
         [BsonIgnoreIfDefault]
         public string SerieDocumentoFiscal { get; set; }
+        [BsonIgnoreIfDefault]
+        public string NsuDocumentoFiscal { get; set; }
         public int DataArmazenamento { get; set; }
         public int DataEmissaoDocumento { get; set; }
         public bool Cancelado { get; set; }

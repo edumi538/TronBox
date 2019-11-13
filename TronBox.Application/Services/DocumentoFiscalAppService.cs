@@ -30,6 +30,7 @@ using TronCore.Persistencia.Interfaces;
 using TronCore.Utilitarios;
 using TronCore.Utilitarios.EnvioDeArquivo.Interface;
 using TronCore.Utilitarios.Specifications;
+using static TronBox.Domain.DTO.EnviarArquivosDTO;
 
 namespace TronBox.Application.Services
 {
@@ -116,7 +117,7 @@ namespace TronBox.Application.Services
             var documentosValidos = new List<DocumentoFiscal>();
             var documentosCancelamento = new List<DocumentoFiscal>();
 
-            DocumentosValidos(documentosFiscais, ref documentosValidos, ref documentosCancelamento);
+            DocumentosValidos(documentosFiscais, arquivos.DetalhesEnvio, ref documentosValidos, ref documentosCancelamento);
 
             if (documentosValidos.Count > 0)
                 _repositoryFactory.Instancie<IDocumentoFiscalRepository>().InserirTodos(documentosValidos);
@@ -423,7 +424,8 @@ namespace TronBox.Application.Services
             return 0;
         }
 
-        private void DocumentosValidos(List<DocumentoFiscalDTO> documentosGerados, ref List<DocumentoFiscal> documentosValidos, ref List<DocumentoFiscal> documentosCancelamento)
+        private void DocumentosValidos(List<DocumentoFiscalDTO> documentosGerados, List<DetalhesEnvioDTO> detalhesEnvio,
+            ref List<DocumentoFiscal> documentosValidos, ref List<DocumentoFiscal> documentosCancelamento)
         {
             var chavesGeradas = documentosGerados.Select(c => c.ChaveDocumentoFiscal);
 
@@ -457,6 +459,14 @@ namespace TronBox.Application.Services
 
                 if (EhValido(documentoFiscal))
                 {
+                    if (detalhesEnvio != null && detalhesEnvio.Count > 0)
+                    {
+                        var detalheEnvio = detalhesEnvio.Where(c => c.ChaveDocumentoFiscal == documentoFiscal.ChaveDocumentoFiscal).FirstOrDefault();
+
+                        if (detalheEnvio != null)
+                            documentoFiscal.NsuDocumentoFiscal = detalheEnvio.NsuDocumentoFiscal;
+                    }
+
                     documentosExistentes.Add(documentoFiscal);
                     documentosValidos.Add(documentoFiscal);
                 }
