@@ -6,6 +6,7 @@ using TronBox.Domain.Aggregates.ManifestoAgg;
 using TronBox.Domain.Aggregates.ManifestoAgg.Repository;
 using TronBox.Domain.DTO;
 using TronCore.Dominio.Bus;
+using TronCore.Dominio.JsonPatch;
 using TronCore.Dominio.Notifications;
 using TronCore.Persistencia.Interfaces;
 using TronCore.Utilitarios.Specifications;
@@ -33,9 +34,11 @@ namespace TronBox.Application.Services
         {
         }
 
-        public void Atualizar(ManifestoDTO manifestoDTO)
+        public void Atualizar(Guid id, dynamic manifestoDTO)
         {
-            var manifesto = _mapper.Map<Manifesto>(manifestoDTO);
+            var manifestoDb = BuscarPorId(id);
+
+            var manifesto = _mapper.Map<Manifesto>(AjudanteJsonPatch.Instancia.ApplyPatch(manifestoDb, manifestoDTO));
 
             if (EhValido(manifesto)) _repositoryFactory.Instancie<IManifestoRepository>().Atualizar(manifesto);
         }

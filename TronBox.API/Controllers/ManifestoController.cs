@@ -33,11 +33,11 @@ namespace TronBox.UI.Controllers
         [HttpGet("{id:GUID}")]
         public IActionResult Get(Guid id) => Ok(AppServiceFactory.Instancie<IManifestoAppService>().BuscarPorId(id));
 
-        [HttpPut]
+        [HttpPatch("{id}")]
         [IdentificadorOperacao(eFuncaoTronBox.ID_MANIFESTO, "Atualizar Manifesto", eOperacaoSuite.ID_OP_EDITAR, typeof(eOperacaoSuite), typeof(eFuncaoTronBox), "/manifestos/editar/:id")]
-        public IActionResult Put([FromBody]ManifestoDTO manifestoDTO)
+        public IActionResult Put(Guid id, [FromBody]dynamic manifestoDTO)
         {
-            AppServiceFactory.Instancie<IManifestoAppService>().Atualizar(manifestoDTO);
+            AppServiceFactory.Instancie<IManifestoAppService>().Atualizar(id, manifestoDTO);
 
             if (_notifications.HasNotifications())
             {
