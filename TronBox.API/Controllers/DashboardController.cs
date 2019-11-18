@@ -20,9 +20,12 @@ namespace TronBox.API.Controllers
         {
         }
 
-        [HttpGet]
+        [HttpGet("total-documentos")]
         [IdentificadorOperacao(eFuncaoTronBox.ID_DASHBOARD, "Obter Dados do Dashboard", eOperacaoSuite.ID_OP_ACESSO, typeof(eOperacaoSuite), typeof(eFuncaoTronBox), "/dashboards")]
-        public IActionResult Get() => Ok(AppServiceFactory.Instancie<IDashboardAppService>().Contar());
+        public IActionResult ContarDocumentos() => Ok(AppServiceFactory.Instancie<IDashboardAppService>().ContarDocumentos());
+
+        [HttpGet("total-sem-manifesto")]
+        public IActionResult ContarSemManifesto() => Ok(AppServiceFactory.Instancie<IDashboardAppService>().ContarSemManifesto());
 
         [HttpGet("documento-fiscal")]
         public IActionResult GetDocumentosArmazenados(int dataInicial, int dataFinal) => Ok(AppServiceFactory.Instancie<IDashboardAppService>().ObterDadosDocumentosArmazenados(dataInicial, dataFinal));
@@ -32,5 +35,8 @@ namespace TronBox.API.Controllers
 
         [HttpGet("ultima-semana")]
         public IActionResult GetDadosUltimaSemana(int dataInicial, int dataFinal) => Ok(AppServiceFactory.Instancie<IDashboardAppService>().ObterDadosUltimaSemana(dataInicial, dataFinal));
+
+        [HttpGet("certificado")]
+        public IActionResult GetCertificado() => Ok(AppServiceFactory.Instancie<IDashboardAppService>().ObterDadosCertificado());
     }
 }

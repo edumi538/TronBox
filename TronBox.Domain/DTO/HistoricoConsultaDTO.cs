@@ -16,7 +16,7 @@ namespace TronBox.Domain.DTO
         {
             get => EnumHelper<ETipoConsulta>.GetDisplayValue(TipoConsulta);
         }
-        public DateTime DataEmissaoDocumentoFormatada
+        public DateTime DataHoraConsultaFormatada
         {
             get => UtilitarioDatas.ConvertIntToDateTime(DataHoraConsulta);
         }
