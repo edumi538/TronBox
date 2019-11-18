@@ -34,7 +34,8 @@ namespace TronBox.UI.Controllers
                 var empresa = new EmpresaViewModel
                 {
                     RazaoSocial = inquilinoConnect.Nome,
-                    Inscricao = inquilinoConnect.Inscricao
+                    Inscricao = inquilinoConnect.Inscricao,
+                    TipoInscricao = eTipoInscricaoEmpresa.CNPJ
                 };
 
                 AppServiceFactory.Instancie<IEmpresaAppService>().Inserir(empresa);
