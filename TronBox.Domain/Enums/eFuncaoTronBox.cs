@@ -31,8 +31,7 @@ namespace TronBox.Domain.Enums
         public static eFuncao DocumentoFiscal { get { return new eFuncao(Guid.Parse(ID_DOCUMENTO_FISCAL), "Consulta Documentos", Modulo.Box, "/documentos-fiscais", "file-code-o", eTipoFuncao.ROTA_MENU, 3); } }
         public static eFuncao Upload { get { return new eFuncao(Guid.Parse(ID_UPLOAD), "Enviar Documentos", Modulo.Box, "/enviar-documentos", "cloud-upload", eTipoFuncao.ROTA_MENU, 4); } }
         public static eFuncao Manifesto { get { return new eFuncao(Guid.Parse(ID_MANIFESTO), "Manifesto", Modulo.Box, "/manifestos", "file-text", eTipoFuncao.ROTA_MENU, 5); } }
-
-        public static eFuncao HistoricoConsulta { get { return new eFuncao(Guid.Parse(ID_HISTORICO_CONSULTA), "Histórico Consulta", Modulo.Box, "/historicos-consulta", string.Empty, eTipoFuncao.ROTA, 1); } }
+        public static eFuncao HistoricoConsulta { get { return new eFuncao(Guid.Parse(ID_HISTORICO_CONSULTA), "Histórico de Consultas", Modulo.Box, "/historicos-consulta", "history", eTipoFuncao.ROTA_MENU, 6); } }
 
         public new static IList<eFuncao> ObtenhaTodos() => ObtenhaTodos(typeof(eFuncaoTronBox)).ToList();
     }

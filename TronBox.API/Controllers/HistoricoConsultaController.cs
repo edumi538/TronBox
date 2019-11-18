@@ -27,7 +27,7 @@ namespace TronBox.API.Controllers
         }
 
         [HttpGet]
-        [IdentificadorOperacao(eFuncaoTronBox.ID_HISTORICO_CONSULTA, "Carregar Histórico de Consulta", eOperacaoSuite.ID_OP_ACESSO, typeof(eOperacaoSuite), typeof(eFuncaoTronBox), "/historicos-consulta")]
+        [IdentificadorOperacao(eFuncaoTronBox.ID_HISTORICO_CONSULTA, "Carregar Histórico de Consultas", eOperacaoSuite.ID_OP_ACESSO, typeof(eOperacaoSuite), typeof(eFuncaoTronBox), "/historicos-consulta")]
         public IActionResult Get(string filtro) => Ok(AppServiceFactory.Instancie<IHistoricoConsultaAppService>().BuscarTodos(filtro));
 
         [HttpGet("ultima")]

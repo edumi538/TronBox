@@ -11,7 +11,7 @@ namespace TronBox.Domain.DTO
         public ETipoConsulta TipoConsulta { get; set; }
         public long DataHoraConsulta { get; set; }
         public int DocumentosEncontrados { get; set; }
-        public int DocumentosAmarzenados { get; set; }
+        public int DocumentosArmazenados { get; set; }
         public string DescricaoTipo
         {
             get => EnumHelper<ETipoConsulta>.GetDisplayValue(TipoConsulta);

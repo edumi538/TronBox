@@ -12,7 +12,7 @@ namespace TronBox.Domain.Aggregates.HistoricoConsultaAgg
         [BsonIgnoreIfDefault]
         public int DocumentosEncontrados { get; set; }
         [BsonIgnoreIfDefault]
-        public int DocumentosAmarzenados { get; set; }
+        public int DocumentosArmazenados { get; set; }
     }
 
     public class HistoricoConsultaValidator : AbstractValidator<HistoricoConsulta>
