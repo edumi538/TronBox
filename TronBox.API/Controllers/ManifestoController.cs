@@ -71,6 +71,17 @@ namespace TronBox.UI.Controllers
 
             if (_notifications.HasNotifications())
             {
+                var notification = _notifications.GetNotifications().FirstOrDefault();
+
+                if (notification.Key == "ManifestoExistente")
+                {
+                    return Conflict(new
+                    {
+                        sucesso = false,
+                        mensagem = notification.Value
+                    });
+                }
+
                 return BadRequest(new
                 {
                     sucesso = false,

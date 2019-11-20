@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using TronBox.Application.Services.Interfaces;
 using TronBox.Domain.Aggregates.ManifestoAgg;
 using TronBox.Domain.Aggregates.ManifestoAgg.Repository;
@@ -62,6 +63,12 @@ namespace TronBox.Application.Services
         public void Inserir(ManifestoDTO manifestoDTO)
         {
             var manifesto = _mapper.Map<Manifesto>(manifestoDTO);
+
+            if (_repositoryFactory.Instancie<IManifestoRepository>().BuscarTodos(c => c.ChaveDocumentoFiscal == manifesto.ChaveDocumentoFiscal).Any())
+            {
+                _bus.RaiseEvent(new DomainNotification("ManifestoExistente", "Manifesto já existente na base de dados."));
+                return;
+            }
 
             if (EhValido(manifesto)) _repositoryFactory.Instancie<IManifestoRepository>().Inserir(manifesto);
         }
