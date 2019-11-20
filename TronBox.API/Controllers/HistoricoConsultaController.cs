@@ -33,6 +33,9 @@ namespace TronBox.API.Controllers
         [HttpGet("ultima")]
         public IActionResult UltimaConsulta() => Ok(AppServiceFactory.Instancie<IHistoricoConsultaAppService>().ObterUltimaConsulta());
 
+        [HttpGet("ultimo-nsu/{tipo}")]
+        public IActionResult UltimoNSU(ETipoDocumentoConsulta tipo) => Ok(AppServiceFactory.Instancie<IHistoricoConsultaAppService>().ObterUltimoNSU(tipo));
+
         [HttpPost]
         public IActionResult Post([FromBody]HistoricoConsultaDTO historicoConsulta)
         {

@@ -2,11 +2,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using TronBox.Application.Services.Interfaces;
 using TronBox.Domain.Aggregates.HistoricoConsultaAgg;
 using TronBox.Domain.Aggregates.HistoricoConsultaAgg.Repository;
 using TronBox.Domain.DTO;
+using TronBox.Domain.Enums;
 using TronCore.Dominio.Bus;
 using TronCore.Dominio.Notifications;
 using TronCore.Persistencia.Interfaces;
@@ -47,6 +47,14 @@ namespace TronBox.Application.Services
 
         public HistoricoConsultaDTO ObterUltimaConsulta() => _mapper.Map<HistoricoConsultaDTO>(_repositoryFactory.Instancie<IHistoricoConsultaRepository>()
             .BuscarTodos().OrderByDescending(c => c.DataHoraConsulta).Take(1).FirstOrDefault());
+
+        public string ObterUltimoNSU(ETipoDocumentoConsulta tipoDocumento)
+        {
+            var historicoConsulta = _mapper.Map<HistoricoConsultaDTO>(_repositoryFactory.Instancie<IHistoricoConsultaRepository>()
+                .BuscarTodos(c => c.TipoDocumentoConsulta == tipoDocumento).OrderByDescending(c => Convert.ToInt32(c.UltimoNSU)).Take(1).FirstOrDefault());
+
+            return historicoConsulta != null ? historicoConsulta.UltimoNSU : "0";
+        }
 
         #region Private Methods
         private bool EhValido(HistoricoConsulta historico)

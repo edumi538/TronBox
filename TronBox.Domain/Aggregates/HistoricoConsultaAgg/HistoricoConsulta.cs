@@ -7,8 +7,11 @@ namespace TronBox.Domain.Aggregates.HistoricoConsultaAgg
 {
     public class HistoricoConsulta : Entity<HistoricoConsulta>
     {
+        public ETipoDocumentoConsulta TipoDocumentoConsulta { get; set; }
         public ETipoConsulta TipoConsulta { get; set; }
         public long DataHoraConsulta { get; set; }
+        [BsonIgnoreIfDefault]
+        public string UltimoNSU { get; set; }
         [BsonIgnoreIfDefault]
         public int DocumentosEncontrados { get; set; }
         [BsonIgnoreIfDefault]
@@ -19,6 +22,9 @@ namespace TronBox.Domain.Aggregates.HistoricoConsultaAgg
     {
         public HistoricoConsultaValidator()
         {
+            RuleFor(a => a.TipoDocumentoConsulta)
+               .NotEmpty().WithMessage(MensagensValidacao.Requerido("Tipo de Documento"));
+
             RuleFor(a => a.TipoConsulta)
                .NotEmpty().WithMessage(MensagensValidacao.Requerido("Tipo da Consulta"));
 
