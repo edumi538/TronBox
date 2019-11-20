@@ -27,10 +27,6 @@ namespace TronBox.Domain.DTO
         public DadosOrigemManifestoDTO DadosOrigem { get; set; }
         [BsonIgnoreIfDefault]
         public DadosFornecedorDTO DadosFornecedor { get; set; }
-        [BsonIgnoreIfDefault]
-        public DadosRetornoDTO DadosManifestacao { get; set; }
-        [BsonIgnoreIfDefault]
-        public DadosRetornoDTO DadosDownload { get; set; }
         public DateTime DataArmazenamentoFormatada
         {
             get => UtilitarioDatas.ConvertIntToDate(DataArmazenamento);

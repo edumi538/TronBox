@@ -5,6 +5,7 @@ using TronBox.Application.Services.Interfaces;
 using TronBox.Domain.Aggregates.ManifestoAgg;
 using TronBox.Domain.Aggregates.ManifestoAgg.Repository;
 using TronBox.Domain.DTO;
+using TronBox.Domain.Enums;
 using TronCore.Dominio.Bus;
 using TronCore.Dominio.JsonPatch;
 using TronCore.Dominio.Notifications;
@@ -39,6 +40,14 @@ namespace TronBox.Application.Services
             var manifestoDb = BuscarPorId(id);
 
             var manifesto = _mapper.Map<Manifesto>(AjudanteJsonPatch.Instancia.ApplyPatch(manifestoDb, manifestoDTO));
+
+            // Quando o manifesto está cancelado não permitido alterar a situação.
+            if (manifestoDb.Cancelado && manifesto.SituacaoManifesto != manifestoDb.SituacaoManifesto)
+                manifesto.SituacaoManifesto = manifestoDb.SituacaoManifesto;
+            // Quando o manifesto existente é Ciência Automática e for enviado 
+            // evento de Ciência não é permitido alterar a situação para Ciência.
+            if ((manifesto.SituacaoManifesto == ESituacaoManifesto.Ciencia) && (manifestoDb.SituacaoManifesto == ESituacaoManifesto.CienciaAutomatica))
+                manifesto.SituacaoManifesto = ESituacaoManifesto.CienciaAutomatica;
 
             if (EhValido(manifesto)) _repositoryFactory.Instancie<IManifestoRepository>().Atualizar(manifesto);
         }

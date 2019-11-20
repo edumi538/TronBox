@@ -22,10 +22,6 @@ namespace TronBox.Domain.Aggregates.ManifestoAgg
         public DadosOrigemManifesto DadosOrigem { get; set; }
         [BsonIgnoreIfDefault]
         public DadosFornecedor DadosFornecedor { get; set; }
-        [BsonIgnoreIfDefault]
-        public DadosRetorno DadosManifestacao { get; set; }
-        [BsonIgnoreIfDefault]
-        public DadosRetorno DadosDownload { get; set; }
     }
 
     public class ManifestoValidator : AbstractValidator<Manifesto>

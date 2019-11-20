@@ -35,7 +35,7 @@ namespace TronBox.UI.Controllers
 
         [HttpPatch("{id}")]
         [IdentificadorOperacao(eFuncaoTronBox.ID_MANIFESTO, "Atualizar Manifesto", eOperacaoSuite.ID_OP_EDITAR, typeof(eOperacaoSuite), typeof(eFuncaoTronBox), "/manifestos/editar/:id")]
-        public IActionResult Put(Guid id, [FromBody]dynamic manifestoDTO)
+        public IActionResult Patch(Guid id, [FromBody]dynamic manifestoDTO)
         {
             AppServiceFactory.Instancie<IManifestoAppService>().Atualizar(id, manifestoDTO);
 
