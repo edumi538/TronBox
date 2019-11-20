@@ -10,16 +10,22 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.PlatformAbstractions;
 using Microsoft.IdentityModel.Tokens;
 using MongoDB.Bson;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
+using Swashbuckle.AspNetCore.Swagger;
 using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Net;
 using System.Text;
+using TronBox.API.Helpers;
 using TronBox.Infra.IoC;
 using TronBox.UI.Helpers;
 using TronCore.DefinicoesConfiguracoes;
+using TronCore.Enumeradores;
 using TronCore.Infra.Bus;
 using TronCore.InjecaoDependencia;
 using TronCore.Seguranca.Filtros;
@@ -101,6 +107,58 @@ namespace TronBox
             // Publicação servidor de testes
             services.Configure<IISOptions>(options => options.ForwardClientCertificate = false);
 
+            #region Swagger
+            // Configurando o serviço de documentação do Swagger
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1",
+                    new Info
+                    {
+                        Title = "Tron Box",
+                        Version = "v1",
+                        Description = Modulo.Box.Titulo,
+                        Contact = new Contact
+                        {
+                            Name = "Tron Box",
+                            Url = Constantes.URI_BASE_BX_PORTAL
+                        }
+                    });
+
+                c.DocumentFilter<SwaggerFilterOutControllers>();
+
+                string caminhoAplicacao =
+                    PlatformServices.Default.Application.ApplicationBasePath;
+                string nomeAplicacao =
+                    PlatformServices.Default.Application.ApplicationName;
+                string caminhoXmlDoc =
+                    Path.Combine(caminhoAplicacao, $"{nomeAplicacao}.xml");
+
+                c.IncludeXmlComments(caminhoXmlDoc);
+
+                c.AddSecurityDefinition("Bearer", new ApiKeyScheme
+                {
+                    Name = "Authorization",
+                    In = "header",
+                    Description = "JWT Authorization header using the Bearer scheme. Example: \"Bearer {token}\"",
+                    Type = "apiKey"
+                });
+
+                c.AddSecurityDefinition("ServiceIdentify", new ApiKeyScheme
+                {
+                    Description = "Service Identify is definition of tenant. Example: \"ServiceIdentify: {tenantId}\"",
+                    Name = "ServiceIdentify",
+                    In = "header",
+                    Type = "apiKey"
+                });
+
+                c.AddSecurityRequirement(new Dictionary<string, IEnumerable<string>>
+                {
+                    { "Bearer", new string[] { } },
+                    { "ServiceIdentify", new string[] { } }
+                });
+            });
+            #endregion
+
             return services.BuildServiceProvider();
         }
 
@@ -126,6 +184,19 @@ namespace TronBox
                     }
                 });
             });
+
+            #region Swagger
+            // Ativando middlewares para uso do Swagger
+            if (env.IsDevelopment() || env.IsStaging())
+            {
+                app.UseSwagger();
+                app.UseSwaggerUI(c =>
+                {
+                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Tron Box");
+                    c.RoutePrefix = "developer";
+                });
+            }
+            #endregion
 
             app.UseAuthentication();
             app.UseMvc();
