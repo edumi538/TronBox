@@ -18,6 +18,7 @@ using System.Threading.Tasks;
 using TronBox.Application.Services.Interfaces;
 using TronBox.Domain.Aggregates.DocumentoFiscalAgg;
 using TronBox.Domain.Aggregates.DocumentoFiscalAgg.Repository;
+using TronBox.Domain.Aggregates.ManifestoAgg.Repository;
 using TronBox.Domain.Classes.NFSe;
 using TronBox.Domain.DTO;
 using TronBox.Domain.DTO.InnerClassDTO;
@@ -127,6 +128,9 @@ namespace TronBox.Application.Services
 
             var retornoDocumentosValidos = documentosValidos.Select(c => new RetornoDocumentoFiscalDTO() { NomeArquivo = c.NomeArquivo, ChaveDocumentoFiscal = c.ChaveDocumentoFiscal });
             var retornoDocumentosCancelados = documentosCancelamento.Select(c => new RetornoDocumentoFiscalDTO() { NomeArquivo = c.NomeArquivo, ChaveDocumentoFiscal = c.ChaveDocumentoFiscal });
+
+            AtualizarManifestoDocumentoArmazenado(retornoDocumentosValidos);
+            AtualizarManifestoDocumentoCancelado(retornoDocumentosCancelados);
 
             return retornoDocumentosValidos.Concat(retornoDocumentosCancelados);
         }
@@ -534,6 +538,34 @@ namespace TronBox.Application.Services
             if (modelo == "65") return "nfce";
 
             return "cte";
+        }
+
+        private void AtualizarManifestoDocumentoCancelado(IEnumerable<RetornoDocumentoFiscalDTO> retornoDocumentosCancelados)
+        {
+            var documentosCancelados = retornoDocumentosCancelados.Select(c => c.ChaveDocumentoFiscal);
+
+            var manifestos = _repositoryFactory.Instancie<IManifestoRepository>().BuscarTodos(d => documentosCancelados.Contains(d.ChaveDocumentoFiscal));
+
+            if (manifestos.Any())
+            {
+                var manifestosAtualizados = manifestos.Select(c => { c.Cancelado = true; return c; });
+
+                _repositoryFactory.Instancie<IManifestoRepository>().AtualizarTodos(manifestosAtualizados);
+            }
+        }
+
+        private void AtualizarManifestoDocumentoArmazenado(IEnumerable<RetornoDocumentoFiscalDTO> retornoDocumentosValidos)
+        {
+            var documentosValidos = retornoDocumentosValidos.Select(c => c.ChaveDocumentoFiscal);
+
+            var manifestos = _repositoryFactory.Instancie<IManifestoRepository>().BuscarTodos(d => documentosValidos.Contains(d.ChaveDocumentoFiscal));
+
+            if (manifestos.Any())
+            {
+                var manifestosAtualizados = manifestos.Select(c => { c.SituacaoDocumentoFiscal = ESituacaoDocumentoFiscal.Armazenado; return c; });
+
+                _repositoryFactory.Instancie<IManifestoRepository>().AtualizarTodos(manifestosAtualizados);
+            }
         }
         #endregion
     }
