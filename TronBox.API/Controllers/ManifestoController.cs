@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using TronBox.Application.Services.Interfaces;
 using TronBox.Domain.DTO;
 using TronBox.Domain.Enums;
@@ -129,5 +130,8 @@ namespace TronBox.UI.Controllers
                 mensagem = "Operação realizada com sucesso."
             });
         }
+
+        [HttpPost("manifestar")]
+        public async Task<IActionResult> Manifestar([FromBody]ManifestarDTO manifestarDTO) => Ok(await AppServiceFactory.Instancie<IManifestoAppService>().Manifestar(manifestarDTO));
     }
 }

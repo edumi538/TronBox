@@ -1,8 +1,12 @@
 ﻿using AutoMapper;
+using Comum.Domain.Aggregates.EmpresaAgg.Repository;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using TronBox.Application.Services.Interfaces;
+using TronBox.Domain.Aggregates.DocumentoFiscalAgg.Repository;
 using TronBox.Domain.Aggregates.ManifestoAgg;
 using TronBox.Domain.Aggregates.ManifestoAgg.Repository;
 using TronBox.Domain.DTO;
@@ -11,12 +15,16 @@ using TronCore.Dominio.Bus;
 using TronCore.Dominio.JsonPatch;
 using TronCore.Dominio.Notifications;
 using TronCore.Persistencia.Interfaces;
+using TronCore.Utilitarios;
 using TronCore.Utilitarios.Specifications;
 
 namespace TronBox.Application.Services
 {
     public class ManifestoAppService : IManifestoAppService
     {
+        //public static string URL_AGENTE_MANIFESTACAO = "http://192.168.10.229:3000";
+        public static string URL_AGENTE_MANIFESTACAO = "http://10.20.30.28:8085";
+
         #region Membros
         private readonly IBus _bus;
         private readonly IMapper _mapper;
@@ -43,7 +51,7 @@ namespace TronBox.Application.Services
             var manifesto = _mapper.Map<Manifesto>(AjudanteJsonPatch.Instancia.ApplyPatch(manifestoDb, manifestoDTO));
 
             // Quando o manifesto está cancelado não permitido alterar a situação.
-            if (manifestoDb.Cancelado && manifesto.SituacaoManifesto != manifestoDb.SituacaoManifesto)
+            if (manifestoDb.SituacaoManifesto == ESituacaoManifesto.Cancelado && manifesto.SituacaoManifesto != manifestoDb.SituacaoManifesto)
                 manifesto.SituacaoManifesto = manifestoDb.SituacaoManifesto;
             // Quando o manifesto existente é Ciência Automática e for enviado 
             // evento de Ciência não é permitido alterar a situação para Ciência.
@@ -73,7 +81,61 @@ namespace TronBox.Application.Services
             if (EhValido(manifesto)) _repositoryFactory.Instancie<IManifestoRepository>().Inserir(manifesto);
         }
 
+        public async Task<RespostaManifestacaoDTO> Manifestar(ManifestarDTO manifestarDTO)
+        {
+            var empresa = _mapper.Map<EmpresaDTO>(_repositoryFactory.Instancie<IEmpresaRepository>().BuscarTodos().FirstOrDefault());
+
+            var manifestacao = new
+            {
+                empresa.UF,
+                registry = empresa.Inscricao,
+                keyNFe = manifestarDTO.ChaveDocumentoFiscal,
+                tpEvent = ObterTIpoManifestacao(manifestarDTO.TipoManifestacao)
+            };
+
+            var manifesto = _repositoryFactory.Instancie<IManifestoRepository>().BuscarPorExpressao(c => c.ChaveDocumentoFiscal == manifestarDTO.ChaveDocumentoFiscal);
+
+            if (manifesto != null && manifesto.SituacaoManifesto != ESituacaoManifesto.Cancelado)
+            {
+                var result = await UtilitarioHttpClient.PostRequest(string.Empty, URL_AGENTE_MANIFESTACAO, "mdf-e/manifest-document", manifestacao);
+
+                var respostaManifestacao = JsonConvert.DeserializeObject<RespostaManifestacaoDTO>(result);
+
+                if (respostaManifestacao != null)
+                    AtualizarManifesto(manifestarDTO, manifesto, respostaManifestacao);
+
+                return respostaManifestacao;
+            }
+
+            return null;
+        }
+
         #region Private Methods
+        private void AtualizarManifesto(ManifestarDTO manifestarDTO, Manifesto manifesto, RespostaManifestacaoDTO respostaManifestacao)
+        {
+            if (respostaManifestacao.Success)
+                manifesto.SituacaoManifesto = manifestarDTO.TipoManifestacao;
+            if (respostaManifestacao.Data.InfEvento.CStat == "650")
+                manifesto.SituacaoManifesto = ESituacaoManifesto.Cancelado;
+
+            _repositoryFactory.Instancie<IManifestoRepository>().Atualizar(manifesto);
+
+            if (manifesto.SituacaoManifesto == ESituacaoManifesto.Cancelado)
+                CancelarDocumentoFiscal(manifesto);
+        }
+
+        private void CancelarDocumentoFiscal(Manifesto manifesto)
+        {
+            var documentoFiscal = _repositoryFactory.Instancie<IDocumentoFiscalRepository>().BuscarPorExpressao(c => c.ChaveDocumentoFiscal == manifesto.ChaveDocumentoFiscal);
+
+            if (documentoFiscal != null)
+            {
+                documentoFiscal.Cancelado = true;
+
+                _repositoryFactory.Instancie<IDocumentoFiscalRepository>().Atualizar(documentoFiscal);
+            }
+        }
+
         private bool EhValido(Manifesto manifesto)
         {
             var validator = new ManifestoValidator().Validate(manifesto);
@@ -82,6 +144,25 @@ namespace TronBox.Application.Services
                 _bus.RaiseEvent(new DomainNotification(error.PropertyName, error.ErrorMessage));
 
             return validator.IsValid;
+        }
+
+        private string ObterTIpoManifestacao(ESituacaoManifesto tipoManifestacao)
+        {
+            switch (tipoManifestacao)
+            {
+                case ESituacaoManifesto.Ciencia:
+                    return "210210";
+                case ESituacaoManifesto.Confirmado:
+                    return "210200";
+                case ESituacaoManifesto.Desconhecido:
+                    return "210240";
+                case ESituacaoManifesto.NaoRealizado:
+                    return "210220";
+                case ESituacaoManifesto.Cancelado:
+                    return "110111";
+                default:
+                    return string.Empty;
+            }
         }
         #endregion
     }

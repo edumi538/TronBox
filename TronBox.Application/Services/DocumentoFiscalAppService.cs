@@ -548,7 +548,7 @@ namespace TronBox.Application.Services
 
             if (manifestos.Any())
             {
-                var manifestosAtualizados = manifestos.Select(c => { c.Cancelado = true; return c; });
+                var manifestosAtualizados = manifestos.Select(c => { c.SituacaoManifesto = ESituacaoManifesto.Cancelado; return c; });
 
                 _repositoryFactory.Instancie<IManifestoRepository>().AtualizarTodos(manifestosAtualizados);
             }

@@ -21,5 +21,8 @@ namespace TronBox.Domain.Enums
 
         [Display(Name = "Ciência/Autom")]
         CienciaAutomatica = 6,
+
+        [Display(Name = "Cancelado")]
+        Cancelado = 7,
     }
 }

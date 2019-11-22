@@ -12,7 +12,8 @@ namespace TronBox.Domain.DTO
         public string NomeFantasia { get; set; }
         public string Telefone { get; set; }
         public string Celular { get; set; }
-        public string EmailPrincipal { get; set; }        
+        public string EmailPrincipal { get; set; }
+        public string UF { get; set; }
         public bool Status { get; set; }
         public ConfiguracaoEmpresaDTO ConfiguracaoEmpresa { get; set; }
         public CertificadoSimplificadoDTO Certificado { get; set; }
