@@ -78,5 +78,23 @@ namespace TronBox.API.Controllers
 
         [HttpGet("cst-icms/{csticms}")]
         public IActionResult GetCSTICMS(Csticms csticms) => Ok(AppServiceFactory.Instancie<IEnumeradorAppService>().ObterCSTICMS(csticms));
+
+        [HttpGet("tipos-documento-consulta")]
+        public IActionResult GetTipoDocumentoConsulta()
+        {
+            var situacoesManifesto = from ETipoDocumentoConsulta d in Enum.GetValues(typeof(ETipoDocumentoConsulta))
+                                     select new { value = (int)d, label = EnumHelper<ETipoDocumentoConsulta>.GetDisplayValue(d) };
+
+            return Ok(situacoesManifesto);
+        }
+
+        [HttpGet("tipos-consulta")]
+        public IActionResult GetTipoConsulta()
+        {
+            var situacoesManifesto = from ETipoConsulta d in Enum.GetValues(typeof(ETipoConsulta))
+                                     select new { value = (int)d, label = EnumHelper<ETipoConsulta>.GetDisplayValue(d) };
+
+            return Ok(situacoesManifesto);
+        }
     }
 }
