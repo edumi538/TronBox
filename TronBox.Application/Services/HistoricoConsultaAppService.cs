@@ -1,8 +1,11 @@
 ﻿using AutoMapper;
+using Comum.Domain.Aggregates.EmpresaAgg.Repository;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using TronBox.Application.Services.Interfaces;
+using TronBox.Domain.Aggregates.ConfiguracaoEmpresaAgg.Repository;
 using TronBox.Domain.Aggregates.HistoricoConsultaAgg;
 using TronBox.Domain.Aggregates.HistoricoConsultaAgg.Repository;
 using TronBox.Domain.DTO;
@@ -10,12 +13,16 @@ using TronBox.Domain.Enums;
 using TronCore.Dominio.Bus;
 using TronCore.Dominio.Notifications;
 using TronCore.Persistencia.Interfaces;
+using TronCore.Utilitarios;
 using TronCore.Utilitarios.Specifications;
 
 namespace TronBox.Application.Services
 {
     public class HistoricoConsultaAppService : IHistoricoConsultaAppService
     {
+        //public static string URL_AGENTE_MANIFESTACAO = "http://192.168.10.229:3000";
+        public static string URL_AGENTE_MANIFESTACAO = "http://10.20.30.28:8085";
+
         #region Membros
         private readonly IBus _bus;
         private readonly IMapper _mapper;
@@ -54,6 +61,30 @@ namespace TronBox.Application.Services
                 .BuscarTodos(c => c.TipoDocumentoConsulta == tipoDocumento).OrderByDescending(c => Convert.ToInt32(c.UltimoNSU)).Take(1).FirstOrDefault());
 
             return historicoConsulta != null ? historicoConsulta.UltimoNSU : "0";
+        }
+
+        public async Task BuscarManualmente()
+        {
+            var empresa = _mapper.Map<EmpresaDTO>(_repositoryFactory.Instancie<IEmpresaRepository>().BuscarTodos().FirstOrDefault());
+
+            var configuracaoEmpresa = _mapper.Map<ConfiguracaoEmpresaDTO>(_repositoryFactory.Instancie<IConfiguracaoEmpresaRepository>()
+                .BuscarTodos().FirstOrDefault());
+
+            if (empresa.UF == null || configuracaoEmpresa == null)
+            {
+                _bus.RaiseEvent(new DomainNotification("ConfiguracaoIncompleta", "O cadastro da empresa está incompleto."));
+                return;
+            }
+
+            var dadosBusca = new
+            {
+                ultNSU = "0",
+                autoManifest = configuracaoEmpresa.ManifestarAutomaticamente,
+                empresa.UF,
+                saveOnlyManifestedInvoices = configuracaoEmpresa.SalvarSomenteManifestadas
+            };
+
+            await UtilitarioHttpClient.PostRequest(string.Empty, URL_AGENTE_MANIFESTACAO, $"mdf-e/send-nsu/registry/{configuracaoEmpresa.Inscricao}", dadosBusca);
         }
 
         #region Private Methods

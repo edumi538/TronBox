@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using TronBox.Application.Services.Interfaces;
 using TronBox.Domain.DTO;
 using TronBox.Domain.Enums;
@@ -65,6 +66,32 @@ namespace TronBox.API.Controllers
                     mensagem = "Operação realizada com sucesso."
                 }
             );
+        }
+
+        [HttpPost("realizar-busca")]
+        public async Task<IActionResult> BuscarManualmente()
+        {
+            await AppServiceFactory.Instancie<IHistoricoConsultaAppService>().BuscarManualmente();
+
+            if (_notifications.HasNotifications())
+            {
+                return BadRequest(new
+                {
+                    sucesso = false,
+                    erros = _notifications.GetNotifications()
+                        .Select(c => new
+                        {
+                            Chave = c.Key,
+                            Mensagem = c.Value
+                        })
+                });
+            }
+
+            return Ok(new
+            {
+                sucesso = true,
+                mensagem = "Operação realizada com sucesso."
+            });
         }
     }
 }
