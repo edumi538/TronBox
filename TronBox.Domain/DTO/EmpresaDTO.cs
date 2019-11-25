@@ -13,6 +13,12 @@ namespace TronBox.Domain.DTO
         public string Telefone { get; set; }
         public string Celular { get; set; }
         public string EmailPrincipal { get; set; }
+        public string Logradouro { get; set; }
+        public string Numero { get; set; }
+        public string Complemento { get; set; }
+        public string Bairro { get; set; }
+        public string Cep { get; set; }
+        public int CodigoCidade { get; set; }
         public string UF { get; set; }
         public bool Status { get; set; }
         public ConfiguracaoEmpresaDTO ConfiguracaoEmpresa { get; set; }

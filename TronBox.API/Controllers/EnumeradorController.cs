@@ -82,19 +82,28 @@ namespace TronBox.API.Controllers
         [HttpGet("tipos-documento-consulta")]
         public IActionResult GetTipoDocumentoConsulta()
         {
-            var situacoesManifesto = from ETipoDocumentoConsulta d in Enum.GetValues(typeof(ETipoDocumentoConsulta))
+            var tiposDocumentoConsulta = from ETipoDocumentoConsulta d in Enum.GetValues(typeof(ETipoDocumentoConsulta))
                                      select new { value = (int)d, label = EnumHelper<ETipoDocumentoConsulta>.GetDisplayValue(d) };
 
-            return Ok(situacoesManifesto);
+            return Ok(tiposDocumentoConsulta);
         }
 
         [HttpGet("tipos-consulta")]
         public IActionResult GetTipoConsulta()
         {
-            var situacoesManifesto = from ETipoConsulta d in Enum.GetValues(typeof(ETipoConsulta))
+            var tiposConsulta = from ETipoConsulta d in Enum.GetValues(typeof(ETipoConsulta))
                                      select new { value = (int)d, label = EnumHelper<ETipoConsulta>.GetDisplayValue(d) };
 
-            return Ok(situacoesManifesto);
+            return Ok(tiposConsulta);
+        }
+
+        [HttpGet("metodos-busca")]
+        public IActionResult GetMetodosBusca()
+        {
+            var metodosBusca = from EMetodoBusca d in Enum.GetValues(typeof(EMetodoBusca))
+                                     select new { value = (int)d, label = EnumHelper<EMetodoBusca>.GetDisplayValue(d) };
+
+            return Ok(metodosBusca);
         }
     }
 }

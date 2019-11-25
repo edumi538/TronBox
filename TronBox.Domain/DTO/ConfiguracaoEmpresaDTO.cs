@@ -10,6 +10,8 @@ namespace TronBox.Domain.DTO
         public string Inscricao { get; set; }
         public bool SalvarCteEntrada { get; set; }
         public bool SalvarCteSaida { get; set; }
+        public bool ManifestarAutomaticamente { get; set; }
+        public EMetodoBusca MetodoBusca { get; set; }
         public string UltimoNsuNfe { get; set; }
         public string UltimoNsuCTe { get; set; }
         public DadosMatoGrossoDTO DadosMatoGrosso { get; set; }
