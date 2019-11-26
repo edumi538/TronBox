@@ -81,7 +81,9 @@ namespace TronBox.Application.Services
                 autoManifest = configuracaoEmpresa.ManifestarAutomaticamente,
                 empresa.UF,
                 saveOnlyManifestedInvoices = configuracaoEmpresa.SalvarSomenteManifestadas,
-                previousInvoices = configuracaoEmpresa.MetodoBusca == EMetodoBusca.UltimosMeses ? "last_three_months" : "current_month"
+                previousInvoices = configuracaoEmpresa.MetodoBusca == EMetodoBusca.UltimosMeses ? "last_three_months" : "current_month",
+                typeConsult = ETipoConsulta.Manual,
+                limitConsults = false
             };
 
             UtilitarioHttpClient.PostRequest(string.Empty, URL_AGENTE_MANIFESTACAO, $"mdf-e/send-nsu/registry/{configuracaoEmpresa.Inscricao}", dadosBusca);
