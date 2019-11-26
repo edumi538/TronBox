@@ -82,7 +82,7 @@ namespace TronBox.Application.Services
                 empresa.UF,
                 saveOnlyManifestedInvoices = configuracaoEmpresa.SalvarSomenteManifestadas,
                 previousInvoices = configuracaoEmpresa.MetodoBusca == EMetodoBusca.UltimosMeses ? "last_three_months" : "current_month",
-                typeConsult = ETipoConsulta.Manual,
+                consultType = ETipoConsulta.Manual,
                 limitConsults = false
             };
 
