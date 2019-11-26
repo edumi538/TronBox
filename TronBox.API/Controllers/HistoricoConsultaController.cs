@@ -69,9 +69,9 @@ namespace TronBox.API.Controllers
         }
 
         [HttpPost("realizar-busca")]
-        public async Task<IActionResult> BuscarManualmente()
+        public IActionResult BuscarManualmente()
         {
-            await AppServiceFactory.Instancie<IHistoricoConsultaAppService>().BuscarManualmente();
+            AppServiceFactory.Instancie<IHistoricoConsultaAppService>().BuscarManualmente();
 
             if (_notifications.HasNotifications())
             {

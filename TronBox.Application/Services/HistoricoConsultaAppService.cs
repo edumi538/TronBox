@@ -3,7 +3,6 @@ using Comum.Domain.Aggregates.EmpresaAgg.Repository;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using TronBox.Application.Services.Interfaces;
 using TronBox.Domain.Aggregates.ConfiguracaoEmpresaAgg.Repository;
 using TronBox.Domain.Aggregates.HistoricoConsultaAgg;
@@ -20,7 +19,7 @@ namespace TronBox.Application.Services
 {
     public class HistoricoConsultaAppService : IHistoricoConsultaAppService
     {
-        //public static string URL_AGENTE_MANIFESTACAO = "http://192.168.10.229:3000";
+        //public static string URL_AGENTE_MANIFESTACAO = "http://192.168.10.229:8082";
         public static string URL_AGENTE_MANIFESTACAO = "http://10.20.30.28:8085";
 
         #region Membros
@@ -63,7 +62,7 @@ namespace TronBox.Application.Services
             return historicoConsulta != null ? historicoConsulta.UltimoNSU : "0";
         }
 
-        public async Task BuscarManualmente()
+        public void BuscarManualmente()
         {
             var empresa = _mapper.Map<EmpresaDTO>(_repositoryFactory.Instancie<IEmpresaRepository>().BuscarTodos().FirstOrDefault());
 
@@ -81,10 +80,11 @@ namespace TronBox.Application.Services
                 ultNSU = "0",
                 autoManifest = configuracaoEmpresa.ManifestarAutomaticamente,
                 empresa.UF,
-                saveOnlyManifestedInvoices = configuracaoEmpresa.SalvarSomenteManifestadas
+                saveOnlyManifestedInvoices = configuracaoEmpresa.SalvarSomenteManifestadas,
+                previousInvoices = configuracaoEmpresa.MetodoBusca == EMetodoBusca.UltimosMeses ? "last_three_months" : "current_month"
             };
 
-            await UtilitarioHttpClient.PostRequest(string.Empty, URL_AGENTE_MANIFESTACAO, $"mdf-e/send-nsu/registry/{configuracaoEmpresa.Inscricao}", dadosBusca);
+            UtilitarioHttpClient.PostRequest(string.Empty, URL_AGENTE_MANIFESTACAO, $"mdf-e/send-nsu/registry/{configuracaoEmpresa.Inscricao}", dadosBusca);
         }
 
         #region Private Methods
