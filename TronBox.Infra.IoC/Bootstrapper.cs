@@ -15,6 +15,7 @@ using TronBox.Application.Services.Interfaces;
 using TronBox.Domain.Aggregates.ConfiguracaoEmpresaAgg.Repository;
 using TronBox.Domain.Aggregates.DocumentoFiscalAgg.Repository;
 using TronBox.Domain.Aggregates.HistoricoConsultaAgg.Repository;
+using TronBox.Domain.Aggregates.HistoricoConsultaMatoGrossoAgg.Repository;
 using TronBox.Domain.Aggregates.ManifestoAgg.Repository;
 using TronBox.Infra.Data.Repositories;
 using TronBox.Infra.IoC.Extensions;
@@ -44,12 +45,14 @@ namespace TronBox.Infra.IoC
             services.AddScoped<IDocumentoFiscalAppService, DocumentoFiscalAppService>();
             services.AddScoped<IEnumeradorAppService, EnumeradorAppService>();
             services.AddScoped<IHistoricoConsultaAppService, HistoricoConsultaAppService>();
+            services.AddScoped<IHistoricoConsultaMatoGrossoAppService, HistoricoConsultaMatoGrossoAppService>();
             services.AddScoped<IManifestoAppService, ManifestoAppService>();
 
             // Repositorios
             services.AddScoped<IConfiguracaoEmpresaRepository, ConfiguracaoEmpresaRepository>();
             services.AddScoped<IDocumentoFiscalRepository, DocumentoFiscalRepository>();
             services.AddScoped<IHistoricoConsultaRepository, HistoricoConsultaRepository>();
+            services.AddScoped<IHistoricoConsultaMatoGrossoRepository, HistoricoConsultaMatoGrossoRepository>();
             services.AddScoped<IManifestoRepository, ManifestoRepository>();
 
             #region Add Comum
