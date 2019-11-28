@@ -1,8 +1,5 @@
 ﻿using AutoMapper;
-using Comum.Domain.Aggregates.EmpresaAgg.Repository;
 using Comum.Domain.Interfaces;
-using Comum.DTO;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -14,10 +11,8 @@ using TronBox.Domain.Aggregates.ManifestoAgg;
 using TronBox.Domain.Aggregates.ManifestoAgg.Repository;
 using TronBox.Domain.DTO;
 using TronBox.Domain.Enums;
-using TronCore.DefinicoesConfiguracoes;
 using TronCore.Dominio.Specifications;
 using TronCore.Persistencia.Interfaces;
-using TronCore.Utilitarios;
 
 namespace TronBox.Application.Services
 {
@@ -26,15 +21,13 @@ namespace TronBox.Application.Services
         #region Membros
         private readonly IMapper _mapper;
         private readonly IRepositoryFactory _repositoryFactory;
-        private readonly IPessoaUsuarioLogado _usuarioLogado;
         #endregion
 
         #region Construtor
-        public DashboardAppService(IMapper mapper, IRepositoryFactory repositoryFactory, IPessoaUsuarioLogado usuarioLogado)
+        public DashboardAppService(IMapper mapper, IRepositoryFactory repositoryFactory)
         {
             _mapper = mapper;
             _repositoryFactory = repositoryFactory;
-            _usuarioLogado = usuarioLogado;
         }
         #endregion
 
@@ -138,19 +131,6 @@ namespace TronBox.Application.Services
             }
 
             return dashboardUltimaSemana;
-        }
-
-        public CertificadoSimplificadoDTO ObterDadosCertificado()
-        {
-            var empresa = _mapper.Map<EmpresaDTO>(_repositoryFactory.Instancie<IEmpresaRepository>().BuscarTodos().FirstOrDefault());
-
-            var certificado = UtilitarioHttpClient.GetRequest(_usuarioLogado.GetToken(), Constantes.URI_BASE_CT,
-                $"api/v1/certificados/{empresa.Inscricao}").GetAwaiter().GetResult();
-
-            if (certificado != null)
-                return JsonConvert.DeserializeObject<CertificadoSimplificadoDTO>(certificado);
-
-            return null;
         }
 
         #region Private Methods

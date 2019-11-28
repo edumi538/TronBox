@@ -35,8 +35,5 @@ namespace TronBox.API.Controllers
 
         [HttpGet("ultima-semana")]
         public IActionResult GetDadosUltimaSemana(int dataInicial, int dataFinal) => Ok(AppServiceFactory.Instancie<IDashboardAppService>().ObterDadosUltimaSemana(dataInicial, dataFinal));
-
-        [HttpGet("certificado")]
-        public IActionResult GetCertificado() => Ok(AppServiceFactory.Instancie<IDashboardAppService>().ObterDadosCertificado());
     }
 }
