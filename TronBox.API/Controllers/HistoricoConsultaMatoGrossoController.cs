@@ -25,6 +25,20 @@ namespace TronBox.API.Controllers
         [HttpGet]
         public IActionResult Get(string filtro) => Ok(AppServiceFactory.Instancie<IHistoricoConsultaMatoGrossoAppService>().BuscarTodos(filtro));
 
+        [HttpGet("ultima")]
+        public IActionResult UltimaConsulta()
+        {
+            var ultimaConsulta = AppServiceFactory.Instancie<IHistoricoConsultaMatoGrossoAppService>().ObterUltimaConsulta();
+
+            if (ultimaConsulta != null)
+                return Ok(ultimaConsulta.DataHoraConsultaFormatada);
+
+            return NotFound();
+        }
+
+        [HttpGet("ultimo-periodo")]
+        public IActionResult UltimoNSU() => Ok(AppServiceFactory.Instancie<IHistoricoConsultaMatoGrossoAppService>().ObterUltimoPeriodo());
+
         [HttpPost]
         public IActionResult Post([FromBody]HistoricoConsultaMatoGrossoDTO historicoConsulta)
         {

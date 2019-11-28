@@ -32,7 +32,15 @@ namespace TronBox.API.Controllers
         public IActionResult Get(string filtro) => Ok(AppServiceFactory.Instancie<IHistoricoConsultaAppService>().BuscarTodos(filtro));
 
         [HttpGet("ultima")]
-        public IActionResult UltimaConsulta() => Ok(AppServiceFactory.Instancie<IHistoricoConsultaAppService>().ObterUltimaConsulta());
+        public IActionResult UltimaConsulta()
+        {
+            var ultimaConsulta = AppServiceFactory.Instancie<IHistoricoConsultaAppService>().ObterUltimaConsulta();
+
+            if (ultimaConsulta != null)
+                return Ok(ultimaConsulta.DataHoraConsultaFormatada);
+
+            return NotFound();
+        }
 
         [HttpGet("ultimo-nsu/{tipo}")]
         public IActionResult UltimoNSU(ETipoDocumentoConsulta tipo) => Ok(AppServiceFactory.Instancie<IHistoricoConsultaAppService>().ObterUltimoNSU(tipo));

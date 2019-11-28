@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using TronBox.Application.Services.Interfaces;
 using TronBox.Domain.Aggregates.HistoricoConsultaMatoGrossoAgg;
 using TronBox.Domain.Aggregates.HistoricoConsultaMatoGrossoAgg.Repository;
@@ -33,6 +35,20 @@ namespace TronBox.Application.Services
 
         public void Dispose()
         {
+        }
+
+        public HistoricoConsultaMatoGrossoDTO ObterUltimaConsulta() => _mapper.Map<HistoricoConsultaMatoGrossoDTO>(_repositoryFactory.Instancie<IHistoricoConsultaMatoGrossoRepository>()
+            .BuscarTodos().OrderByDescending(c => c.DataHoraConsulta).Take(1).FirstOrDefault());
+
+        public DateTime? ObterUltimoPeriodo()
+        {
+            var historicoConsulta = _mapper.Map<HistoricoConsultaMatoGrossoDTO>(_repositoryFactory.Instancie<IHistoricoConsultaMatoGrossoRepository>()
+                .BuscarTodos().OrderByDescending(c => c.DataFinalConsultada).Take(1).FirstOrDefault());
+
+            if (historicoConsulta != null)
+                return historicoConsulta.DataFinalConsultadaFormatada;
+
+            return null;
         }
 
         public void Inserir(HistoricoConsultaMatoGrossoDTO historicoConsulta)
