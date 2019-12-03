@@ -9,6 +9,7 @@ namespace TronBox.Domain.DTO
     public class DocumentoFiscalDTO
     {
         public string Id { get; set; }
+        public string InscricaoEstadual { get; set; }
         public ETipoDocumentoFiscal TipoDocumentoFiscal { get; set; }
         public string ChaveDocumentoFiscal { get; set; }
         public string NumeroDocumentoFiscal { get; set; }

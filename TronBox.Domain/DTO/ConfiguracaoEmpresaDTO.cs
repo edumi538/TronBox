@@ -26,15 +26,10 @@ namespace TronBox.Domain.DTO
 
     public class InscricaoComplementarDTO
     {
-        public bool ConsultaMatoGrosso { get; set; }
-        public eSituacao Situacao { get; set; }
+        public string Id { get; set; }
         public string InscricaoEstadual { get; set; }
-        public IEnumerable<DadosMunicipaisDTO> DadosMunicipais { get; set; }
-    }
-
-    public class DadosMunicipaisDTO
-    {
         public string InscricaoMunicipal { get; set; }
+        public bool ConsultaMatoGrosso { get; set; }
         public eSituacao Situacao { get; set; }
     }
 }

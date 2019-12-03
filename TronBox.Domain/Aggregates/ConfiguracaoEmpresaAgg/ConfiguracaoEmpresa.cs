@@ -33,17 +33,15 @@ namespace TronBox.Domain.Aggregates.ConfiguracaoEmpresaAgg
         public string Senha { get; set; }
     }
 
-    public class InscricaoComplementar
+    public class InscricaoComplementar : Entity<InscricaoComplementar>
     {
-        public bool ConsultaMatoGrosso { get; set; }
-        public eSituacao Situacao { get; set; }
+        [BsonIgnoreIfNull]
         public string InscricaoEstadual { get; set; }
-        public IEnumerable<DadosMunicipais> DadosMunicipais { get; set; }
-    }
-
-    public class DadosMunicipais
-    {
+        [BsonIgnoreIfNull]
         public string InscricaoMunicipal { get; set; }
+        [BsonIgnoreIfNull]
+        public bool ConsultaMatoGrosso { get; set; }
+        [BsonIgnoreIfNull]
         public eSituacao Situacao { get; set; }
     }
 

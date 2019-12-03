@@ -9,6 +9,8 @@ namespace TronBox.Domain.Aggregates.DocumentoFiscalAgg
 {
     public class DocumentoFiscal : Entity<DocumentoFiscal>
     {
+        [BsonIgnoreIfDefault]
+        public string InscricaoEstadual { get; set; }
         public ETipoDocumentoFiscal TipoDocumentoFiscal { get; set; }
         public string ChaveDocumentoFiscal { get; set; }
         public string NumeroDocumentoFiscal { get; set; }

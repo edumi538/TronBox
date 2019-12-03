@@ -9,6 +9,7 @@ namespace TronBox.Domain.DTO
     public class HistoricoConsultaMatoGrossoDTO
     {
         public string Id { get; set; }
+        public string InscricaoEstadual { get; set; }
         public ETipoConsulta TipoConsulta { get; set; }
         public long DataHoraConsulta { get; set; }
         public int DataInicialConsultada { get; set; }

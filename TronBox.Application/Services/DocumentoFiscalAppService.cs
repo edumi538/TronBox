@@ -316,13 +316,17 @@ namespace TronBox.Application.Services
                     : ObterTipoNotaFiscal(inscricaoEmpresa, nfe.NFe.infNFe.ide.tpNF, nfe.NFe.infNFe.emit, nfe.NFe.infNFe.dest, nfe.NFe.infNFe.det.FirstOrDefault())
             };
 
-            // TODO DOCUMENTO NÃO É DA EMPRESA
             if (documentoFiscal.TipoDocumentoFiscal == 0) return null;
 
             var inscricaoEmitente = nfe.NFe.infNFe.emit.CNPJ ?? nfe.NFe.infNFe.emit.CPF;
-            var empresaNaoEmitente = inscricaoEmpresa != inscricaoEmitente;
+            var inscricaoDestinatario = nfe.NFe.infNFe.dest.CNPJ ?? nfe.NFe.infNFe.dest.CPF;
 
-            if ((documentoFiscal.TipoDocumentoFiscal == ETipoDocumentoFiscal.Nfce) || (empresaNaoEmitente))
+            if (inscricaoEmpresa == inscricaoEmitente)
+                documentoFiscal.InscricaoEstadual = nfe.NFe.infNFe.emit.IE;
+            else if (inscricaoEmpresa == inscricaoDestinatario)
+                documentoFiscal.InscricaoEstadual = nfe.NFe.infNFe.dest.IE;
+
+            if ((documentoFiscal.TipoDocumentoFiscal == ETipoDocumentoFiscal.Nfce) || (inscricaoEmpresa != inscricaoEmitente))
             {
                 documentoFiscal.DadosEmitenteDestinatario = new DadosFornecedorDTO()
                 {

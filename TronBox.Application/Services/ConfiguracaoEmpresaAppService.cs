@@ -80,6 +80,15 @@ namespace TronBox.Application.Services
             {
                 var configuracaoExistente = BuscarConfiguracaoEmpresa();
 
+                configuracaoEmpresa.InscricoesComplementares = configuracaoEmpresa.InscricoesComplementares
+                    .Select(c => 
+                        { 
+                            if (c.Id == null || c.Id == Guid.Empty) 
+                                c.Id = Guid.NewGuid(); 
+                            
+                            return c; 
+                        });
+
                 if (configuracaoExistente != null)
                 {
                     configuracaoEmpresa.Id = configuracaoExistente.Id;

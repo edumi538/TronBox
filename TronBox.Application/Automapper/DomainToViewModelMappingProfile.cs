@@ -21,6 +21,7 @@ namespace TronBox.Domain.Automapper
             #region Modelos
             CreateMap<Empresa, EmpresaDTO>();
             CreateMap<ConfiguracaoEmpresa, ConfiguracaoEmpresaDTO>();
+            CreateMap<InscricaoComplementar, InscricaoComplementarDTO>();
             CreateMap<DocumentoFiscal, DocumentoFiscalDTO>();
             CreateMap<HistoricoConsulta, HistoricoConsultaDTO>();
             CreateMap<HistoricoConsultaMatoGrosso, HistoricoConsultaMatoGrossoDTO>();
@@ -30,6 +31,7 @@ namespace TronBox.Domain.Automapper
             #region Listas
             CreateMap<List<Empresa>, List<EmpresaDTO>>();
             CreateMap<List<ConfiguracaoEmpresa>, List<ConfiguracaoEmpresaDTO>>();
+            CreateMap<List<InscricaoComplementar>, List<InscricaoComplementarDTO>>();
             CreateMap<List<DocumentoFiscal>, List<DocumentoFiscalDTO>>();
             CreateMap<List<HistoricoConsultaMatoGrosso>, List<HistoricoConsultaMatoGrossoDTO>>();
             CreateMap<List<Manifesto>, List<ManifestoDTO>>();

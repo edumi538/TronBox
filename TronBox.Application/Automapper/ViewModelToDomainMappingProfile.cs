@@ -19,6 +19,7 @@ namespace TronBox.Domain.Automapper
 
             CreateMap<EmpresaDTO, Empresa>();
             CreateMap<ConfiguracaoEmpresaDTO, ConfiguracaoEmpresa>();
+            CreateMap<InscricaoComplementarDTO, InscricaoComplementar>();
             CreateMap<DocumentoFiscalDTO, DocumentoFiscal>();
             CreateMap<HistoricoConsultaDTO, HistoricoConsulta>();
             CreateMap<HistoricoConsultaMatoGrossoDTO, HistoricoConsultaMatoGrosso>();

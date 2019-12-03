@@ -20,7 +20,6 @@ namespace TronBox.Domain.DTO
         public string Cep { get; set; }
         public int CodigoCidade { get; set; }
         public string UF { get; set; }
-        public bool Status { get; set; }
         public ConfiguracaoEmpresaDTO ConfiguracaoEmpresa { get; set; }
         public CertificadoSimplificadoDTO Certificado { get; set; }
     }

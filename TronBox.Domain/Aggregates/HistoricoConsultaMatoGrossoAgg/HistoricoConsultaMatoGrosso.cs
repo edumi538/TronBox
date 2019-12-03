@@ -8,6 +8,7 @@ namespace TronBox.Domain.Aggregates.HistoricoConsultaMatoGrossoAgg
 {
     public class HistoricoConsultaMatoGrosso : Entity<HistoricoConsultaMatoGrosso>
     {
+        public string InscricaoEstadual { get; set; }
         public ETipoConsulta TipoConsulta { get; set; }
         public long DataHoraConsulta { get; set; }
         [BsonIgnoreIfDefault]
@@ -22,6 +23,9 @@ namespace TronBox.Domain.Aggregates.HistoricoConsultaMatoGrossoAgg
     {
         public HistoricoConsultaMatoGrossoValidator()
         {
+            RuleFor(a => a.InscricaoEstadual)
+               .NotEmpty().WithMessage(MensagensValidacao.Requerido("Inscrição Estadual"));
+
             RuleFor(a => a.TipoConsulta)
                .NotEmpty().WithMessage(MensagensValidacao.Requerido("Tipo da Consulta"));
 
