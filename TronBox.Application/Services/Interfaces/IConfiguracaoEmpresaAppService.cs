@@ -12,5 +12,6 @@ namespace TronBox.Application.Services.Interfaces
         Task<Resposta> DeletarCertificado(Guid id);
         EmpresaDTO BuscarEmpresa();
         void AtualizarEmpresa(EmpresaDTO empresaDto);
+        void AtualizarEmail(AtualizacaoEmailDTO empregado);
     }
 }

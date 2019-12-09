@@ -39,9 +39,9 @@ namespace TronBox.Domain.Aggregates.ConfiguracaoEmpresaAgg
         public string InscricaoEstadual { get; set; }
         [BsonIgnoreIfNull]
         public string InscricaoMunicipal { get; set; }
-        [BsonIgnoreIfNull]
+        [BsonIgnoreIfDefault]
         public bool ConsultaMatoGrosso { get; set; }
-        [BsonIgnoreIfNull]
+        [BsonIgnoreIfDefault]
         public eSituacao Situacao { get; set; }
     }
 

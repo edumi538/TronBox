@@ -80,5 +80,31 @@ namespace TronBox.UI.Controllers
 
             return Ok(resposta);
         }
+
+        [HttpPut("atualizar-email")]
+        public IActionResult AtualizarEmail([FromBody]AtualizacaoEmailDTO empregado)
+        {
+            AppServiceFactory.Instancie<IConfiguracaoEmpresaAppService>().AtualizarEmail(empregado);
+
+            if (_notifications.HasNotifications())
+            {
+                return BadRequest(new
+                {
+                    sucesso = false,
+                    erro = _notifications.GetNotifications()
+                        .Select(c => new
+                        {
+                            Chave = c.Key,
+                            Mensagem = c.Value
+                        })
+                });
+            }
+
+            return Ok(new
+            {
+                sucesso = true,
+                mensagem = "Operação realizada com sucesso."
+            });
+        }
     }
 }

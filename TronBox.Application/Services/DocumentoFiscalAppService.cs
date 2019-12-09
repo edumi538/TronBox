@@ -3,6 +3,7 @@ using Comum.Domain.Aggregates.EmpresaAgg.Repository;
 using CTe.Classes;
 using DFe.Classes.Flags;
 using DFe.Utils;
+using FluentValidation.Results;
 using NFe.Classes;
 using NFe.Classes.Informacoes.Destinatario;
 using NFe.Classes.Informacoes.Detalhe;
@@ -23,6 +24,7 @@ using TronBox.Domain.Classes.NFSe;
 using TronBox.Domain.DTO;
 using TronBox.Domain.DTO.InnerClassDTO;
 using TronBox.Domain.Enums;
+using TronBox.Domain.InnerClass;
 using TronBox.Infra.Data.Utilitarios;
 using TronCore.DefinicoesConfiguracoes;
 using TronCore.Dominio.Bus;
@@ -31,7 +33,6 @@ using TronCore.Persistencia.Interfaces;
 using TronCore.Utilitarios;
 using TronCore.Utilitarios.EnvioDeArquivo.Interface;
 using TronCore.Utilitarios.Specifications;
-using static TronBox.Domain.DTO.EnviarArquivosDTO;
 
 namespace TronBox.Application.Services
 {
@@ -432,7 +433,7 @@ namespace TronBox.Application.Services
             return 0;
         }
 
-        private void DocumentosValidos(List<DocumentoFiscalDTO> documentosGerados, List<DetalhesEnvioDTO> detalhesEnvio,
+        private void DocumentosValidos(List<DocumentoFiscalDTO> documentosGerados, List<EnviarArquivosDTO.DetalhesEnvioDTO> detalhesEnvio,
             ref List<DocumentoFiscal> documentosValidos, ref List<DocumentoFiscal> documentosCancelamento)
         {
             var chavesGeradas = documentosGerados.Select(c => c.ChaveDocumentoFiscal);
@@ -485,20 +486,62 @@ namespace TronBox.Application.Services
 
         private bool EhValido(DocumentoFiscal documentoFiscal)
         {
+            var valido = true;
+
+            #region Validar Documento
             var validator = new DocumentoFiscalValidator().Validate(documentoFiscal);
 
-            if (validator.Errors.Any())
+            if (!validator.IsValid)
             {
-                var erros = validator.Errors.Select(c => new
-                {
-                    Chave = c.PropertyName,
-                    Mensagem = c.ErrorMessage
-                });
+                valido = false;
 
-                _bus.RaiseEvent(new DomainNotification(documentoFiscal.NomeArquivo, erros));
+                CriarMensagensErro(documentoFiscal.NomeArquivo, validator);
             }
+            #endregion
 
-            return validator.IsValid;
+            #region Validar Dados Origem
+            if (documentoFiscal.DadosOrigem != null)
+            {
+                var validatorDadosOrigem = new DadosOrigemDocumentoFiscalValidator().Validate(documentoFiscal.DadosOrigem);
+
+                if (!validatorDadosOrigem.IsValid)
+                {
+                    valido = false;
+
+                    CriarMensagensErro(documentoFiscal.NomeArquivo, validatorDadosOrigem);
+                }
+            }
+            #endregion
+
+            #region Validar Dados Importacao
+            if (documentoFiscal.DadosImportacao != null)
+            {
+                var validatorDadosImportacao = new DadosImportacaoValidator().Validate(documentoFiscal.DadosImportacao);
+
+                if (!validatorDadosImportacao.IsValid)
+                {
+                    valido = false;
+
+                    CriarMensagensErro(documentoFiscal.NomeArquivo, validatorDadosImportacao);
+                }
+            }
+            #endregion
+
+            #region Validar Dados Fornecedor
+            if (documentoFiscal.DadosEmitenteDestinatario != null)
+            {
+                var validatorDadosFornecedor = new DadosFornecedorValidator().Validate(documentoFiscal.DadosEmitenteDestinatario);
+
+                if (!validatorDadosFornecedor.IsValid)
+                {
+                    valido = false;
+
+                    CriarMensagensErro(documentoFiscal.NomeArquivo, validatorDadosFornecedor);
+                }
+            }
+            #endregion
+
+            return valido;
         }
 
         private async Task<string> BuscarConteudoXML(DocumentoFiscalDTO documentoFiscal)
@@ -570,6 +613,17 @@ namespace TronBox.Application.Services
 
                 _repositoryFactory.Instancie<IManifestoRepository>().AtualizarTodos(manifestosAtualizados);
             }
+        }
+
+        private void CriarMensagensErro(string nomeArquivo, ValidationResult validation)
+        {
+            var erros = validation.Errors.Select(c => new
+            {
+                Chave = c.PropertyName,
+                Mensagem = c.ErrorMessage
+            });
+
+            _bus.RaiseEvent(new DomainNotification(nomeArquivo, erros));
         }
         #endregion
     }
