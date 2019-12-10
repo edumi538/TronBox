@@ -77,17 +77,8 @@ namespace TronBox.Application.Services
 
             var configuracaoEmpresa = _mapper.Map<ConfiguracaoEmpresa>(empresaDto.ConfiguracaoEmpresa);
 
-            if (configuracaoEmpresa == null)
+            if (configuracaoEmpresa != null)
             {
-                configuracaoEmpresa = new ConfiguracaoEmpresa()
-                {
-                    Inscricao = empresa.Inscricao
-                };
-            }
-            else
-            {
-                configuracaoEmpresa.Inscricao = empresa.Inscricao;
-
                 configuracaoEmpresa.InscricoesComplementares = configuracaoEmpresa.InscricoesComplementares
                     .Select(c =>
                     {

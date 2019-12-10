@@ -9,7 +9,6 @@ namespace TronBox.Domain.Aggregates.ConfiguracaoEmpresaAgg
 {
     public class ConfiguracaoEmpresa : Entity<ConfiguracaoEmpresa>
     {
-        public string Inscricao { get; set; }
         [BsonIgnoreIfDefault]
         public bool SalvarCteEntrada { get; set; }
         [BsonIgnoreIfDefault]
@@ -36,9 +35,29 @@ namespace TronBox.Domain.Aggregates.ConfiguracaoEmpresaAgg
     public class InscricaoComplementar : Entity<InscricaoComplementar>
     {
         [BsonIgnoreIfNull]
+        public string NomeFantasia { get; set; }
+        [BsonIgnoreIfNull]
+        public string Telefone { get; set; }
+        [BsonIgnoreIfNull]
+        public string Celular { get; set; }
+        [BsonIgnoreIfNull]
         public string InscricaoEstadual { get; set; }
         [BsonIgnoreIfNull]
         public string InscricaoMunicipal { get; set; }
+        [BsonIgnoreIfNull]
+        public string Logradouro { get; set; }
+        [BsonIgnoreIfNull]
+        public string Numero { get; set; }
+        [BsonIgnoreIfNull]
+        public string Complemento { get; set; }
+        [BsonIgnoreIfNull]
+        public string Bairro { get; set; }
+        [BsonIgnoreIfNull]
+        public string Cep { get; set; }
+        [BsonIgnoreIfDefault]
+        public int CodigoCidade { get; set; }
+        [BsonIgnoreIfNull]
+        public string UF { get; set; }
         [BsonIgnoreIfDefault]
         public bool ConsultaMatoGrosso { get; set; }
         [BsonIgnoreIfDefault]
@@ -49,8 +68,8 @@ namespace TronBox.Domain.Aggregates.ConfiguracaoEmpresaAgg
     {
         public ConfiguracaoEmpresaValidator()
         {
-            RuleFor(a => a.Inscricao)
-               .NotEmpty().WithMessage(MensagensValidacao.Requerido("Inscrição"));
+            RuleFor(a => a.InscricoesComplementares)
+               .NotNull().WithMessage(MensagensValidacao.Requerido("Inscrições Complementares"));
         }
     }
 }

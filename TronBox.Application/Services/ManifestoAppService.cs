@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using TronBox.Application.Services.Interfaces;
+using TronBox.Domain.Aggregates.ConfiguracaoEmpresaAgg.Repository;
 using TronBox.Domain.Aggregates.DocumentoFiscalAgg.Repository;
 using TronBox.Domain.Aggregates.ManifestoAgg;
 using TronBox.Domain.Aggregates.ManifestoAgg.Repository;
@@ -84,10 +85,17 @@ namespace TronBox.Application.Services
         public async Task<RespostaManifestacaoDTO> Manifestar(ManifestarDTO manifestarDTO)
         {
             var empresa = _mapper.Map<EmpresaDTO>(_repositoryFactory.Instancie<IEmpresaRepository>().BuscarTodos().FirstOrDefault());
+            var configuracaoEmpresa = _mapper.Map<ConfiguracaoEmpresaDTO>(_repositoryFactory.Instancie<IConfiguracaoEmpresaRepository>().BuscarTodos().FirstOrDefault());
+
+            if (configuracaoEmpresa == null || !configuracaoEmpresa.InscricoesComplementares.Any())
+            {
+                _bus.RaiseEvent(new DomainNotification("CadastroIncompleto", "Cadastro da empresa está incompleto."));
+                return null;
+            }
 
             var manifestacao = new
             {
-                empresa.UF,
+                configuracaoEmpresa.InscricoesComplementares.FirstOrDefault().UF,
                 registry = empresa.Inscricao,
                 keyNFe = manifestarDTO.ChaveDocumentoFiscal,
                 tpEvent = ObterTIpoManifestacao(manifestarDTO.TipoManifestacao)
