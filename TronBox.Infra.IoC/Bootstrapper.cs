@@ -10,6 +10,7 @@ using Comum.Infra.Data.Repositories;
 using Comum.Infra.IoC.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Sentinela.Domain.Aggregates.LoggingAgg;
 using TronBox.Application.Services;
 using TronBox.Application.Services.Interfaces;
 using TronBox.Domain.Aggregates.ConfiguracaoEmpresaAgg.Repository;
@@ -19,6 +20,7 @@ using TronBox.Domain.Aggregates.HistoricoConsultaMatoGrossoAgg.Repository;
 using TronBox.Domain.Aggregates.ManifestoAgg.Repository;
 using TronBox.Infra.Data.Repositories;
 using TronBox.Infra.IoC.Extensions;
+using TronCore.Dominio.Auditoria;
 using TronCore.Dominio.Notifications;
 using TronCore.Enumeradores;
 using TronCore.Persistencia.Context;
@@ -76,6 +78,8 @@ namespace TronBox.Infra.IoC
 
             // Infra - Identity
             services.AddScoped<IPessoaUsuarioLogado, PessoaUsuarioLogado>();
+
+            services.AddTransient<IRegistroLogging, RegistroLogging>();
 
             services.AddIdentityService();
         }

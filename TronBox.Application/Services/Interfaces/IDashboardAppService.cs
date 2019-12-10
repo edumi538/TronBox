@@ -1,5 +1,4 @@
-﻿using Comum.DTO;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using TronBox.Domain.DTO;
 

@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Comum.Domain.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Globalization;

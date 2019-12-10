@@ -357,10 +357,13 @@ namespace TronBox.Application.Services
                 NumeroDocumentoFiscal = compNfse.Nfse.InfNfse.Numero,
             };
 
-            PrestadorGenerico dadosPrestador = compNfse.Nfse.InfNfse.PrestadorServico;
+            PrestadorGenerico dadosPrestador = (PrestadorGenerico)compNfse.Nfse.InfNfse.PrestadorServico ?? compNfse.Nfse.InfNfse.DeclaracaoPrestacaoServico.InfDeclaracaoPrestacaoServico.Prestador;
             TomadorGenerico dadosTomador = (TomadorGenerico)compNfse.Nfse.InfNfse.TomadorServico ?? compNfse.Nfse.InfNfse.DeclaracaoPrestacaoServico.InfDeclaracaoPrestacaoServico.Tomador;
 
-            var inscricaoPrestador = dadosPrestador.IdentificacaoPrestador.Cnpj ?? dadosPrestador.IdentificacaoPrestador.CpfCnpj.Cnpj ?? dadosPrestador.IdentificacaoPrestador.CpfCnpj.Cpf;
+            var inscricaoPrestador = dadosPrestador.IdentificacaoPrestador != null
+                ? (dadosPrestador.IdentificacaoPrestador.Cnpj ?? dadosPrestador.IdentificacaoPrestador.CpfCnpj.Cnpj ?? dadosPrestador.IdentificacaoPrestador.CpfCnpj.Cpf)
+                : (dadosPrestador.CpfCnpj.Cnpj ?? dadosPrestador.CpfCnpj.Cpf);
+
             var inscricaoTomador = dadosTomador.IdentificacaoTomador.CpfCnpj.Cnpj ?? dadosTomador.IdentificacaoTomador.CpfCnpj.Cpf;
 
             if (inscricaoEmpresa == inscricaoPrestador)
