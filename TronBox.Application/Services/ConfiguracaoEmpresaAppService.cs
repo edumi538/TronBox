@@ -146,6 +146,8 @@ namespace TronBox.Application.Services
             if ((empresa.EmailPrincipal != null) && (empresa.EmailPrincipal.Length > 0) && (novoEmail != empresa.EmailPrincipal))
                 emailRemocao = empresa.EmailPrincipal;
 
+            empresa.EmailPrincipal = novoEmail;
+
             CriarUsuárioEmpresa(empresa, emailRemocao);
         }
 
