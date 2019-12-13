@@ -5,7 +5,7 @@ namespace TronBox.Domain.InnerClass
 {
     public class DadosImportacao
     {
-        public int DataImportacao { get; set; }
+        public long DataImportacao { get; set; }
         public string Usuario { get; set; }
     }
 

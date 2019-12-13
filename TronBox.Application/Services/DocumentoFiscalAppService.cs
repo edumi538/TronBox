@@ -29,6 +29,7 @@ using TronBox.Infra.Data.Utilitarios;
 using TronCore.DefinicoesConfiguracoes;
 using TronCore.Dominio.Bus;
 using TronCore.Dominio.Notifications;
+using TronCore.Dominio.Specifications;
 using TronCore.Persistencia.Interfaces;
 using TronCore.Utilitarios;
 using TronCore.Utilitarios.EnvioDeArquivo.Interface;
@@ -110,6 +111,15 @@ namespace TronBox.Application.Services
         public IEnumerable<DocumentoFiscalDTO> BuscarTodos(string filtro) => _mapper.Map<IEnumerable<DocumentoFiscalDTO>>(_repositoryFactory.Instancie<IDocumentoFiscalRepository>()
             .BuscarTodos(new UtilitarioSpecification<DocumentoFiscal>().CriarEspecificacaoFiltro(filtro)));
 
+        public IEnumerable<DocumentoFiscalDTO> BuscarPendentes(string filtro)
+        {
+            var spec = new UtilitarioSpecification<DocumentoFiscal>().CriarEspecificacaoFiltro(filtro);
+
+            spec &= new DirectSpecification<DocumentoFiscal>(c => c.DadosImportacao == null || c.DadosImportacao.DataImportacao == 0);
+
+            return _mapper.Map<IEnumerable<DocumentoFiscalDTO>>(_repositoryFactory.Instancie<IDocumentoFiscalRepository>().BuscarTodos(spec));
+        }
+
         public async Task<IEnumerable<RetornoDocumentoFiscalDTO>> Inserir(EnviarArquivosDTO arquivos)
         {
             var empresa = _mapper.Map<EmpresaDTO>(_repositoryFactory.Instancie<IEmpresaRepository>().BuscarTodos().FirstOrDefault());
@@ -137,6 +147,27 @@ namespace TronBox.Application.Services
         }
 
         public void Deletar(Guid id) => _repositoryFactory.Instancie<IDocumentoFiscalRepository>().Excluir(id);
+
+        public bool ExisteNaoProcessado() => _repositoryFactory.Instancie<IDocumentoFiscalRepository>().Contar(
+            new DirectSpecification<DocumentoFiscal>(c => c.DadosImportacao == null || c.DadosImportacao.DataImportacao == 0)) > 0;
+
+        public void ConfirmarImportacao(Guid id, DadosImportacaoDTO dadosImportacao)
+        {
+            var documentoFiscalEncontrado = _mapper.Map<DocumentoFiscalDTO>(_repositoryFactory.Instancie<IDocumentoFiscalRepository>().BuscarPorId(id));
+
+            if (documentoFiscalEncontrado == null)
+            {
+                _bus.RaiseEvent(new DomainNotification("NaoEncontrado", "Documento Fiscal informado não foi encontrado."));
+                return;
+            }
+
+            documentoFiscalEncontrado.DadosImportacao = dadosImportacao;
+
+            var documentoFiscal = _mapper.Map<DocumentoFiscal>(documentoFiscalEncontrado);
+
+            if (EhValido(documentoFiscal))
+                _repositoryFactory.Instancie<IDocumentoFiscalRepository>().Atualizar(documentoFiscal);
+        }
 
         #region Private Methods
         private async Task<List<DocumentoFiscalDTO>> ProcessarArquivosEnviados(EnviarArquivosDTO arquivos, EmpresaDTO empresa)
