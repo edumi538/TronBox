@@ -117,7 +117,17 @@ namespace TronBox.Application.Services
 
             var result = await UtilitarioHttpClient.PostRequest(_usuarioLogado.GetToken(), Constantes.URI_BASE_CT, "api/v1/certificados", dictionary, "certificado.pfx");
 
-            return JsonConvert.DeserializeObject<Resposta>(result);
+            var resposta = JsonConvert.DeserializeObject<Resposta>(result);
+
+            if (resposta.Sucesso && certificadoCreateDTO.ManifestarAutomaticamente)
+            {
+                var configuracaoEmpresa = BuscarConfiguracaoEmpresa();
+                
+                configuracaoEmpresa.ManifestarAutomaticamente = true;
+                _repositoryFactory.Instancie<IConfiguracaoEmpresaRepository>().Atualizar(configuracaoEmpresa);
+            }
+
+            return resposta;
         }
 
         public async Task<Resposta> DeletarCertificado(Guid id)
