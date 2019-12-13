@@ -136,6 +136,26 @@ namespace TronBox.Application.Services
             _repositoryFactory.Instancie<IEmpresaRepository>().Atualizar(empresa);
         }
 
+        public CertificadoSituacaoDTO SituacaoCertificado()
+        {
+            var empresa = _mapper.Map<EmpresaDTO>(_repositoryFactory.Instancie<IEmpresaRepository>().BuscarTodos().FirstOrDefault());
+
+            var certificadoResposta = UtilitarioHttpClient.GetRequest(_usuarioLogado.GetToken(), Constantes.URI_BASE_CT,
+                $"api/v1/certificados/{empresa.Inscricao}").GetAwaiter().GetResult();
+
+            if (certificadoResposta == null) return new CertificadoSituacaoDTO(empresa.Inscricao, empresa.RazaoSocial);
+
+            var certificado = JsonConvert.DeserializeObject<CertificadoSimplificadoDTO>(certificadoResposta);
+
+            return new CertificadoSituacaoDTO()
+            {
+                InscricaoEmpresa = empresa.Inscricao,
+                NomeEmpresa = empresa.RazaoSocial,
+                DataVencimento = certificado.DataVencimento,
+                Vencido = certificado.DataVencimento <= UtilitarioDatas.ConvertToIntDateTime(DateTime.Now)
+            };
+        }
+
         #region Private Methods
         private ConfiguracaoEmpresa BuscarConfiguracaoEmpresa() => _repositoryFactory.Instancie<IConfiguracaoEmpresaRepository>().BuscarTodos().FirstOrDefault();
 

@@ -13,5 +13,6 @@ namespace TronBox.Application.Services.Interfaces
         EmpresaDTO BuscarEmpresa();
         void AtualizarEmpresa(EmpresaDTO empresaDto);
         void AtualizarEmail(AtualizacaoEmailDTO empregado);
+        CertificadoSituacaoDTO SituacaoCertificado();
     }
 }

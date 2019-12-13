@@ -106,5 +106,8 @@ namespace TronBox.UI.Controllers
                 mensagem = "Operação realizada com sucesso."
             });
         }
+    
+        [HttpGet("situacao-certificado")]
+        public IActionResult SituacaoCertificado() => Ok(AppServiceFactory.Instancie<IConfiguracaoEmpresaAppService>().SituacaoCertificado());
     }
 }
