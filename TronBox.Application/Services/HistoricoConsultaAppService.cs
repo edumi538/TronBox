@@ -1,10 +1,8 @@
 ﻿using AutoMapper;
-using Comum.Domain.Aggregates.EmpresaAgg.Repository;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using TronBox.Application.Services.Interfaces;
-using TronBox.Domain.Aggregates.ConfiguracaoEmpresaAgg.Repository;
 using TronBox.Domain.Aggregates.HistoricoConsultaAgg;
 using TronBox.Domain.Aggregates.HistoricoConsultaAgg.Repository;
 using TronBox.Domain.DTO;
@@ -19,8 +17,8 @@ namespace TronBox.Application.Services
 {
     public class HistoricoConsultaAppService : IHistoricoConsultaAppService
     {
-        //public static string URL_AGENTE_MANIFESTACAO = "http://192.168.10.229:8082";
-        public static string URL_AGENTE_MANIFESTACAO = "http://10.20.30.28:8085";
+        public static string URL_AGENTE_MANIFESTACAO_NFE = "http://10.20.30.28:8085";
+        public static string URL_AGENTE_MANIFESTACAO_CTE = "http://10.20.30.28:8083";
 
         #region Membros
         private readonly IBus _bus;
@@ -62,34 +60,31 @@ namespace TronBox.Application.Services
             return historicoConsulta != null ? historicoConsulta.UltimoNSU : "0";
         }
 
-        public void BuscarManualmente()
+        public void BuscarManualmente(ETipoDocumentoConsulta tipo, DadosBuscaDTO dadosBuscaDTO)
         {
-            var empresa = _mapper.Map<EmpresaDTO>(_repositoryFactory.Instancie<IEmpresaRepository>().BuscarTodos().FirstOrDefault());
-
-            var configuracaoEmpresa = _mapper.Map<ConfiguracaoEmpresaDTO>(_repositoryFactory.Instancie<IConfiguracaoEmpresaRepository>()
-                .BuscarTodos().FirstOrDefault());
-
-            if (empresa.UF == null || configuracaoEmpresa == null)
-            {
-                _bus.RaiseEvent(new DomainNotification("ConfiguracaoIncompleta", "O cadastro da empresa está incompleto."));
-                return;
-            }
-
-            var dadosBusca = new
-            {
-                ultNSU = "0",
-                autoManifest = configuracaoEmpresa.ManifestarAutomaticamente,
-                empresa.UF,
-                saveOnlyManifestedInvoices = configuracaoEmpresa.SalvarSomenteManifestadas,
-                previousInvoices = configuracaoEmpresa.MetodoBusca == EMetodoBusca.UltimosMeses ? "last_three_months" : "current_month",
-                consultType = ETipoConsulta.Manual,
-                limitConsults = false
-            };
-
-            UtilitarioHttpClient.PostRequest(string.Empty, URL_AGENTE_MANIFESTACAO, $"mdf-e/send-nsu/registry/{configuracaoEmpresa.Inscricao}", dadosBusca);
+            if (tipo == ETipoDocumentoConsulta.NFe)
+                RealizarBuscaNFe(dadosBuscaDTO);
+            if (tipo == ETipoDocumentoConsulta.CTe)
+                RealizarBuscaCTe(dadosBuscaDTO);
         }
 
+
         #region Private Methods
+        private static void RealizarBuscaNFe(DadosBuscaDTO dadosBuscaDTO)
+        {
+            var dadosBusca = new DadosManifestacaoNFeDTO("0", dadosBuscaDTO.UF, dadosBuscaDTO.MetodoBusca == EMetodoBusca.UltimosMeses ? "last_three_months" : "current_month",
+                (int)ETipoConsulta.Manual, dadosBuscaDTO.ManifestarAutomaticamente, dadosBuscaDTO.SalvarSomenteManifestadas, false);
+
+            UtilitarioHttpClient.PostRequest(string.Empty, URL_AGENTE_MANIFESTACAO_NFE, $"mdf-e/send-nsu/registry/{dadosBuscaDTO.Inscricao}", dadosBusca);
+        }
+
+        private static void RealizarBuscaCTe(DadosBuscaDTO dadosBuscaDTO)
+        {
+            var dadosBusca = new DadosManifestacaoCTeDTO("0", dadosBuscaDTO.UF, (int)ETipoConsulta.Manual, dadosBuscaDTO.MetodoBusca == EMetodoBusca.MesAtual);
+
+            UtilitarioHttpClient.PostRequest(string.Empty, URL_AGENTE_MANIFESTACAO_CTE, $"cte/customer/{dadosBuscaDTO.Inscricao}/new-documents", dadosBusca);
+        }
+
         private bool EhValido(HistoricoConsulta historico)
         {
             var validator = new HistoricoConsultaValidator().Validate(historico);

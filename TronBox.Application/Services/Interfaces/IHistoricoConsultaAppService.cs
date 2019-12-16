@@ -11,6 +11,6 @@ namespace TronBox.Application.Services.Interfaces
         void Inserir(HistoricoConsultaDTO historicoConsulta);
         HistoricoConsultaDTO ObterUltimaConsulta();
         string ObterUltimoNSU(ETipoDocumentoConsulta tipoDocumento);
-        void BuscarManualmente();
+        void BuscarManualmente(ETipoDocumentoConsulta tipo, DadosBuscaDTO dadosBuscaDTO);
     }
 }

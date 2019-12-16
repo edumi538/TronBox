@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Linq;
-using System.Threading.Tasks;
 using TronBox.Application.Services.Interfaces;
 using TronBox.Domain.DTO;
 using TronBox.Domain.Enums;
@@ -76,10 +75,10 @@ namespace TronBox.API.Controllers
             );
         }
 
-        [HttpPost("realizar-busca")]
-        public IActionResult BuscarManualmente()
+        [HttpPost("realizar-busca/{tipo}")]
+        public IActionResult BuscarManualmente(ETipoDocumentoConsulta tipo, [FromBody]DadosBuscaDTO dadosBuscaDTO)
         {
-            AppServiceFactory.Instancie<IHistoricoConsultaAppService>().BuscarManualmente();
+            AppServiceFactory.Instancie<IHistoricoConsultaAppService>().BuscarManualmente(tipo, dadosBuscaDTO);
 
             if (_notifications.HasNotifications())
             {
