@@ -12,8 +12,8 @@
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="7.0.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.1.4" />
-    <PackageReference Include="Zeus.Net.CTe" Version="1.0.0.948" />
-    <PackageReference Include="Zeus.Net.NFe.NFCe" Version="1.0.1.948" />
+    <PackageReference Include="Zeus.Net.CTe" Version="1.0.0.976" />
+    <PackageReference Include="Zeus.Net.NFe.NFCe" Version="1.0.1.976" />
     <PackageReference Include="ZionDanfe" Version="0.9.99" />
   </ItemGroup>
 

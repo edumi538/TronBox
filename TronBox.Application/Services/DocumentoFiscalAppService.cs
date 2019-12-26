@@ -431,6 +431,9 @@ namespace TronBox.Application.Services
 
         private ETipoDocumentoFiscal ObterTipoConhecimentoTransporte(string inscricaoEmpresa, cteProc cte)
         {
+            if (cte.CTe.infCte.ide.tomaBase3 == null && cte.CTe.infCte.ide.toma4 != null)
+                return inscricaoEmpresa == (cte.CTe.infCte.ide.toma4.CNPJ ?? cte.CTe.infCte.ide.toma4.CPF) ? ETipoDocumentoFiscal.CteEntrada : ETipoDocumentoFiscal.CteSaida;
+
             switch (cte.CTe.infCte.ide.tomaBase3.toma)
             {
                 case CTe.Classes.Informacoes.Tipos.toma.Remetente:
