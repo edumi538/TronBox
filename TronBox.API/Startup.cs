@@ -12,6 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.PlatformAbstractions;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using MongoDB.Bson;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
@@ -22,6 +23,7 @@ using System.IO;
 using System.Net;
 using System.Text;
 using TronBox.API.Helpers;
+using TronBox.Domain.Automapper;
 using TronBox.Infra.IoC;
 using TronBox.UI.Helpers;
 using TronCore.DefinicoesConfiguracoes;
@@ -47,14 +49,14 @@ namespace TronBox
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
             services.AddOptions();
-            services.AddAutoMapper();
+            services.AddSingleton(AutoMapperConfiguration.RegisterMappings());
+            services.AddAutoMapper(typeof(Startup));
             services.AddScoped<AuditarAttribute>();
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
             #region Contexts
             services.AddScoped<SuiteMongoDbContext>();
-            services.AddEntityFrameworkSqlServer().AddDbContext<SuiteDbContext>(ServiceLifetime.Scoped);
             #endregion
 
             Bootstrapper.RegisterServices(services, Configuration);
@@ -112,15 +114,15 @@ namespace TronBox
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1",
-                    new Info
+                    new OpenApiInfo
                     {
                         Title = "Tron Box",
                         Version = "v1",
                         Description = Modulo.Box.Titulo,
-                        Contact = new Contact
+                        Contact = new OpenApiContact
                         {
                             Name = "Tron Box",
-                            Url = Constantes.URI_BASE_BX_PORTAL
+                            Url = new Uri(Constantes.URI_BASE_BX_PORTAL)
                         }
                     });
 
@@ -135,26 +137,21 @@ namespace TronBox
 
                 c.IncludeXmlComments(caminhoXmlDoc);
 
-                c.AddSecurityDefinition("Bearer", new ApiKeyScheme
+                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
                     Name = "Authorization",
-                    In = "header",
                     Description = "JWT Authorization header using the Bearer scheme. Example: \"Bearer {token}\"",
-                    Type = "apiKey"
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.ApiKey,
+                    Scheme = "Bearer",
                 });
 
-                c.AddSecurityDefinition("ServiceIdentify", new ApiKeyScheme
+                c.AddSecurityDefinition("ServiceIdentify", new OpenApiSecurityScheme
                 {
                     Description = "Service Identify is definition of tenant. Example: \"ServiceIdentify: {tenantId}\"",
                     Name = "ServiceIdentify",
-                    In = "header",
-                    Type = "apiKey"
-                });
-
-                c.AddSecurityRequirement(new Dictionary<string, IEnumerable<string>>
-                {
-                    { "Bearer", new string[] { } },
-                    { "ServiceIdentify", new string[] { } }
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.ApiKey
                 });
             });
             #endregion

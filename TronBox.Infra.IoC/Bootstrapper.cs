@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using Comum.Application.Services;
+﻿using Comum.Application.Services;
 using Comum.Application.Services.Interfaces;
 using Comum.Domain.Aggregates.EmpresaAgg.Repository;
 using Comum.Domain.Aggregates.PessoaAgg.Repository;
@@ -19,7 +18,6 @@ using TronBox.Domain.Aggregates.HistoricoConsultaAgg.Repository;
 using TronBox.Domain.Aggregates.HistoricoConsultaMatoGrossoAgg.Repository;
 using TronBox.Domain.Aggregates.ManifestoAgg.Repository;
 using TronBox.Infra.Data.Repositories;
-using TronBox.Infra.IoC.Extensions;
 using TronCore.Dominio.Auditoria;
 using TronCore.Dominio.Notifications;
 using TronCore.Enumeradores;
@@ -33,10 +31,6 @@ namespace TronBox.Infra.IoC
         public static void RegisterServices(IServiceCollection services, IConfiguration configuration)
         {
             services.AddScoped<IDbContext, SuiteMongoDbContext>();
-
-            // Aplicação
-            services.AddSingleton(Mapper.Configuration);
-            services.AddScoped<IMapper>(sp => new Mapper(sp.GetRequiredService<AutoMapper.IConfigurationProvider>(), sp.GetService));       
 
             // Eventos de Domínio
             services.AddScoped<IDomainNotificationHandler<DomainNotification>, DomainNotificationHandler>();
@@ -80,8 +74,6 @@ namespace TronBox.Infra.IoC
             services.AddScoped<IPessoaUsuarioLogado, PessoaUsuarioLogado>();
 
             services.AddTransient<IRegistroLogging, RegistroLogging>();
-
-            services.AddIdentityService();
         }
     }
 }

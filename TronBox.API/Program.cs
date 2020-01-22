@@ -3,7 +3,6 @@ using Microsoft.Extensions.Configuration;
 using System;
 using System.IO;
 using System.Reflection;
-using TronBox.Domain.Automapper;
 using TronBox.Domain.Enums;
 using TronCore.DefinicoesConfiguracoes;
 using Utilitarios.Atualizacao;
@@ -14,8 +13,6 @@ namespace TronBox
     {
         public static void Main(string[] args)
         {
-            //Invoco a inicialização personalizada do AutoMapper
-            AutoMapperConfiguration.RegisterMappings();
             try
             {
                 //Invoca a atualização das funções do Módulo.
@@ -26,10 +23,10 @@ namespace TronBox
                 Console.WriteLine(ex.Message);
             }
             //Inicio o serviço da WebAPI
-            BuildWebHost(args).Run();
+            CreateWebHostBuilder(args).Build().Run();
         }
 
-        public static IWebHost BuildWebHost(string[] args)
+        public static IWebHostBuilder CreateWebHostBuilder(string[] args)
         {
             return new WebHostBuilder()
                 .UseKestrel()
@@ -46,7 +43,7 @@ namespace TronBox
                     }
                     else
                     {
-                         config.AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true, reloadOnChange: true);
+                        config.AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true, reloadOnChange: true);
                     }
 
                     if (env.IsDevelopment())
@@ -70,8 +67,7 @@ namespace TronBox
                 {
                     options.ValidateScopes = context.HostingEnvironment.IsDevelopment();
                 })
-                .UseStartup<Startup>()
-                .Build();
+                .UseStartup<Startup>();
         }
     }
 }

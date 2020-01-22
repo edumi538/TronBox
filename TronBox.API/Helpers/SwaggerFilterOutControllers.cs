@@ -1,4 +1,4 @@
-﻿using Swashbuckle.AspNetCore.Swagger;
+﻿using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Linq;
 
@@ -6,8 +6,7 @@ namespace TronBox.API.Helpers
 {
     internal class SwaggerFilterOutControllers : IDocumentFilter
     {
-
-        void IDocumentFilter.Apply(SwaggerDocument swaggerDoc, DocumentFilterContext context)
+        void IDocumentFilter.Apply(OpenApiDocument swaggerDoc, DocumentFilterContext context)
         {
             foreach (var item in swaggerDoc.Paths.ToList())
             {
@@ -15,21 +14,21 @@ namespace TronBox.API.Helpers
                     swaggerDoc.Paths.Remove(item.Key);
             }
 
-            swaggerDoc.Definitions.Remove("ConfiguracaoNotificacoesViewModel");
-            swaggerDoc.Definitions.Remove("EmpresaViewModel");
-            swaggerDoc.Definitions.Remove("InquilinoMongoDTO");
-            swaggerDoc.Definitions.Remove("PessoaViewModel");
-            swaggerDoc.Definitions.Remove("PessoaDispositivoViewModel");
-            swaggerDoc.Definitions.Remove("Pessoa");
-            swaggerDoc.Definitions.Remove("Dispositivo");
-            swaggerDoc.Definitions.Remove("Cidade");
-            swaggerDoc.Definitions.Remove("ValidationResult");
-            swaggerDoc.Definitions.Remove("ValidationFailure");
-            swaggerDoc.Definitions.Remove("DispositivoViewModel");
-            swaggerDoc.Definitions.Remove("PessoaUsuarioViewModel");
-            swaggerDoc.Definitions.Remove("PushModel");
-            swaggerDoc.Definitions.Remove("IFormFile");
-            swaggerDoc.Definitions.Remove("PessoaDTO");
+            swaggerDoc.Extensions.Remove("ConfiguracaoNotificacoesViewModel");
+            swaggerDoc.Extensions.Remove("EmpresaViewModel");
+            swaggerDoc.Extensions.Remove("InquilinoMongoDTO");
+            swaggerDoc.Extensions.Remove("PessoaViewModel");
+            swaggerDoc.Extensions.Remove("PessoaDispositivoViewModel");
+            swaggerDoc.Extensions.Remove("Pessoa");
+            swaggerDoc.Extensions.Remove("Dispositivo");
+            swaggerDoc.Extensions.Remove("Cidade");
+            swaggerDoc.Extensions.Remove("ValidationResult");
+            swaggerDoc.Extensions.Remove("ValidationFailure");
+            swaggerDoc.Extensions.Remove("DispositivoViewModel");
+            swaggerDoc.Extensions.Remove("PessoaUsuarioViewModel");
+            swaggerDoc.Extensions.Remove("PushModel");
+            swaggerDoc.Extensions.Remove("IFormFile");
+            swaggerDoc.Extensions.Remove("PessoaDTO");
         }
     }
 }

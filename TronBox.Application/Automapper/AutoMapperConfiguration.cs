@@ -4,16 +4,17 @@ namespace TronBox.Domain.Automapper
 {
     public class AutoMapperConfiguration
     {
-        public static void RegisterMappings()
+        public static IMapper RegisterMappings()
         {
-            Mapper.Reset();
-            Mapper.Initialize(p =>
+            var config = new MapperConfiguration(cfg =>
             {
-                p.AddProfile<DomainToViewModelMappingProfile>();
-                p.AddProfile<ViewModelToDomainMappingProfile>();
-                p.AddProfile<Comum.Domain.Automapper.DomainToViewModelMappingProfile>();
-                p.AddProfile<Comum.Domain.Automapper.ViewModelToDomainMappingProfile>();
+                cfg.AddProfile<DomainToViewModelMappingProfile>();
+                cfg.AddProfile<ViewModelToDomainMappingProfile>();
+                cfg.AddProfile<Comum.Domain.Automapper.DomainToViewModelMappingProfile>();
+                cfg.AddProfile<Comum.Domain.Automapper.ViewModelToDomainMappingProfile>();
             });
+
+            return config.CreateMapper();
         }
     }
 }
