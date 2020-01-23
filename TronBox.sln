@@ -29,6 +29,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TronSuite", "..\TronSuite\T
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Comum.UI", "..\TronComum\Comum.UI\Comum.UI.csproj", "{FD97016F-1A3C-43E8-AF2F-6EB568A26E57}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TronBox.API.Tests", "TronBox.API.Tests\TronBox.API.Tests.csproj", "{652F7EC5-66A2-42CA-9AAA-818F4B3F8171}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -66,6 +68,10 @@ Global
 		{FD97016F-1A3C-43E8-AF2F-6EB568A26E57}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{FD97016F-1A3C-43E8-AF2F-6EB568A26E57}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FD97016F-1A3C-43E8-AF2F-6EB568A26E57}.Release|Any CPU.Build.0 = Release|Any CPU
+		{652F7EC5-66A2-42CA-9AAA-818F4B3F8171}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{652F7EC5-66A2-42CA-9AAA-818F4B3F8171}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{652F7EC5-66A2-42CA-9AAA-818F4B3F8171}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{652F7EC5-66A2-42CA-9AAA-818F4B3F8171}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -79,6 +85,7 @@ Global
 		{F37F883D-E3BE-447A-9183-56E406A3B20A} = {9FBA6F6F-17A1-4BBD-BD9F-CF65D126077A}
 		{3E1810F3-082E-438F-A999-E95BD82F49D4} = {9FBA6F6F-17A1-4BBD-BD9F-CF65D126077A}
 		{FD97016F-1A3C-43E8-AF2F-6EB568A26E57} = {05056F9F-2C77-422D-977A-29B5AF3B90FB}
+		{652F7EC5-66A2-42CA-9AAA-818F4B3F8171} = {05056F9F-2C77-422D-977A-29B5AF3B90FB}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5D54EC1D-4D23-4543-B9DB-FBC7733BB6BD}
