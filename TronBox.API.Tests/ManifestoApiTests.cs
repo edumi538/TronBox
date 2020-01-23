@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using TronBox.API.Tests.Config;
 using TronBox.Domain.DTO;
 using TronBox.Domain.Enums;
-using TronCore.Utilitarios;
 using Xunit;
 
 namespace TronBox.API.Tests
@@ -28,7 +27,7 @@ namespace TronBox.API.Tests
             _testsFixture = testsFixture;
         }
 
-        [Fact(DisplayName = "Nã inserir novo manifesto invalido")]
+        [Fact(DisplayName = "Não inserir novo manifesto invalido")]
         [Trait("Manifesto", "Integração API - Inserir")]
         public async Task Manifesto_NovoManifestoInvalido_DeveRetornarComErro()
         {

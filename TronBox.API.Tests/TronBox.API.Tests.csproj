@@ -19,4 +19,8 @@
     <ProjectReference Include="..\TronBox.API\TronBox.API.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Files\" />
+  </ItemGroup>
+
 </Project>

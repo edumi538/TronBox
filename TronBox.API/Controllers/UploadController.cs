@@ -33,19 +33,11 @@ namespace TronBox.API.Controllers
         {
             var documentosInseridos = await AppServiceFactory.Instancie<IDocumentoFiscalAppService>().Inserir(arquivos);
 
-            var documentosNaoInseridos = _notifications.GetNotifications()
-                .Select(c => new
-                    {
-                        NomeArquivo = c.Key,
-                        Mensagem = c.Value,
-                        Erros = c.Object
-                    });
+            var documentosNaoInseridos = _notifications
+                .GetNotifications()
+                .Select(c => new RetornoDocumentoFiscalNaoInseridoDTO(c.Key, c.Value, c.Object));
 
-            return Ok(new
-            {
-                documentosInseridos,
-                documentosNaoInseridos
-            });
+            return Ok(new RetornoUploadDTO(documentosInseridos, documentosNaoInseridos));
         }
 
         [HttpPost("single")]
