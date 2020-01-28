@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
+using Sentry.Extensibility;
 using System;
 using System.IO;
+using System.Net;
 using System.Reflection;
 using TronBox.Domain.Enums;
 using TronCore.DefinicoesConfiguracoes;
@@ -33,6 +35,16 @@ namespace TronBox
                 .UseIISIntegration()
                 .UseUrls("http://*.localhost:6004")
                 .UseContentRoot(Directory.GetCurrentDirectory())
+                .UseSentry(options =>
+                {
+                    options.Dsn = "https://a12ec570bf324eefbb39ee20cd8c1fb8@sentry.io/2036782";
+                    options.MaxRequestBodySize = RequestSize.Always;
+                    options.Release = "BX-1.0.0";
+                    options.MaxBreadcrumbs = 200;
+                    options.DecompressionMethods = DecompressionMethods.None;
+                    options.MaxQueueItems = 100;
+                    options.ShutdownTimeout = TimeSpan.FromSeconds(5);
+                })
                 .ConfigureAppConfiguration((hostingContext, config) =>
                 {
                     var env = hostingContext.HostingEnvironment;

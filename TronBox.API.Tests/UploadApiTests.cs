@@ -70,7 +70,7 @@ namespace TronBox.API.Tests
             Assert.Equal(HttpStatusCode.BadRequest, postResponse.StatusCode);
         }
 
-        [Fact(DisplayName = "Upload vários documentos válidos")]
+        [Fact(DisplayName = "Upload vários documentos válidos"), TestPriority(1)]
         [Trait("Upload", "Integração API - Multiple Válidos")]
         public async Task Upload_VariosArquivos_DeveRetornarComSucesso()
         {
@@ -112,7 +112,7 @@ namespace TronBox.API.Tests
             Assert.NotEmpty(retornoUpload.DocumentosInseridos);
         }
 
-        [Fact(DisplayName = "Upload vários documentos inválidos")]
+        [Fact(DisplayName = "Upload vários documentos inválidos"), TestPriority(2)]
         [Trait("Upload", "Integração API - Multiple inválidos")]
         public async Task Upload_VariosArquivos_DeveRetornarComErro()
         {
