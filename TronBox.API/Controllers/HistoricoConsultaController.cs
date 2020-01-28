@@ -2,7 +2,6 @@
 using Comum.UI.Controllers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Linq;
 using TronBox.Application.Services.Interfaces;
 using TronBox.Domain.DTO;
@@ -47,9 +46,6 @@ namespace TronBox.API.Controllers
         [HttpPost]
         public IActionResult Post([FromBody]HistoricoConsultaDTO historicoConsulta)
         {
-            if (historicoConsulta.Id == null)
-                historicoConsulta.Id = Guid.NewGuid().ToString();
-
             AppServiceFactory.Instancie<IHistoricoConsultaAppService>().Inserir(historicoConsulta);
 
             if (_notifications.HasNotifications())

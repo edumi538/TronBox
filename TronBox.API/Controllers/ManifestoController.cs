@@ -65,9 +65,6 @@ namespace TronBox.UI.Controllers
         [IdentificadorOperacao(eFuncaoTronBox.ID_MANIFESTO, "Inserir Manifesto", eOperacaoSuite.ID_OP_INSERIR, typeof(eOperacaoSuite), typeof(eFuncaoTronBox), "/manifestos/adicionar")]
         public IActionResult Post([FromBody]ManifestoDTO manifestoDTO)
         {
-            if (manifestoDTO.Id == null)
-                manifestoDTO.Id = Guid.NewGuid().ToString();
-
             AppServiceFactory.Instancie<IManifestoAppService>().Inserir(manifestoDTO);
 
             if (_notifications.HasNotifications())

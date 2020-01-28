@@ -42,9 +42,6 @@ namespace TronBox.API.Controllers
         [HttpPost]
         public IActionResult Post([FromBody]HistoricoConsultaMatoGrossoDTO historicoConsulta)
         {
-            if (historicoConsulta.Id == null)
-                historicoConsulta.Id = Guid.NewGuid().ToString();
-
             AppServiceFactory.Instancie<IHistoricoConsultaMatoGrossoAppService>().Inserir(historicoConsulta);
 
             if (_notifications.HasNotifications())

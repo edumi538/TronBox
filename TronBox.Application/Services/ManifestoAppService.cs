@@ -71,6 +71,15 @@ namespace TronBox.Application.Services
 
         public void Inserir(ManifestoDTO manifestoDTO)
         {
+            if (manifestoDTO == null)
+            {
+                _bus.RaiseEvent(new DomainNotification("Manifesto", "Manifesto enviado não informado ou está inválido."));
+                return;
+            }
+
+            if (manifestoDTO.Id == null)
+                manifestoDTO.Id = Guid.NewGuid().ToString();
+
             var manifesto = _mapper.Map<Manifesto>(manifestoDTO);
 
             if (_repositoryFactory.Instancie<IManifestoRepository>().BuscarTodos(c => c.ChaveDocumentoFiscal == manifesto.ChaveDocumentoFiscal).Any())

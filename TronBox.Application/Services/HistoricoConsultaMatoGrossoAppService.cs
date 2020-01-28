@@ -53,6 +53,15 @@ namespace TronBox.Application.Services
 
         public void Inserir(HistoricoConsultaMatoGrossoDTO historicoConsulta)
         {
+            if (historicoConsulta == null)
+            {
+                _bus.RaiseEvent(new DomainNotification("HistoricoConsultaMatoGrosso", "Histórico de Consulta do Mato Groso enviado não informado ou está inválido."));
+                return;
+            }
+
+            if (historicoConsulta.Id == null)
+                historicoConsulta.Id = Guid.NewGuid().ToString();
+
             var historico = _mapper.Map<HistoricoConsultaMatoGrosso>(historicoConsulta);
 
             if (EhValido(historico)) _repositoryFactory.Instancie<IHistoricoConsultaMatoGrossoRepository>().Inserir(historico);

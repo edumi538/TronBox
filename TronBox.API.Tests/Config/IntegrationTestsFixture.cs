@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Bogus;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Internal;
 using Newtonsoft.Json;
 using System;
@@ -264,6 +265,36 @@ namespace TronBox.API.Tests.Config
                 }
             };
         }
+
+        public HistoricoConsultaDTO ObterHistoricoConsultaValido()
+        {
+            return new HistoricoConsultaDTO
+            {
+                TipoDocumentoConsulta = new Faker().PickRandom<ETipoDocumentoConsulta>(),
+                TipoConsulta = new Faker().PickRandom<ETipoConsulta>(),
+                DataHoraConsulta = UtilitarioDatas.ConvertToIntDateTime(DateTime.Now),
+                UltimoNSU = new Faker().Random.AlphaNumeric(10),
+                DocumentosEncontrados = new Faker().Random.Int(),
+                DocumentosArmazenados = new Faker().Random.Int()
+            };
+        }
+
+        public HistoricoConsultaDTO ObterHistoricoConsultaInvalido() => new HistoricoConsultaDTO();
+
+        public HistoricoConsultaMatoGrossoDTO ObterHistoricoConsultaMatoGrossoValido()
+        {
+            return new HistoricoConsultaMatoGrossoDTO
+            {
+                InscricaoEstadual = new Faker().Random.AlphaNumeric(10),
+                TipoConsulta = new Faker().PickRandom<ETipoConsulta>(),
+                DataHoraConsulta = UtilitarioDatas.ConvertToIntDateTime(DateTime.Now),
+                DataInicialConsultada = UtilitarioDatas.ConvertToIntDate(DateTime.Now.AddDays(-30)),
+                DataFinalConsultada = UtilitarioDatas.ConvertToIntDate(DateTime.Now),
+                ChavesEncontradas = new Faker().Make(3, () => new Faker().Random.AlphaNumeric(44))
+            };
+        }
+
+        public HistoricoConsultaMatoGrossoDTO ObterHistoricoConsultaMatoGrossoInvalido() => new HistoricoConsultaMatoGrossoDTO();
 
         public void Dispose()
         {
