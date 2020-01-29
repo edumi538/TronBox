@@ -4,11 +4,13 @@ using CTe.Classes;
 using DFe.Classes.Flags;
 using DFe.Utils;
 using FluentValidation.Results;
+using Microsoft.AspNetCore.Http;
 using NFe.Classes;
 using NFe.Classes.Informacoes.Destinatario;
 using NFe.Classes.Informacoes.Detalhe;
 using NFe.Classes.Informacoes.Emitente;
 using NFe.Classes.Informacoes.Identificacao.Tipos;
+using Sentry;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -231,8 +233,9 @@ namespace TronBox.Application.Services
                         }
                     }
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
+                    NotificarExcecaoSentry(arquivo, ex);
                     NotificarDocumentoInvalidos(arquivo.FileName, "Documento não suportado.");
                     continue;
                 }
@@ -649,6 +652,21 @@ namespace TronBox.Application.Services
                 var manifestosAtualizados = manifestos.Select(c => { c.SituacaoDocumentoFiscal = ESituacaoDocumentoFiscal.Armazenado; return c; });
 
                 _repositoryFactory.Instancie<IManifestoRepository>().AtualizarTodos(manifestosAtualizados);
+            }
+        }
+
+        private static void NotificarExcecaoSentry(IFormFile arquivo, Exception ex)
+        {
+            if (arquivo != null)
+            {
+                var sentry = new SentryEvent(ex);
+
+                using (StreamReader reader = new StreamReader(arquivo.OpenReadStream()))
+                {
+                    sentry.Message = reader.ReadToEnd();
+
+                    SentrySdk.CaptureEvent(sentry);
+                }
             }
         }
 
