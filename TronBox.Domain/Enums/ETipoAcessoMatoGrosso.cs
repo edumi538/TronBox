@@ -7,7 +7,7 @@ namespace TronBox.Domain.Enums
         [Display(Name = "Contabilista")]
         Contabilista = 1,
 
-        [Display(Name = "Escritorio")]
+        [Display(Name = "Escritório")]
         Escritorio = 2,
 
         [Display(Name = "Individual")]
