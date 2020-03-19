@@ -13,9 +13,6 @@ namespace TronBox.Domain.InnerClass
     {
         public DadosFornecedorValidator()
         {
-            RuleFor(a => a.Inscricao)
-               .NotEmpty().WithMessage(MensagensValidacao.Requerido("Inscrição"));
-
             RuleFor(a => a.RazaoSocial)
                 .NotEmpty().WithMessage(MensagensValidacao.Requerido("Razão Social"));
         }

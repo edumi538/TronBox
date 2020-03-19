@@ -6,8 +6,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Zeus.Net.CTe" Version="1.0.0.976" />
-    <PackageReference Include="Zeus.Net.NFe.NFCe" Version="1.0.1.976" />
+    <PackageReference Include="Zeus.Net.CTe" Version="1.0.0.1007" />
+    <PackageReference Include="Zeus.Net.NFe.NFCe" Version="1.0.1.1007" />
   </ItemGroup>
 
   <ItemGroup>

@@ -18,10 +18,13 @@ using TronBox.Domain.Aggregates.HistoricoConsultaAgg.Repository;
 using TronBox.Domain.Aggregates.HistoricoConsultaMatoGrossoAgg.Repository;
 using TronBox.Domain.Aggregates.ManifestoAgg.Repository;
 using TronBox.Infra.Data.Repositories;
+using TronCore.DefinicoesConfiguracoes;
 using TronCore.Dominio.Auditoria;
 using TronCore.Dominio.Notifications;
 using TronCore.Enumeradores;
+using TronCore.Notificacao.Interfaces;
 using TronCore.Persistencia.Context;
+using TronCore.Servicos;
 using TronCore.Utilitarios.EnvioDeArquivo;
 
 namespace TronBox.Infra.IoC
@@ -66,6 +69,8 @@ namespace TronBox.Infra.IoC
                     storageAccount: ConstantsEnvioArquivo.storageAccountNovo,
                     storageKey: ConstantsEnvioArquivo.storageKeyNovo,
                     containerName: Modulo.Box.ContainerName));
+
+            services.AddScoped<INotificacao>(factory => new Notificacao(Constantes.APP_CENTER_TOKEN, string.Empty, string.Empty));
             #endregion
 
             //// UnitOfWork
