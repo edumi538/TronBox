@@ -10,6 +10,7 @@ namespace TronBox.Domain.Aggregates.ManifestoAgg
     {
         public string ChaveDocumentoFiscal { get; set; }
         public string NumeroDocumentoFiscal { get; set; }
+        [BsonIgnoreIfDefault]
         public double ValorDocumentoFiscal { get; set; }
         public int DataArmazenamento { get; set; }
         public int DataEmissaoManifesto { get; set; }
@@ -31,10 +32,6 @@ namespace TronBox.Domain.Aggregates.ManifestoAgg
 
             RuleFor(a => a.NumeroDocumentoFiscal)
                 .NotEmpty().WithMessage(MensagensValidacao.Requerido("Número do Documento Fiscal"));
-
-            RuleFor(a => a.ValorDocumentoFiscal)
-                .NotEmpty().WithMessage(MensagensValidacao.Requerido("Valor do Documento Fiscal"))
-                .NotEqual(0).WithMessage(MensagensValidacao.NaoPodeSerIgualA("Valor do Documento Fiscal", "zero"));
 
             RuleFor(a => a.DataArmazenamento)
                 .NotEmpty().WithMessage(MensagensValidacao.Requerido("Data de Armazenamento"));

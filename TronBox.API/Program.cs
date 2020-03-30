@@ -25,26 +25,17 @@ namespace TronBox
                 Console.WriteLine(ex.Message);
             }
             //Inicio o serviço da WebAPI
-            CreateWebHostBuilder(args).Build().Run();
+            CreateWebHostBuilder(args).Run();
         }
 
-        public static IWebHostBuilder CreateWebHostBuilder(string[] args)
+        public static IWebHost CreateWebHostBuilder(string[] args)
         {
             return new WebHostBuilder()
                 .UseKestrel()
                 .UseIISIntegration()
                 .UseUrls("http://*.localhost:6004")
                 .UseContentRoot(Directory.GetCurrentDirectory())
-                .UseSentry(options =>
-                {
-                    options.Dsn = "https://a12ec570bf324eefbb39ee20cd8c1fb8@sentry.io/2036782";
-                    options.MaxRequestBodySize = RequestSize.Always;
-                    options.Release = "BX-1.0.0";
-                    options.MaxBreadcrumbs = 200;
-                    options.DecompressionMethods = DecompressionMethods.None;
-                    options.MaxQueueItems = 100;
-                    options.ShutdownTimeout = TimeSpan.FromSeconds(5);
-                })
+                .UseSentry()
                 .ConfigureAppConfiguration((hostingContext, config) =>
                 {
                     var env = hostingContext.HostingEnvironment;
@@ -79,7 +70,8 @@ namespace TronBox
                 {
                     options.ValidateScopes = context.HostingEnvironment.IsDevelopment();
                 })
-                .UseStartup<Startup>();
+                .UseStartup<Startup>()
+                .Build();
         }
     }
 }
