@@ -16,5 +16,6 @@ namespace TronBox.Application.Services.Interfaces
         void Deletar(Guid id);
         bool ExisteNaoProcessado();
         void ConfirmarImportacao(Guid id, DadosImportacaoDTO dadosImportacao);
+        void CancelarDocumentos(IEnumerable<string> chavesCancelamento);
     }
 }

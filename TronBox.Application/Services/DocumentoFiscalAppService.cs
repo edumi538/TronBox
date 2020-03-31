@@ -171,6 +171,28 @@ namespace TronBox.Application.Services
                 _repositoryFactory.Instancie<IDocumentoFiscalRepository>().Atualizar(documentoFiscal);
         }
 
+        public void CancelarDocumentos(IEnumerable<string> chavesCancelamento)
+        {
+            var documentosExistentes = _repositoryFactory.Instancie<IDocumentoFiscalRepository>()
+                .BuscarTodos(d => chavesCancelamento.Contains(d.ChaveDocumentoFiscal)).ToList();
+
+            if (documentosExistentes.Any())
+            {
+                var documentosAtualizados = documentosExistentes.Select(c => { c.Cancelado = true; return c; });
+
+                _repositoryFactory.Instancie<IDocumentoFiscalRepository>().AtualizarTodos(documentosAtualizados);
+            }
+
+            var manifestosExistentes = _repositoryFactory.Instancie<IManifestoRepository>().BuscarTodos(d => chavesCancelamento.Contains(d.ChaveDocumentoFiscal));
+
+            if (manifestosExistentes.Any())
+            {
+                var manifestosAtualizados = manifestosExistentes.Select(c => { c.SituacaoManifesto = ESituacaoManifesto.Cancelado; return c; });
+
+                _repositoryFactory.Instancie<IManifestoRepository>().AtualizarTodos(manifestosAtualizados);
+            }
+        }
+
         #region Private Methods
         private async Task<List<DocumentoFiscalDTO>> ProcessarArquivosEnviados(EnviarArquivosDTO arquivos, EmpresaDTO empresa)
         {

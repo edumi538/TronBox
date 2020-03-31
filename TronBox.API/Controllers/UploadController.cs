@@ -2,6 +2,7 @@
 using Comum.UI.Controllers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using TronBox.Application.Services.Interfaces;
@@ -45,6 +46,33 @@ namespace TronBox.API.Controllers
         public async Task<IActionResult> UploadSingle([FromForm]EnviarArquivosDTO arquivos)
         {
             await AppServiceFactory.Instancie<IDocumentoFiscalAppService>().Inserir(arquivos);
+
+            if (_notifications.HasNotifications())
+            {
+                return BadRequest(new
+                {
+                    sucesso = false,
+                    erros = _notifications.GetNotifications()
+                        .Select(c => new
+                        {
+                            NomeArquivo = c.Key,
+                            Mensagem = c.Value,
+                            Erros = c.Object
+                        })
+                });
+            }
+
+            return Ok(new
+            {
+                sucesso = true,
+                mensagem = "Operação realizada com sucesso."
+            });
+        }
+
+        [HttpPost("cancelamento")]
+        public async Task<IActionResult> CancelarDocumentos([FromBody]IEnumerable<string> chavesCancelamento)
+        {
+            AppServiceFactory.Instancie<IDocumentoFiscalAppService>().CancelarDocumentos(chavesCancelamento);
 
             if (_notifications.HasNotifications())
             {
