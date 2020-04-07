@@ -1,18 +1,21 @@
-﻿using Comum.UI.Controllers;
+﻿using Comum.Enums;
+using Comum.UI.Controllers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Linq;
 using TronBox.Application.Services.Interfaces;
 using TronBox.Domain.DTO;
+using TronBox.Domain.Enums;
 using TronCore.Domain.Factories;
 using TronCore.Dominio.Notifications;
+using TronCore.Seguranca.AOP.Anotacao;
 
 namespace TronBox.API.Controllers
 {
     [Authorize]
     [Produces("application/json")]
     [Route("api/v1/historicos-consulta-mato-grosso")]
+    [IdentificadorFuncao(typeof(eFuncaoTronBox), eFuncaoTronBox.ID_HISTORICO_CONSULTA_SEFAZ_MT)]
     public class HistoricoConsultaMatoGrossoController : BaseController
     {
         readonly IDomainNotificationHandler<DomainNotification> _notifications;
@@ -23,6 +26,7 @@ namespace TronBox.API.Controllers
         }
 
         [HttpGet]
+        [IdentificadorOperacao(eFuncaoTronBox.ID_HISTORICO_CONSULTA_SEFAZ_MT, "Carregar Histórico de Consultas", eOperacaoSuite.ID_OP_ACESSO, typeof(eOperacaoSuite), typeof(eFuncaoTronBox), "/historicos-consulta-sefaz-mt")]
         public IActionResult Get(string filtro) => Ok(AppServiceFactory.Instancie<IHistoricoConsultaMatoGrossoAppService>().BuscarTodos(filtro));
 
         [HttpGet("ultima")]
