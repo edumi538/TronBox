@@ -12,7 +12,7 @@ namespace TronBox.Domain.Aggregates.ManifestoAgg
         public string NumeroDocumentoFiscal { get; set; }
         [BsonIgnoreIfDefault]
         public double ValorDocumentoFiscal { get; set; }
-        public int DataArmazenamento { get; set; }
+        public long DataArmazenamento { get; set; }
         public int DataEmissaoManifesto { get; set; }
         [BsonIgnoreIfDefault]
         public int DataManifesto { get; set; }

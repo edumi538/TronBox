@@ -16,7 +16,7 @@ namespace TronBox.Domain.DTO
         public double ValorDocumentoFiscal { get; set; }
         public string SerieDocumentoFiscal { get; set; }
         public string NsuDocumentoFiscal { get; set; }
-        public int DataArmazenamento { get; set; }
+        public long DataArmazenamento { get; set; }
         public int DataEmissaoDocumento { get; set; }
         public bool Cancelado { get; set; }
         public bool Rejeitado { get; set; }
@@ -28,7 +28,7 @@ namespace TronBox.Domain.DTO
         public string NomeArquivo { get; set; }
         public DateTime DataArmazenamentoFormatada
         {
-            get => UtilitarioDatas.ConvertIntToDate(DataArmazenamento);
+            get => UtilitarioDatas.ConvertIntToDateTime(DataArmazenamento);
         }
         public DateTime DataEmissaoDocumentoFormatada
         {

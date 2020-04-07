@@ -7,7 +7,7 @@ namespace TronBox.Domain.DTO
 {
     public class DetalhesDocumentoFiscalDTO
     {
-        public int DataArmazenamento { get; set; }
+        public long DataArmazenamento { get; set; }
         public bool Cancelado { get; set; }
         public bool Rejeitado { get; set; }
         public bool Denegada { get; set; }

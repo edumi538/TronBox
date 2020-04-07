@@ -12,7 +12,7 @@ namespace TronBox.Domain.DTO
         public string ChaveDocumentoFiscal { get; set; }
         public string NumeroDocumentoFiscal { get; set; }
         public double ValorDocumentoFiscal { get; set; }
-        public int DataArmazenamento { get; set; }
+        public long DataArmazenamento { get; set; }
         public int DataEmissaoManifesto { get; set; }
         public int DataManifesto { get; set; }
         public ESituacaoManifesto SituacaoManifesto { get; set; }
@@ -21,7 +21,7 @@ namespace TronBox.Domain.DTO
         public DadosFornecedorDTO DadosFornecedor { get; set; }
         public DateTime DataArmazenamentoFormatada
         {
-            get => UtilitarioDatas.ConvertIntToDate(DataArmazenamento);
+            get => UtilitarioDatas.ConvertIntToDateTime(DataArmazenamento);
         }
         public DateTime DataEmissaoManifestoFormatada
         {
