@@ -12,6 +12,7 @@ namespace TronBox.Domain.DTO
         public bool ManifestarAutomaticamente { get; set; }
         public bool SalvarSomenteManifestadas { get; set; }
         public EMetodoBusca MetodoBusca { get; set; }
+        public EEstruturaDownload EstruturaDownload { get; set; }
         public DadosMatoGrossoDTO DadosMatoGrosso { get; set; }
         public IEnumerable<InscricaoComplementarDTO> InscricoesComplementares { get; set; }
     }

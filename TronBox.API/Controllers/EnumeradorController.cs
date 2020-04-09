@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NFe.Classes.Informacoes.Detalhe.Tributacao.Estadual.Tipos;
-using NFe.Utils;
 using System;
 using System.Linq;
 using TronBox.Application.Services.Interfaces;
@@ -35,7 +34,7 @@ namespace TronBox.API.Controllers
         public IActionResult GetTipoDocumentoFiscal()
         {
             var tiposDocumentoFiscal = from ETipoDocumentoFiscal d in Enum.GetValues(typeof(ETipoDocumentoFiscal))
-                              select new { value = (int)d, label = EnumHelper<ETipoDocumentoFiscal>.GetDisplayValue(d) };
+                                       select new { value = (int)d, label = EnumHelper<ETipoDocumentoFiscal>.GetDisplayValue(d) };
 
             return Ok(tiposDocumentoFiscal);
         }
@@ -44,7 +43,7 @@ namespace TronBox.API.Controllers
         public IActionResult GetOrigemManifesto()
         {
             var origensManifesto = from EOrigemManifesto d in Enum.GetValues(typeof(EOrigemManifesto))
-                              select new { value = (int)d, label = EnumHelper<EOrigemManifesto>.GetDisplayValue(d) };
+                                   select new { value = (int)d, label = EnumHelper<EOrigemManifesto>.GetDisplayValue(d) };
 
             return Ok(origensManifesto);
         }
@@ -62,7 +61,7 @@ namespace TronBox.API.Controllers
         public IActionResult GetSituacaoDocumento()
         {
             var situacoesDocumento = from ESituacaoDocumentoFiscal d in Enum.GetValues(typeof(ESituacaoDocumentoFiscal))
-                                   select new { value = (int)d, label = EnumHelper<ESituacaoDocumentoFiscal>.GetDisplayValue(d) };
+                                     select new { value = (int)d, label = EnumHelper<ESituacaoDocumentoFiscal>.GetDisplayValue(d) };
 
             return Ok(situacoesDocumento);
         }
@@ -83,7 +82,7 @@ namespace TronBox.API.Controllers
         public IActionResult GetTipoDocumentoConsulta()
         {
             var tiposDocumentoConsulta = from ETipoDocumentoConsulta d in Enum.GetValues(typeof(ETipoDocumentoConsulta))
-                                     select new { value = (int)d, label = EnumHelper<ETipoDocumentoConsulta>.GetDisplayValue(d) };
+                                         select new { value = (int)d, label = EnumHelper<ETipoDocumentoConsulta>.GetDisplayValue(d) };
 
             return Ok(tiposDocumentoConsulta);
         }
@@ -92,7 +91,7 @@ namespace TronBox.API.Controllers
         public IActionResult GetTipoConsulta()
         {
             var tiposConsulta = from ETipoConsulta d in Enum.GetValues(typeof(ETipoConsulta))
-                                     select new { value = (int)d, label = EnumHelper<ETipoConsulta>.GetDisplayValue(d) };
+                                select new { value = (int)d, label = EnumHelper<ETipoConsulta>.GetDisplayValue(d) };
 
             return Ok(tiposConsulta);
         }
@@ -101,9 +100,18 @@ namespace TronBox.API.Controllers
         public IActionResult GetMetodosBusca()
         {
             var metodosBusca = from EMetodoBusca d in Enum.GetValues(typeof(EMetodoBusca))
-                                     select new { value = (int)d, label = EnumHelper<EMetodoBusca>.GetDisplayValue(d) };
+                               select new { value = (int)d, label = EnumHelper<EMetodoBusca>.GetDisplayValue(d) };
 
             return Ok(metodosBusca);
+        }
+
+        [HttpGet("estruturas-download")]
+        public IActionResult GetEstruturaDownload()
+        {
+            var estruturasDownload = from EEstruturaDownload d in Enum.GetValues(typeof(EEstruturaDownload))
+                                     select new { value = (int)d, label = EnumHelper<EEstruturaDownload>.GetDisplayValue(d) };
+
+            return Ok(estruturasDownload);
         }
     }
 }

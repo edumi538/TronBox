@@ -20,6 +20,8 @@ namespace TronBox.Domain.Aggregates.ConfiguracaoEmpresaAgg
         [BsonIgnoreIfDefault]
         public EMetodoBusca MetodoBusca { get; set; }
         [BsonIgnoreIfDefault]
+        public EEstruturaDownload EstruturaDownload { get; set; }
+        [BsonIgnoreIfDefault]
         public DadosMatoGrosso DadosMatoGrosso { get; set; }
         [BsonIgnoreIfDefault]
         public IEnumerable<InscricaoComplementar> InscricoesComplementares { get; set; }
