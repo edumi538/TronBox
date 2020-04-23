@@ -378,6 +378,8 @@ namespace TronBox.Application.Services
             var inscricaoEmitente = nfe.NFe.infNFe.emit.CNPJ ?? nfe.NFe.infNFe.emit.CPF;
             var inscricaoDestinatario = nfe.NFe.infNFe.dest != null ? nfe.NFe.infNFe.dest.CNPJ ?? nfe.NFe.infNFe.dest.CPF : string.Empty;
 
+            if (inscricaoEmpresa != inscricaoEmitente && inscricaoEmpresa != inscricaoDestinatario) return null;
+
             if (inscricaoEmpresa == inscricaoEmitente)
                 documentoFiscal.InscricaoEstadual = nfe.NFe.infNFe.emit.IE;
             else if (inscricaoEmpresa == inscricaoDestinatario)
