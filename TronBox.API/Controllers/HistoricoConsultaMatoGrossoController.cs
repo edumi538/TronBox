@@ -40,8 +40,8 @@ namespace TronBox.API.Controllers
             return NotFound();
         }
 
-        [HttpGet("ultimo-periodo")]
-        public IActionResult UltimoNSU() => Ok(AppServiceFactory.Instancie<IHistoricoConsultaMatoGrossoAppService>().ObterUltimoPeriodo());
+        [HttpGet("ultimo-periodo/{inscricaoEstadual}")]
+        public IActionResult UltimoNSU(string inscricaoEstadual) => Ok(AppServiceFactory.Instancie<IHistoricoConsultaMatoGrossoAppService>().ObterUltimoPeriodo(inscricaoEstadual));
 
         [HttpPost]
         public IActionResult Post([FromBody]HistoricoConsultaMatoGrossoDTO historicoConsulta)
