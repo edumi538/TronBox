@@ -70,31 +70,5 @@ namespace TronBox.API.Controllers
                 }
             );
         }
-
-        [HttpPost("realizar-busca/{tipo}")]
-        public IActionResult BuscarManualmente(ETipoDocumentoConsulta tipo, [FromBody]DadosBuscaDTO dadosBuscaDTO)
-        {
-            AppServiceFactory.Instancie<IHistoricoConsultaAppService>().BuscarManualmente(tipo, dadosBuscaDTO);
-
-            if (_notifications.HasNotifications())
-            {
-                return BadRequest(new
-                {
-                    sucesso = false,
-                    erros = _notifications.GetNotifications()
-                        .Select(c => new
-                        {
-                            Chave = c.Key,
-                            Mensagem = c.Value
-                        })
-                });
-            }
-
-            return Ok(new
-            {
-                sucesso = true,
-                mensagem = "Operação realizada com sucesso."
-            });
-        }
     }
 }

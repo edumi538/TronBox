@@ -6,6 +6,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using TronBox.Application.Services.Interfaces;
+using TronBox.Domain.DTO;
 using TronBox.Domain.DTO.InnerClassDTO;
 using TronBox.Domain.Enums;
 using TronCore.Domain.Factories;
@@ -87,6 +88,32 @@ namespace TronBox.UI.Controllers
         public IActionResult ConfirmarImportacao(Guid id, [FromBody] DadosImportacaoDTO dadosImportacao)
         {
             AppServiceFactory.Instancie<IDocumentoFiscalAppService>().ConfirmarImportacao(id, dadosImportacao);
+
+            if (_notifications.HasNotifications())
+            {
+                return BadRequest(new
+                {
+                    sucesso = false,
+                    erros = _notifications.GetNotifications()
+                        .Select(c => new
+                        {
+                            Chave = c.Key,
+                            Mensagem = c.Value
+                        })
+                });
+            }
+
+            return Ok(new
+            {
+                sucesso = true,
+                mensagem = "Operação realizada com sucesso."
+            });
+        }
+
+        [HttpPost("realizar-busca/{tipo}")]
+        public IActionResult BuscarManualmente(ETipoDocumentoConsulta tipo, [FromBody]DadosBuscaDTO dadosBuscaDTO)
+        {
+            AppServiceFactory.Instancie<IDocumentoFiscalAppService>().BuscarManualmente(tipo, dadosBuscaDTO);
 
             if (_notifications.HasNotifications())
             {

@@ -124,12 +124,15 @@ namespace TronBox.Application.Services
 
             var resposta = JsonConvert.DeserializeObject<Resposta>(result);
 
-            if (resposta.Sucesso && certificadoCreateDTO.ManifestarAutomaticamente)
+            if (resposta.Sucesso)
             {
                 var configuracaoEmpresa = BuscarConfiguracaoEmpresa();
 
-                configuracaoEmpresa.ManifestarAutomaticamente = true;
-                _repositoryFactory.Instancie<IConfiguracaoEmpresaRepository>().Atualizar(configuracaoEmpresa);
+                if (certificadoCreateDTO.ManifestarAutomaticamente)
+                {
+                    configuracaoEmpresa.ManifestarAutomaticamente = true;
+                    _repositoryFactory.Instancie<IConfiguracaoEmpresaRepository>().Atualizar(configuracaoEmpresa);
+                }
 
                 InserirEmpresaFila(configuracaoEmpresa);
             }

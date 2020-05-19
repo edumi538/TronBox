@@ -17,8 +17,10 @@ namespace TronBox.Domain.DTO
         public bool SalvarSomenteManifestadas { get; set; }
         [JsonProperty("limitConsults")]
         public bool LimitarConsulta { get; set; }
+        [JsonProperty("tenantId")]
+        public string Empresa { get; set; }
 
-        public DadosManifestacaoNFeDTO(string ultimoNSU, string uf, string metodoBusca, int tipoConsulta, bool manifestarAutomaticamente, bool salvarSomenteManifestadas, bool limitarConsulta)
+        public DadosManifestacaoNFeDTO(string ultimoNSU, string uf, string metodoBusca, int tipoConsulta, bool manifestarAutomaticamente, bool salvarSomenteManifestadas, bool limitarConsulta, string empresa)
         {
             UltimoNSU = ultimoNSU;
             UF = uf;
@@ -27,6 +29,7 @@ namespace TronBox.Domain.DTO
             ManifestarAutomaticamente = manifestarAutomaticamente;
             SalvarSomenteManifestadas = salvarSomenteManifestadas;
             LimitarConsulta = limitarConsulta;
+            Empresa = empresa;
         }
     }
 }

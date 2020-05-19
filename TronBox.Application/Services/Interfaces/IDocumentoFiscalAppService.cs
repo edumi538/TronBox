@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using TronBox.Domain.DTO;
 using TronBox.Domain.DTO.InnerClassDTO;
+using TronBox.Domain.Enums;
 
 namespace TronBox.Application.Services.Interfaces
 {
@@ -17,5 +18,6 @@ namespace TronBox.Application.Services.Interfaces
         bool ExisteNaoProcessado();
         void ConfirmarImportacao(Guid id, DadosImportacaoDTO dadosImportacao);
         void CancelarDocumentos(IEnumerable<string> chavesCancelamento);
+        void BuscarManualmente(ETipoDocumentoConsulta tipo, DadosBuscaDTO dadosBuscaDTO);
     }
 }

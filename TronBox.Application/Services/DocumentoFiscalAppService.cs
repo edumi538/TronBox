@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Comum.Domain.Aggregates.EmpresaAgg.Repository;
+using Comum.Domain.Enums;
 using CTe.Classes;
 using DFe.Classes.Flags;
 using DFe.Utils;
@@ -10,6 +11,7 @@ using NFe.Classes.Informacoes.Destinatario;
 using NFe.Classes.Informacoes.Detalhe;
 using NFe.Classes.Informacoes.Emitente;
 using NFe.Classes.Informacoes.Identificacao.Tipos;
+using Sentinela.Domain.Interfaces;
 using Sentry;
 using System;
 using System.Collections.Generic;
@@ -19,6 +21,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using TronBox.Application.Services.Interfaces;
+using TronBox.Domain.Aggregates.ConfiguracaoEmpresaAgg.Repository;
 using TronBox.Domain.Aggregates.DocumentoFiscalAgg;
 using TronBox.Domain.Aggregates.DocumentoFiscalAgg.Repository;
 using TronBox.Domain.Aggregates.ManifestoAgg.Repository;
@@ -32,6 +35,7 @@ using TronCore.DefinicoesConfiguracoes;
 using TronCore.Dominio.Bus;
 using TronCore.Dominio.Notifications;
 using TronCore.Dominio.Specifications;
+using TronCore.InjecaoDependencia;
 using TronCore.Persistencia.Interfaces;
 using TronCore.Utilitarios;
 using TronCore.Utilitarios.EnvioDeArquivo.Interface;
@@ -42,6 +46,9 @@ namespace TronBox.Application.Services
     public class DocumentoFiscalAppService : IDocumentoFiscalAppService
     {
         public static string path = "documentosfiscais/{tipo}/{anomes}";
+        public static string URL_AGENTE_MANIFESTACAO_NFE = "http://10.20.30.28:8085";
+        public static string URL_AGENTE_MANIFESTACAO_CTE = "http://10.20.30.28:8083";
+        public static string URL_SCRAPER_SEFAZ_MT = "http://10.20.30.28:7002";
 
         #region Membros
         private readonly IBus _bus;
@@ -191,6 +198,14 @@ namespace TronBox.Application.Services
 
                 _repositoryFactory.Instancie<IManifestoRepository>().AtualizarTodos(manifestosAtualizados);
             }
+        }
+
+        public void BuscarManualmente(ETipoDocumentoConsulta tipo, DadosBuscaDTO dadosBuscaDTO)
+        {
+            if (tipo == ETipoDocumentoConsulta.NFe)
+                RealizarBuscaNFe(dadosBuscaDTO);
+            if (tipo == ETipoDocumentoConsulta.CTe)
+                RealizarBuscaCTe(dadosBuscaDTO);
         }
 
         #region Private Methods
@@ -703,6 +718,59 @@ namespace TronBox.Application.Services
             });
 
             _bus.RaiseEvent(new DomainNotification(nomeArquivo, erros));
+        }
+
+        private void RealizarBuscaNFe(DadosBuscaDTO dadosBuscaDTO)
+        {
+            var tenantId = FabricaGeral.Instancie<ITenantProvider>().GetTenant().Id.ToString();
+
+            RealizarBuscaManualPortal(dadosBuscaDTO, tenantId);
+
+            if (dadosBuscaDTO.UF == "MT")
+                RealizarBuscaManualMatoGrosso(dadosBuscaDTO, tenantId);
+        }
+
+        private static void RealizarBuscaCTe(DadosBuscaDTO dadosBuscaDTO)
+        {
+            var dadosBusca = new DadosManifestacaoCTeDTO("0", dadosBuscaDTO.UF, (int)ETipoConsulta.Manual, dadosBuscaDTO.MetodoBusca == EMetodoBusca.MesAtual);
+
+            UtilitarioHttpClient.PostRequest(string.Empty, URL_AGENTE_MANIFESTACAO_CTE, $"cte/customer/{dadosBuscaDTO.Inscricao}/new-documents", dadosBusca);
+        }
+
+        private static void RealizarBuscaManualPortal(DadosBuscaDTO dadosBuscaDTO, string tenantId)
+        {
+            var dadosBusca = new DadosManifestacaoNFeDTO("0", dadosBuscaDTO.UF, dadosBuscaDTO.MetodoBusca == EMetodoBusca.UltimosMeses ? "last_three_months" : "current_month",
+                (int)ETipoConsulta.Manual, dadosBuscaDTO.ManifestarAutomaticamente, dadosBuscaDTO.SalvarSomenteManifestadas, false, tenantId);
+
+            UtilitarioHttpClient.PostRequest(string.Empty, URL_AGENTE_MANIFESTACAO_NFE, $"mdf-e/send-nsu/registry/{dadosBuscaDTO.Inscricao}", dadosBusca);
+        }
+
+        private void RealizarBuscaManualMatoGrosso(DadosBuscaDTO dadosBuscaDTO, string tenantId)
+        {
+            var configuracaoEmpresa = _repositoryFactory.Instancie<IConfiguracaoEmpresaRepository>().BuscarTodos().FirstOrDefault();
+
+            if (configuracaoEmpresa != null && configuracaoEmpresa.DadosMatoGrosso != null)
+            {
+                if (!string.IsNullOrEmpty(configuracaoEmpresa.DadosMatoGrosso.Usuario) && !string.IsNullOrEmpty(configuracaoEmpresa.DadosMatoGrosso.Senha))
+                {
+                    foreach (var inscricaoComplementar in configuracaoEmpresa.InscricoesComplementares)
+                    {
+                        if (inscricaoComplementar.ConsultaMatoGrosso && inscricaoComplementar.Situacao == eSituacao.Ativo)
+                        {
+                            var inscricaoEstadual = inscricaoComplementar.InscricaoEstadual.PadLeft(11, '0');
+
+                            var dataInicial = configuracaoEmpresa.MetodoBusca == EMetodoBusca.MesAtual ? UtilitarioDatas.ConvertToIntDate(DateTime.Now.AddDays(-30)) : UtilitarioDatas.ConvertToIntDate(DateTime.Now.AddDays(-90));
+                            var dataFinal = UtilitarioDatas.ConvertToIntDate(DateTime.Now.AddDays(-1));
+
+                            var dadosBuscaMatoGrosso = new DadosBuscaMatoGrossoDTO(tenantId, $"{dadosBuscaDTO.Inscricao} - {inscricaoEstadual}", dadosBuscaDTO.Inscricao,
+                                inscricaoEstadual, dataInicial, dataFinal, 2, configuracaoEmpresa.DadosMatoGrosso.Usuario, configuracaoEmpresa.DadosMatoGrosso.Senha,
+                                (int)configuracaoEmpresa.DadosMatoGrosso.Tipo);
+
+                            UtilitarioHttpClient.PostRequest(string.Empty, URL_SCRAPER_SEFAZ_MT, $"api/scraper", dadosBuscaMatoGrosso);
+                        }
+                    }
+                }
+            }
         }
         #endregion
     }

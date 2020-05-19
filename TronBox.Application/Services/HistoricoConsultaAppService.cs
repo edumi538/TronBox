@@ -10,15 +10,13 @@ using TronBox.Domain.Enums;
 using TronCore.Dominio.Bus;
 using TronCore.Dominio.Notifications;
 using TronCore.Persistencia.Interfaces;
-using TronCore.Utilitarios;
 using TronCore.Utilitarios.Specifications;
 
 namespace TronBox.Application.Services
 {
     public class HistoricoConsultaAppService : IHistoricoConsultaAppService
     {
-        public static string URL_AGENTE_MANIFESTACAO_NFE = "http://10.20.30.28:8085";
-        public static string URL_AGENTE_MANIFESTACAO_CTE = "http://10.20.30.28:8083";
+
 
         #region Membros
         private readonly IBus _bus;
@@ -69,31 +67,7 @@ namespace TronBox.Application.Services
             return historicoConsulta != null ? historicoConsulta.UltimoNSU : "0";
         }
 
-        public void BuscarManualmente(ETipoDocumentoConsulta tipo, DadosBuscaDTO dadosBuscaDTO)
-        {
-            if (tipo == ETipoDocumentoConsulta.NFe)
-                RealizarBuscaNFe(dadosBuscaDTO);
-            if (tipo == ETipoDocumentoConsulta.CTe)
-                RealizarBuscaCTe(dadosBuscaDTO);
-        }
-
-
         #region Private Methods
-        private static void RealizarBuscaNFe(DadosBuscaDTO dadosBuscaDTO)
-        {
-            var dadosBusca = new DadosManifestacaoNFeDTO("0", dadosBuscaDTO.UF, dadosBuscaDTO.MetodoBusca == EMetodoBusca.UltimosMeses ? "last_three_months" : "current_month",
-                (int)ETipoConsulta.Manual, dadosBuscaDTO.ManifestarAutomaticamente, dadosBuscaDTO.SalvarSomenteManifestadas, false);
-
-            UtilitarioHttpClient.PostRequest(string.Empty, URL_AGENTE_MANIFESTACAO_NFE, $"mdf-e/send-nsu/registry/{dadosBuscaDTO.Inscricao}", dadosBusca);
-        }
-
-        private static void RealizarBuscaCTe(DadosBuscaDTO dadosBuscaDTO)
-        {
-            var dadosBusca = new DadosManifestacaoCTeDTO("0", dadosBuscaDTO.UF, (int)ETipoConsulta.Manual, dadosBuscaDTO.MetodoBusca == EMetodoBusca.MesAtual);
-
-            UtilitarioHttpClient.PostRequest(string.Empty, URL_AGENTE_MANIFESTACAO_CTE, $"cte/customer/{dadosBuscaDTO.Inscricao}/new-documents", dadosBusca);
-        }
-
         private bool EhValido(HistoricoConsulta historico)
         {
             var validator = new HistoricoConsultaValidator().Validate(historico);
