@@ -10,4 +10,10 @@ FROM mcr.microsoft.com/dotnet/core/aspnet:2.2
 WORKDIR /app
 COPY --from=build-env /app .
 ENV ASPNETCORE_ENVIRONMENT=Staging
+
+RUN apt-get update && apt-get install - tzdata --no-install-recommends
+
+ENV TZ America/Sao_Paulo
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
 CMD cat ./hosts >> /etc/hosts && dotnet TronBox.API.dll
