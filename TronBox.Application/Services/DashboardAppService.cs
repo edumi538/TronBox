@@ -135,7 +135,7 @@ namespace TronBox.Application.Services
         #region Private Methods
         private IEnumerable<DocumentoFiscalDTO> BuscarDocumentos(int dataInicial, int dataFinal)
         {
-            Specification<DocumentoFiscal> spec = new DirectSpecification<DocumentoFiscal>(c => c.DataEmissaoDocumento >= dataInicial && c.DataEmissaoDocumento <= dataFinal);
+            Specification<DocumentoFiscal> spec = new DirectSpecification<DocumentoFiscal>(c => c.DataArmazenamento >= AdicionaHorasDataInt(dataInicial) && c.DataArmazenamento <= AdicionaHorasDataInt(dataFinal));
 
             return _mapper.Map<IEnumerable<DocumentoFiscalDTO>>(_repositoryFactory.Instancie<IDocumentoFiscalRepository>().BuscarTodos(spec));
         }
@@ -179,6 +179,11 @@ namespace TronBox.Application.Services
                 new DashboardOrigemDocumentoDTO() { Origem = EOrigemDocumentoFiscal.Monitor, Quantidade = 0 },
                 new DashboardOrigemDocumentoDTO() { Origem = EOrigemDocumentoFiscal.UploadManual, Quantidade = 0 },
             };
+        }
+
+        private long AdicionaHorasDataInt(int data)
+        {
+            return Convert.ToInt64(data * Math.Pow(10, 4));
         }
         #endregion
     }
