@@ -417,6 +417,9 @@ namespace TronBox.Application.Services
                 };
             }
 
+            if (nfe.protNFe != null && nfe.protNFe.infProt != null && nfe.protNFe.infProt.cStat == 101)
+                documentoFiscal.Cancelado = true;
+
             return documentoFiscal;
         }
 
