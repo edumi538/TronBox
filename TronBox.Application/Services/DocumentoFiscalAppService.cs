@@ -141,7 +141,10 @@ namespace TronBox.Application.Services
             DocumentosValidos(documentosFiscais, arquivos.DetalhesEnvio, ref documentosValidos, ref documentosCancelamento);
 
             if (documentosValidos.Count > 0)
+            {
+                AtualizaCancelamentoDocumentos(documentosValidos);
                 _repositoryFactory.Instancie<IDocumentoFiscalRepository>().InserirTodos(documentosValidos);
+            }
 
             if (documentosCancelamento.Count > 0)
                 _repositoryFactory.Instancie<IDocumentoFiscalRepository>().AtualizarTodos(documentosCancelamento);
@@ -154,6 +157,8 @@ namespace TronBox.Application.Services
 
             return retornoDocumentosValidos.Concat(retornoDocumentosCancelados);
         }
+
+
 
         public void Deletar(Guid id) => _repositoryFactory.Instancie<IDocumentoFiscalRepository>().Excluir(id);
 
@@ -209,6 +214,24 @@ namespace TronBox.Application.Services
         }
 
         #region Private Methods
+        private void AtualizaCancelamentoDocumentos(List<DocumentoFiscal> documentosValidos)
+        {
+            var chaves = documentosValidos.Select(c => c.ChaveDocumentoFiscal);
+
+            var manifestos = _repositoryFactory.Instancie<IManifestoRepository>()
+                 .BuscarTodos(m => chaves.Contains(m.ChaveDocumentoFiscal))
+                 .ToList();
+
+            foreach (var documento in documentosValidos)
+            {
+                var manifesto = manifestos.FirstOrDefault(m => m.ChaveDocumentoFiscal == documento.ChaveDocumentoFiscal);
+
+                if (manifesto == null) continue;
+
+                documento.Cancelado = manifesto.SituacaoManifesto == ESituacaoManifesto.Cancelado;
+            }
+        }
+
         private async Task<List<DocumentoFiscalDTO>> ProcessarArquivosEnviados(EnviarArquivosDTO arquivos, EmpresaDTO empresa)
         {
             var documentosFiscais = new List<DocumentoFiscalDTO>();
