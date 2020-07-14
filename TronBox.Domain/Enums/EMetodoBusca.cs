@@ -4,7 +4,7 @@ namespace TronBox.Domain.Enums
 {
     public enum EMetodoBusca
     {
-        [Display(Name = "Mês Atual")]
+        [Display(Name = "Ultimos 30 dias")]
         MesAtual = 1,
 
         [Display(Name = "Últimos 3 Meses")]
