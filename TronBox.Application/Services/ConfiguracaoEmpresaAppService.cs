@@ -107,7 +107,6 @@ namespace TronBox.Application.Services
                 _repositoryFactory.Instancie<IEmpresaRepository>().Atualizar(empresa);
 
                 ExcluirUsuarioCriarNovo(empresaExistente, empresa.EmailPrincipal);
-                InserirEmpresaFila(empresa, configuracaoEmpresa);
             }
         }
 
@@ -208,6 +207,7 @@ namespace TronBox.Application.Services
 
                 if (certificado != null && !certificado.Vencido)
                 {
+                    InserirEmpresaFila(empresa, configuracaoEmpresa);
                     var tenantId = FabricaGeral.Instancie<ITenantProvider>().GetTenant().Id;
 
                     foreach (var inscricaoComplementar in configuracaoEmpresa.InscricoesComplementares)
