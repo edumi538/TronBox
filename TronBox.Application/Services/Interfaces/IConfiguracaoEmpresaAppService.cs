@@ -3,6 +3,7 @@ using System;
 using System.Threading.Tasks;
 using TronBox.Domain.DTO;
 using TronCore.Dominio.Base;
+using TronCore.Enumeradores;
 
 namespace TronBox.Application.Services.Interfaces
 {
@@ -14,5 +15,6 @@ namespace TronBox.Application.Services.Interfaces
         void AtualizarEmpresa(EmpresaDTO empresaDto);
         void AtualizarEmail(AtualizacaoEmailDTO empregado);
         CertificadoSituacaoDTO SituacaoCertificado();
+        Task NotificarContadorAcessoInvalido(ESefazEstado estado);
     }
 }
