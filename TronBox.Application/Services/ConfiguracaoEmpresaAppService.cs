@@ -282,10 +282,10 @@ namespace TronBox.Application.Services
 
             empresa.EmailPrincipal = novoEmail;
 
-            CriarUsuárioEmpresa(empresa, emailRemocao);
+            CriarUsuarioEmpresa(empresa, emailRemocao);
         }
 
-        private void CriarUsuárioEmpresa(Empresa empresa, string emailRemocao)
+        private void CriarUsuarioEmpresa(Empresa empresa, string emailRemocao)
         {
             var pessoaId = AtualizarDadosPessoa(empresa.Inscricao, empresa.RazaoSocial, empresa.EmailPrincipal);
 
