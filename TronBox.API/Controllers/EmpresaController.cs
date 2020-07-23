@@ -106,8 +106,21 @@ namespace TronBox.UI.Controllers
                 mensagem = "Operação realizada com sucesso."
             });
         }
-    
+
         [HttpGet("situacao-certificado")]
         public IActionResult SituacaoCertificado() => Ok(AppServiceFactory.Instancie<IConfiguracaoEmpresaAppService>().SituacaoCertificado());
+
+        [HttpPost("notificar-acesso-invalido")]
+        public IActionResult NotificarContadorAcessoInvalido([FromBody]NotificaSenhaInvalidaDTO sefaz)
+        {
+            AppServiceFactory.Instancie<IConfiguracaoEmpresaAppService>().NotificarContadorAcessoInvalido(sefaz.Estado);
+
+            return Ok(new
+            {
+                sucesso = true,
+                mensagem = "Operação realizada com sucesso."
+            });
+        }
+
     }
 }

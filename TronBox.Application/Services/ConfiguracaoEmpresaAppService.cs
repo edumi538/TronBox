@@ -15,6 +15,7 @@ using Sentinela.Domain.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using TronBox.Application.Services.Interfaces;
 using TronBox.Domain.Aggregates.ConfiguracaoEmpresaAgg;
@@ -25,9 +26,11 @@ using TronCore.DefinicoesConfiguracoes;
 using TronCore.Dominio.Base;
 using TronCore.Dominio.Bus;
 using TronCore.Dominio.Notifications;
+using TronCore.Enumeradores;
 using TronCore.InjecaoDependencia;
 using TronCore.Persistencia.Interfaces;
 using TronCore.Utilitarios;
+using TronCore.Utilitarios.Email;
 
 namespace TronBox.Application.Services
 {
@@ -160,6 +163,23 @@ namespace TronBox.Application.Services
             var empresa = _mapper.Map<EmpresaDTO>(_repositoryFactory.Instancie<IEmpresaRepository>().BuscarTodos().FirstOrDefault());
 
             return ObterSituacaoCertificadoEmpresa(empresa);
+        }
+
+        public async Task NotificarContadorAcessoInvalido(ESefazEstado estado)
+        {
+            var regex = new Regex(@"\bDB-(GC|CN|LR|BX)-[0-9]{4}@tron.com.br\b", RegexOptions.None);
+
+            var administradores = _repositoryFactory.Instancie<IPessoaEmpresaRepository>()
+                .BuscarTodos(c => c.ClassificacaoFuncionario == eClassificacaoPessoa.Administrador)
+                .Select(c => c.PessoaId);
+            var empresa = _repositoryFactory.Instancie<IEmpresaRepository>().BuscarTodos().FirstOrDefault();
+            var pessoas = _repositoryFactory.Instancie<IPessoaRepository>().BuscarTodos(c => administradores.Contains(c.Id) && !regex.IsMatch(c.Email));
+
+            foreach (var pessoa in pessoas)
+            {
+               await TemplateEmail.EnviarEmailSefazSenhaInvalida(pessoa.Email, empresa.RazaoSocial, ESefazEstado.MT);
+            }
+
         }
 
         #region Private Methods
