@@ -203,12 +203,10 @@ namespace TronBox.Application.Services
             };
         }
 
-        private void InserirEmpresaFila(Empresa empresa, ConfiguracaoEmpresa configuracaoEmpresa)
+        private void InserirEmpresaFila(Empresa empresa, ConfiguracaoEmpresa configuracaoEmpresa, Guid tenantId)
         {
             if (configuracaoEmpresa.InscricoesComplementares.Any())
             {
-                var tenantId = FabricaGeral.Instancie<ITenantProvider>().GetTenant().Id;
-
                 foreach (var inscricaoComplementar in configuracaoEmpresa.InscricoesComplementares)
                 {
                     if (configuracaoEmpresa.DadosMatoGrosso != null && inscricaoComplementar.ConsultaMatoGrosso && inscricaoComplementar.Situacao == eSituacao.Ativo && !string.IsNullOrEmpty(inscricaoComplementar.InscricaoEstadual))
@@ -227,11 +225,17 @@ namespace TronBox.Application.Services
 
                 if (certificado != null && !certificado.Vencido)
                 {
-                    InserirEmpresaFila(empresa, configuracaoEmpresa);
                     var tenantId = FabricaGeral.Instancie<ITenantProvider>().GetTenant().Id;
 
+                    InserirEmpresaFila(empresa, configuracaoEmpresa, tenantId);
+
                     foreach (var inscricaoComplementar in configuracaoEmpresa.InscricoesComplementares)
+                    {
                         AdicionarFilaNfe(empresa, configuracaoEmpresa, inscricaoComplementar, tenantId);
+
+                        if (configuracaoEmpresa.SalvarCteEntrada || configuracaoEmpresa.SalvarCteSaida)
+                            AdicionarFilaCte(empresa, configuracaoEmpresa, inscricaoComplementar, tenantId);
+                    }
                 }
             }
         }
@@ -257,6 +261,29 @@ namespace TronBox.Application.Services
             };
 
             UtilitarioHttpClient.PostRequest(string.Empty, URL_FILA_EMPRESA, "api/nfes", empresaFila);
+        }
+
+        private static void AdicionarFilaCte(Empresa empresa, ConfiguracaoEmpresa configuracaoEmpresa, InscricaoComplementar inscricaoComplementar, Guid tenantId)
+        {
+            var ultimoNsu = FabricaGeral.Instancie<IHistoricoConsultaAppService>().ObterUltimoNSU(ETipoDocumentoConsulta.CTe);
+
+            var empresaFila = new
+            {
+                id = tenantId,
+                dataCriacao = DateTime.Now,
+                nome = inscricaoComplementar.NomeFantasia ?? empresa.RazaoSocial,
+                inscricaoEmpresa = empresa.Inscricao,
+                uf = inscricaoComplementar.UF,
+                ultimoNsu,
+                configuracaoEmpresa = new
+                {
+                    salvarCteEntrada = configuracaoEmpresa.SalvarCteEntrada,
+                    salvarCteSaida = configuracaoEmpresa.SalvarCteSaida,
+                    metodoBusca = configuracaoEmpresa.MetodoBusca,
+                }
+            };
+
+            UtilitarioHttpClient.PostRequest(string.Empty, URL_FILA_EMPRESA, "api/ctes", empresaFila);
         }
 
         private static void AdicionarFilaMatoGrosso(Empresa empresa, ConfiguracaoEmpresa configuracaoEmpresa, InscricaoComplementar inscricaoComplementar, Guid tenantId)
