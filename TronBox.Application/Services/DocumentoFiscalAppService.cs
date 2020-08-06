@@ -158,8 +158,6 @@ namespace TronBox.Application.Services
             return retornoDocumentosValidos.Concat(retornoDocumentosCancelados);
         }
 
-
-
         public void Deletar(Guid id) => _repositoryFactory.Instancie<IDocumentoFiscalRepository>().Excluir(id);
 
         public bool ExisteNaoProcessado() => _repositoryFactory.Instancie<IDocumentoFiscalRepository>().Contar(
@@ -328,7 +326,7 @@ namespace TronBox.Application.Services
 
         private DocumentoFiscalDTO ProcessarXMLparaCTe(string inscricaoEmpresa, string conteudoXML, string nomeArquivo)
         {
-            var cte = FuncoesXml.XmlStringParaClasse<cteProc>(conteudoXML);
+            var cte = UtilitarioXML.XmlStringParaClasse<cteProc>(conteudoXML);
 
             var conhecimentoTransporte = ObterConhecimentoTransporteFromObject(inscricaoEmpresa, cte);
 
@@ -343,7 +341,7 @@ namespace TronBox.Application.Services
 
         private DocumentoFiscalDTO ProcessarXMLparaNFe(string inscricaoEmpresa, string conteudoXML, string nomeArquivo)
         {
-            var nfe = FuncoesXml.XmlStringParaClasse<nfeProc>(conteudoXML);
+            var nfe = UtilitarioXML.XmlStringParaClasse<nfeProc>(conteudoXML);
 
             var notaFiscal = ObterNotaFiscalFromObject(inscricaoEmpresa, nfe);
 
