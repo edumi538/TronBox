@@ -4,6 +4,7 @@ using Sentinela.Domain.Aggregates.TenantAgg;
 using Sentinela.Domain.DTO.ViewModels;
 using System.Collections.Generic;
 using TronBox.Domain.Aggregates.ConfiguracaoEmpresaAgg;
+using TronBox.Domain.Aggregates.DadosComputadorMonitorAgg;
 using TronBox.Domain.Aggregates.DocumentoFiscalAgg;
 using TronBox.Domain.Aggregates.HistoricoConsultaAgg;
 using TronBox.Domain.Aggregates.HistoricoConsultaMatoGrossoAgg;
@@ -25,6 +26,7 @@ namespace TronBox.Domain.Automapper
             CreateMap<ConfiguracaoEmpresa, ConfiguracaoEmpresaDTO>();
             CreateMap<InscricaoComplementar, InscricaoComplementarDTO>();
             CreateMap<DocumentoFiscal, DocumentoFiscalDTO>();
+            CreateMap<DadosComputadorMonitor, DadosComputadorMonitorDTO>();
             CreateMap<HistoricoConsulta, HistoricoConsultaDTO>();
             CreateMap<HistoricoConsultaMatoGrosso, HistoricoConsultaMatoGrossoDTO>();
             CreateMap<Manifesto, ManifestoDTO>();
@@ -40,6 +42,7 @@ namespace TronBox.Domain.Automapper
             CreateMap<List<ConfiguracaoEmpresa>, List<ConfiguracaoEmpresaDTO>>();
             CreateMap<List<InscricaoComplementar>, List<InscricaoComplementarDTO>>();
             CreateMap<List<DocumentoFiscal>, List<DocumentoFiscalDTO>>();
+            CreateMap<List<DadosComputadorMonitor>, List<DadosComputadorMonitorDTO>>();
             CreateMap<List<HistoricoConsultaMatoGrosso>, List<HistoricoConsultaMatoGrossoDTO>>();
             CreateMap<List<Manifesto>, List<ManifestoDTO>>();
             #endregion

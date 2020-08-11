@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Comum.Domain.Aggregates.EmpresaAgg;
 using TronBox.Domain.Aggregates.ConfiguracaoEmpresaAgg;
+using TronBox.Domain.Aggregates.DadosComputadorMonitorAgg;
 using TronBox.Domain.Aggregates.DocumentoFiscalAgg;
 using TronBox.Domain.Aggregates.HistoricoConsultaAgg;
 using TronBox.Domain.Aggregates.HistoricoConsultaMatoGrossoAgg;
@@ -19,6 +20,7 @@ namespace TronBox.Domain.Automapper
             CreateMap<ConfiguracaoEmpresaDTO, ConfiguracaoEmpresa>();
             CreateMap<InscricaoComplementarDTO, InscricaoComplementar>();
             CreateMap<DocumentoFiscalDTO, DocumentoFiscal>();
+            CreateMap<DadosComputadorMonitorDTO, DadosComputadorMonitor>();
             CreateMap<HistoricoConsultaDTO, HistoricoConsulta>();
             CreateMap<HistoricoConsultaMatoGrossoDTO, HistoricoConsultaMatoGrosso>();
             CreateMap<ManifestoDTO, Manifesto>();

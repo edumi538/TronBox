@@ -13,6 +13,7 @@ using Sentinela.Domain.Aggregates.LoggingAgg;
 using TronBox.Application.Services;
 using TronBox.Application.Services.Interfaces;
 using TronBox.Domain.Aggregates.ConfiguracaoEmpresaAgg.Repository;
+using TronBox.Domain.Aggregates.DadosComputadorMonitorAgg.Repository;
 using TronBox.Domain.Aggregates.DocumentoFiscalAgg.Repository;
 using TronBox.Domain.Aggregates.HistoricoConsultaAgg.Repository;
 using TronBox.Domain.Aggregates.HistoricoConsultaMatoGrossoAgg.Repository;
@@ -49,6 +50,7 @@ namespace TronBox.Infra.IoC
 
             // Repositorios
             services.AddScoped<IConfiguracaoEmpresaRepository, ConfiguracaoEmpresaRepository>();
+            services.AddScoped<IDadosComputadorMonitorRepository, DadosComputadorMonitorRepository>();
             services.AddScoped<IDocumentoFiscalRepository, DocumentoFiscalRepository>();
             services.AddScoped<IHistoricoConsultaRepository, HistoricoConsultaRepository>();
             services.AddScoped<IHistoricoConsultaMatoGrossoRepository, HistoricoConsultaMatoGrossoRepository>();
