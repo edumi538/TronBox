@@ -17,7 +17,7 @@ namespace TronBox.Domain.DTO
         public string NomeUsuario { get; set; }
         public string Processador { get; set; }
         public int ArquiteturaProcessador { get; set; }
-        public string TipoProcessador { get => $"Prcessador com base em x{ArquiteturaProcessador}"; }
+        public string TipoProcessador { get => $"Processador com base em x{ArquiteturaProcessador}"; }
         public long MemoriaRam { get; set; }
         public string QuantidadeMemoriaRam { get => $"{Math.Round((double)(MemoriaRam / 1024) / 1024)}GB"; }
     }
