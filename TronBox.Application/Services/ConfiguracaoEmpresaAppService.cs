@@ -209,8 +209,14 @@ namespace TronBox.Application.Services
             {
                 foreach (var inscricaoComplementar in configuracaoEmpresa.InscricoesComplementares)
                 {
-                    if (configuracaoEmpresa.DadosMatoGrosso != null && inscricaoComplementar.ConsultaMatoGrosso && inscricaoComplementar.Situacao == eSituacao.Ativo && !string.IsNullOrEmpty(inscricaoComplementar.InscricaoEstadual))
-                        AdicionarFilaMatoGrosso(empresa, configuracaoEmpresa, inscricaoComplementar, tenantId);
+                    if (inscricaoComplementar.ConsultaPortalEstadual && inscricaoComplementar.Situacao == eSituacao.Ativo && !string.IsNullOrEmpty(inscricaoComplementar.InscricaoEstadual))
+                    {
+                        if (configuracaoEmpresa.DadosMatoGrosso != null)
+                            AdicionarFilaMatoGrosso(empresa, configuracaoEmpresa, inscricaoComplementar, tenantId);
+
+                        if (configuracaoEmpresa.DadosMatoGrossoSul != null)
+                            AdicionarFilaMatoGrossoSul(empresa, configuracaoEmpresa, inscricaoComplementar, tenantId);
+                    }
                 }
             }
         }
@@ -318,6 +324,11 @@ namespace TronBox.Application.Services
             };
 
             UtilitarioHttpClient.PostRequest(string.Empty, URL_FILA_EMPRESA, "api/mato-grosso", empresaFila);
+        }
+
+        private static void AdicionarFilaMatoGrossoSul(Empresa empresa, ConfiguracaoEmpresa configuracaoEmpresa, InscricaoComplementar inscricaoComplementar, Guid tenantId)
+        {
+            // TODO - Adicionar empresa na fila do mato grosso do sul.
         }
 
         private void ExcluirUsuarioCriarNovo(Empresa empresa, string novoEmail)

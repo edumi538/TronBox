@@ -24,6 +24,8 @@ namespace TronBox.Domain.Aggregates.ConfiguracaoEmpresaAgg
         [BsonIgnoreIfDefault]
         public DadosMatoGrosso DadosMatoGrosso { get; set; }
         [BsonIgnoreIfDefault]
+        public DadosMatoGrossoSul DadosMatoGrossoSul { get; set; }
+        [BsonIgnoreIfDefault]
         public IEnumerable<InscricaoComplementar> InscricoesComplementares { get; set; }
     }
 
@@ -31,6 +33,13 @@ namespace TronBox.Domain.Aggregates.ConfiguracaoEmpresaAgg
     {
         public ETipoAcessoMatoGrosso Tipo { get; set; }
         public string Usuario { get; set; }
+        public string Senha { get; set; }
+    }
+
+    public class DadosMatoGrossoSul
+    {
+        public string Usuario { get; set; }
+        public string CodigoAcesso { get; set; }
         public string Senha { get; set; }
     }
 
@@ -61,7 +70,7 @@ namespace TronBox.Domain.Aggregates.ConfiguracaoEmpresaAgg
         [BsonIgnoreIfNull]
         public string UF { get; set; }
         [BsonIgnoreIfDefault]
-        public bool ConsultaMatoGrosso { get; set; }
+        public bool ConsultaPortalEstadual { get; set; }
         [BsonIgnoreIfDefault]
         public eSituacao Situacao { get; set; }
     }

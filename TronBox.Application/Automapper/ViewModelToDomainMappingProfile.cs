@@ -25,6 +25,7 @@ namespace TronBox.Domain.Automapper
             CreateMap<HistoricoConsultaMatoGrossoDTO, HistoricoConsultaMatoGrosso>();
             CreateMap<ManifestoDTO, Manifesto>();
             CreateMap<DadosMatoGrossoDTO, DadosMatoGrosso>();
+            CreateMap<DadosMatoGrossoSulDTO, DadosMatoGrossoSul>();
             CreateMap<InscricaoComplementarDTO, InscricaoComplementar>();
             CreateMap<DadosOrigemManifestoDTO, DadosOrigemManifesto>();
             CreateMap<DadosFornecedorDTO, DadosFornecedor>();

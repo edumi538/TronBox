@@ -779,7 +779,7 @@ namespace TronBox.Application.Services
                 {
                     foreach (var inscricaoComplementar in configuracaoEmpresa.InscricoesComplementares)
                     {
-                        if (inscricaoComplementar.ConsultaMatoGrosso && inscricaoComplementar.Situacao == eSituacao.Ativo)
+                        if (inscricaoComplementar.ConsultaPortalEstadual && inscricaoComplementar.Situacao == eSituacao.Ativo)
                         {
                             var inscricaoEstadual = inscricaoComplementar.InscricaoEstadual.PadLeft(11, '0');
 

@@ -14,6 +14,7 @@ namespace TronBox.Domain.DTO
         public EMetodoBusca MetodoBusca { get; set; }
         public EEstruturaDownload EstruturaDownload { get; set; }
         public DadosMatoGrossoDTO DadosMatoGrosso { get; set; }
+        public DadosMatoGrossoSulDTO DadosMatoGrossoSul { get; set; }
         public IEnumerable<InscricaoComplementarDTO> InscricoesComplementares { get; set; }
     }
 
@@ -21,6 +22,13 @@ namespace TronBox.Domain.DTO
     {
         public ETipoAcessoMatoGrosso Tipo { get; set; }
         public string Usuario { get; set; }
+        public string Senha { get; set; }
+    }
+
+    public class DadosMatoGrossoSulDTO
+    {
+        public string Usuario { get; set; }
+        public string CodigoAcesso { get; set; }
         public string Senha { get; set; }
     }
 
@@ -39,7 +47,7 @@ namespace TronBox.Domain.DTO
         public string Cep { get; set; }
         public int CodigoCidade { get; set; }
         public string UF { get; set; }
-        public bool ConsultaMatoGrosso { get; set; }
+        public bool ConsultaPortalEstadual { get; set; }
         public eSituacao Situacao { get; set; }
     }
 }

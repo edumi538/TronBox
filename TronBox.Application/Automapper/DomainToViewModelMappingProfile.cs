@@ -34,6 +34,7 @@ namespace TronBox.Domain.Automapper
             CreateMap<DadosImportacao, DadosImportacaoDTO>();
             CreateMap<DadosOrigemDocumentoFiscal, DadosOrigemDocumentoFiscalDTO>();
             CreateMap<DadosMatoGrosso, DadosMatoGrossoDTO>();
+            CreateMap<DadosMatoGrossoSul, DadosMatoGrossoSulDTO>();
             CreateMap<DadosOrigemManifesto, DadosOrigemManifestoDTO>();
             #endregion
 
