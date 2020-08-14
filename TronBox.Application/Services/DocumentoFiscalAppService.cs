@@ -49,6 +49,7 @@ namespace TronBox.Application.Services
         public static string URL_AGENTE_MANIFESTACAO_NFE = "http://10.20.30.28:8085";
         public static string URL_AGENTE_MANIFESTACAO_CTE = "http://10.20.30.28:8083";
         public static string URL_SCRAPER_SEFAZ_MT = "http://10.20.30.28:7002";
+        public static string URL_SCRAPER_SEFAZ_MS = "http://10.20.30.28:7007";
 
         #region Membros
         private readonly IBus _bus;
@@ -752,6 +753,8 @@ namespace TronBox.Application.Services
 
             if (dadosBuscaDTO.UF == "MT")
                 RealizarBuscaManualMatoGrosso(dadosBuscaDTO, tenantId);
+            else if (dadosBuscaDTO.UF == "MS")
+                RealizarBuscaManualMatoGrossoSul(dadosBuscaDTO, tenantId);
         }
 
         private static void RealizarBuscaCTe(DadosBuscaDTO dadosBuscaDTO)
@@ -791,6 +794,32 @@ namespace TronBox.Application.Services
                                 (int)configuracaoEmpresa.DadosMatoGrosso.Tipo);
 
                             UtilitarioHttpClient.PostRequest(string.Empty, URL_SCRAPER_SEFAZ_MT, $"api/scraper", dadosBuscaMatoGrosso);
+                        }
+                    }
+                }
+            }
+        }
+
+        private void RealizarBuscaManualMatoGrossoSul(DadosBuscaDTO dadosBuscaDTO, string tenantId)
+        {
+            var configuracaoEmpresa = _repositoryFactory.Instancie<IConfiguracaoEmpresaRepository>().BuscarTodos().FirstOrDefault();
+
+            if (configuracaoEmpresa != null && configuracaoEmpresa.DadosMatoGrossoSul != null)
+            {
+                if (!string.IsNullOrEmpty(configuracaoEmpresa.DadosMatoGrossoSul.Usuario) && !string.IsNullOrEmpty(configuracaoEmpresa.DadosMatoGrossoSul.CodigoAcesso) && !string.IsNullOrEmpty(configuracaoEmpresa.DadosMatoGrossoSul.Senha))
+                {
+                    foreach (var inscricaoComplementar in configuracaoEmpresa.InscricoesComplementares)
+                    {
+                        if (inscricaoComplementar.ConsultaPortalEstadual && inscricaoComplementar.Situacao == eSituacao.Ativo)
+                        {
+                            var dataInicial = configuracaoEmpresa.MetodoBusca == EMetodoBusca.MesAtual ? UtilitarioDatas.ConvertToIntDate(DateTime.Now.AddDays(-30)) : UtilitarioDatas.ConvertToIntDate(DateTime.Now.AddDays(-90));
+                            var dataFinal = UtilitarioDatas.ConvertToIntDate(DateTime.Now.AddDays(-1));
+
+                            var dadosBuscaMatoGrossoSul = new DadosBuscaMatoGrossoSulDTO(tenantId, dadosBuscaDTO.Inscricao, dadosBuscaDTO.Inscricao,
+                                dataInicial, dataFinal, 2, configuracaoEmpresa.DadosMatoGrossoSul.Usuario, configuracaoEmpresa.DadosMatoGrossoSul.CodigoAcesso,
+                                configuracaoEmpresa.DadosMatoGrossoSul.Senha);
+
+                            UtilitarioHttpClient.PostRequest(string.Empty, URL_SCRAPER_SEFAZ_MT, $"api/scraper", dadosBuscaMatoGrossoSul);
                         }
                     }
                 }
