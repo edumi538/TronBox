@@ -819,7 +819,7 @@ namespace TronBox.Application.Services
                                 dataInicial, dataFinal, 2, configuracaoEmpresa.DadosMatoGrossoSul.Usuario, configuracaoEmpresa.DadosMatoGrossoSul.CodigoAcesso,
                                 configuracaoEmpresa.DadosMatoGrossoSul.Senha);
 
-                            UtilitarioHttpClient.PostRequest(string.Empty, URL_SCRAPER_SEFAZ_MT, $"api/scraper", dadosBuscaMatoGrossoSul);
+                            UtilitarioHttpClient.PostRequest(string.Empty, URL_SCRAPER_SEFAZ_MS, $"api/scraper", dadosBuscaMatoGrossoSul);
                         }
                     }
                 }
