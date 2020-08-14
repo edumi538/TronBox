@@ -37,9 +37,6 @@ namespace TronBox.Application.Services
         {
         }
 
-        public HistoricoConsultaMatoGrossoDTO ObterUltimaConsulta() => _mapper.Map<HistoricoConsultaMatoGrossoDTO>(_repositoryFactory.Instancie<IHistoricoConsultaMatoGrossoRepository>()
-            .BuscarTodos().OrderByDescending(c => c.DataHoraConsulta).Take(1).FirstOrDefault());
-
         public DateTime? ObterUltimoPeriodo(string inscricaoEstadual)
         {
             var historicoConsulta = _mapper.Map<HistoricoConsultaMatoGrossoDTO>(_repositoryFactory.Instancie<IHistoricoConsultaMatoGrossoRepository>()

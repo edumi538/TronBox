@@ -29,17 +29,6 @@ namespace TronBox.API.Controllers
         [IdentificadorOperacao(eFuncaoTronBox.ID_HISTORICO_CONSULTA_PORTAL_ESTADUAL, "Carregar Histórico de Consultas", eOperacaoSuite.ID_OP_ACESSO, typeof(eOperacaoSuite), typeof(eFuncaoTronBox), "/historicos-consulta-portal-estadual")]
         public IActionResult Get(string filtro) => Ok(AppServiceFactory.Instancie<IHistoricoConsultaMatoGrossoAppService>().BuscarTodos(filtro));
 
-        [HttpGet("ultima")]
-        public IActionResult UltimaConsulta()
-        {
-            var ultimaConsulta = AppServiceFactory.Instancie<IHistoricoConsultaMatoGrossoAppService>().ObterUltimaConsulta();
-
-            if (ultimaConsulta != null)
-                return Ok(ultimaConsulta.DataHoraConsultaFormatada);
-
-            return NotFound();
-        }
-
         [HttpGet("ultimo-periodo/{inscricaoEstadual}")]
         public IActionResult UltimoNSU(string inscricaoEstadual) => Ok(AppServiceFactory.Instancie<IHistoricoConsultaMatoGrossoAppService>().ObterUltimoPeriodo(inscricaoEstadual));
 

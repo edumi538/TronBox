@@ -8,7 +8,6 @@ namespace TronBox.Application.Services.Interfaces
     {
         IEnumerable<HistoricoConsultaMatoGrossoDTO> BuscarTodos(string filtro);
         void Inserir(HistoricoConsultaMatoGrossoDTO historicoConsulta);
-        HistoricoConsultaMatoGrossoDTO ObterUltimaConsulta();
         DateTime? ObterUltimoPeriodo(string inscricaoEstadual);
     }
 }

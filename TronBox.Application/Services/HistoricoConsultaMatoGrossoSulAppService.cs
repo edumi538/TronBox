@@ -36,9 +36,16 @@ namespace TronBox.Application.Services
         public void Dispose()
         {
         }
+        public DateTime? ObterUltimoPeriodo()
+        {
+            var historicoConsulta = _mapper.Map<HistoricoConsultaMatoGrossoDTO>(_repositoryFactory.Instancie<IHistoricoConsultaMatoGrossoSulRepository>()
+                .BuscarTodos().OrderByDescending(c => c.DataFinalConsultada).Take(1).FirstOrDefault());
 
-        public HistoricoConsultaMatoGrossoSulDTO ObterUltimaConsulta() => _mapper.Map<HistoricoConsultaMatoGrossoSulDTO>(_repositoryFactory.Instancie<IHistoricoConsultaMatoGrossoSulRepository>()
-            .BuscarTodos().OrderByDescending(c => c.DataHoraConsulta).Take(1).FirstOrDefault());
+            if (historicoConsulta != null)
+                return historicoConsulta.DataFinalConsultadaFormatada;
+
+            return null;
+        }
 
         public void Inserir(HistoricoConsultaMatoGrossoSulDTO historicoConsulta)
         {
