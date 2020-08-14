@@ -328,7 +328,33 @@ namespace TronBox.Application.Services
 
         private static void AdicionarFilaMatoGrossoSul(Empresa empresa, ConfiguracaoEmpresa configuracaoEmpresa, InscricaoComplementar inscricaoComplementar, Guid tenantId)
         {
-            // TODO - Adicionar empresa na fila do mato grosso do sul.
+            var dataFinalConsultada = FabricaGeral.Instancie<IHistoricoConsultaMatoGrossoSulAppService>().ObterUltimoPeriodo();
+
+            var dataInicial = dataFinalConsultada != null && dataFinalConsultada.HasValue
+                ? UtilitarioDatas.ConvertToIntDate(dataFinalConsultada.Value.AddDays(-7))
+                : configuracaoEmpresa.MetodoBusca == EMetodoBusca.MesAtual
+                    ? UtilitarioDatas.ConvertToIntDate(DateTime.Now.AddMonths(-1))
+                    : UtilitarioDatas.ConvertToIntDate(DateTime.Now.AddMonths(-3));
+
+            var dataFinal = UtilitarioDatas.ConvertToIntDate(DateTime.Now.AddDays(-1));
+
+            var empresaFila = new
+            {
+                id = tenantId,
+                dataCriacao = DateTime.Now,
+                nome = inscricaoComplementar.NomeFantasia ?? empresa.RazaoSocial,
+                inscricaoEmpresa = empresa.Inscricao,
+                dadosMatoGrossoSul = new
+                {
+                    usuario = configuracaoEmpresa.DadosMatoGrossoSul.Usuario,
+                    codigoAcesso = configuracaoEmpresa.DadosMatoGrossoSul.CodigoAcesso,
+                    senha = configuracaoEmpresa.DadosMatoGrossoSul.Senha
+                },
+                dataInicial,
+                dataFinal,
+            };
+
+            UtilitarioHttpClient.PostRequest(string.Empty, URL_FILA_EMPRESA, "api/mato-grosso-sul", empresaFila);
         }
 
         private void ExcluirUsuarioCriarNovo(Empresa empresa, string novoEmail)
