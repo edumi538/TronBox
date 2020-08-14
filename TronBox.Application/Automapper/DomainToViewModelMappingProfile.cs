@@ -8,6 +8,7 @@ using TronBox.Domain.Aggregates.DadosComputadorMonitorAgg;
 using TronBox.Domain.Aggregates.DocumentoFiscalAgg;
 using TronBox.Domain.Aggregates.HistoricoConsultaAgg;
 using TronBox.Domain.Aggregates.HistoricoConsultaMatoGrossoAgg;
+using TronBox.Domain.Aggregates.HistoricoConsultaMatoGrossoSulAgg;
 using TronBox.Domain.Aggregates.ManifestoAgg;
 using TronBox.Domain.DTO;
 using TronBox.Domain.DTO.InnerClassDTO;
@@ -29,6 +30,7 @@ namespace TronBox.Domain.Automapper
             CreateMap<DadosComputadorMonitor, DadosComputadorMonitorDTO>();
             CreateMap<HistoricoConsulta, HistoricoConsultaDTO>();
             CreateMap<HistoricoConsultaMatoGrosso, HistoricoConsultaMatoGrossoDTO>();
+            CreateMap<HistoricoConsultaMatoGrossoSul, HistoricoConsultaMatoGrossoSulDTO>();
             CreateMap<Manifesto, ManifestoDTO>();
             CreateMap<DadosFornecedor, DadosFornecedorDTO>();
             CreateMap<DadosImportacao, DadosImportacaoDTO>();
@@ -45,6 +47,7 @@ namespace TronBox.Domain.Automapper
             CreateMap<List<DocumentoFiscal>, List<DocumentoFiscalDTO>>();
             CreateMap<List<DadosComputadorMonitor>, List<DadosComputadorMonitorDTO>>();
             CreateMap<List<HistoricoConsultaMatoGrosso>, List<HistoricoConsultaMatoGrossoDTO>>();
+            CreateMap<List<HistoricoConsultaMatoGrossoSul>, List<HistoricoConsultaMatoGrossoSulDTO>>();
             CreateMap<List<Manifesto>, List<ManifestoDTO>>();
             #endregion
         }

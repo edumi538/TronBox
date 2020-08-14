@@ -113,5 +113,14 @@ namespace TronBox.API.Controllers
 
             return Ok(estruturasDownload);
         }
+
+        [HttpGet("portais-estadual")]
+        public IActionResult GetPortalEstadual()
+        {
+            var portais = from EPortalEstadual d in Enum.GetValues(typeof(EPortalEstadual))
+                          select new { value = (int)d, label = EnumHelper<EPortalEstadual>.GetDisplayValue(d) };
+
+            return Ok(portais);
+        }
     }
 }

@@ -17,6 +17,7 @@ using TronBox.Domain.Aggregates.DadosComputadorMonitorAgg.Repository;
 using TronBox.Domain.Aggregates.DocumentoFiscalAgg.Repository;
 using TronBox.Domain.Aggregates.HistoricoConsultaAgg.Repository;
 using TronBox.Domain.Aggregates.HistoricoConsultaMatoGrossoAgg.Repository;
+using TronBox.Domain.Aggregates.HistoricoConsultaMatoGrossoSulAgg.Repository;
 using TronBox.Domain.Aggregates.ManifestoAgg.Repository;
 using TronBox.Infra.Data.Repositories;
 using TronCore.DefinicoesConfiguracoes;
@@ -47,6 +48,7 @@ namespace TronBox.Infra.IoC
             services.AddScoped<IEnumeradorAppService, EnumeradorAppService>();
             services.AddScoped<IHistoricoConsultaAppService, HistoricoConsultaAppService>();
             services.AddScoped<IHistoricoConsultaMatoGrossoAppService, HistoricoConsultaMatoGrossoAppService>();
+            services.AddScoped<IHistoricoConsultaMatoGrossoSulAppService, HistoricoConsultaMatoGrossoSulAppService>();
             services.AddScoped<IManifestoAppService, ManifestoAppService>();
 
             // Repositorios
@@ -55,6 +57,7 @@ namespace TronBox.Infra.IoC
             services.AddScoped<IDocumentoFiscalRepository, DocumentoFiscalRepository>();
             services.AddScoped<IHistoricoConsultaRepository, HistoricoConsultaRepository>();
             services.AddScoped<IHistoricoConsultaMatoGrossoRepository, HistoricoConsultaMatoGrossoRepository>();
+            services.AddScoped<IHistoricoConsultaMatoGrossoSulRepository, HistoricoConsultaMatoGrossoSulRepository>();
             services.AddScoped<IManifestoRepository, ManifestoRepository>();
 
             #region Add Comum
