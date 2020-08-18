@@ -112,7 +112,7 @@ namespace TronBox.Application.Services
 
             var manifesto = _repositoryFactory.Instancie<IManifestoRepository>().BuscarPorExpressao(c => c.ChaveDocumentoFiscal == manifestarDTO.ChaveDocumentoFiscal);
 
-            if (manifesto != null && manifesto.SituacaoManifesto != ESituacaoManifesto.Cancelado)
+            if (manifesto != null && (manifesto.SituacaoManifesto != ESituacaoManifesto.Cancelado && manifesto.SituacaoManifesto != ESituacaoManifesto.CienciaAutomatica))
             {
                 var result = await UtilitarioHttpClient.PostRequest(string.Empty, URL_AGENTE_MANIFESTACAO, "mdf-e/manifest-document", manifestacao);
 
