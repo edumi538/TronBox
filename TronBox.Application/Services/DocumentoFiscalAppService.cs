@@ -759,7 +759,7 @@ namespace TronBox.Application.Services
 
         private static void RealizarBuscaCTe(DadosBuscaDTO dadosBuscaDTO)
         {
-            var dadosBusca = new DadosManifestacaoCTeDTO("0", dadosBuscaDTO.UF, (int)ETipoConsulta.Manual, dadosBuscaDTO.MetodoBusca == EMetodoBusca.MesAtual);
+            var dadosBusca = new DadosManifestacaoCTeDTO("0", dadosBuscaDTO.UF, (int)ETipoConsulta.Manual, dadosBuscaDTO.MetodoBusca == EMetodoBusca.UltimosTrintaDias);
 
             UtilitarioHttpClient.PostRequest(string.Empty, URL_AGENTE_MANIFESTACAO_CTE, $"cte/customer/{dadosBuscaDTO.Inscricao}/new-documents", dadosBusca);
         }
@@ -786,7 +786,7 @@ namespace TronBox.Application.Services
                         {
                             var inscricaoEstadual = inscricaoComplementar.InscricaoEstadual.PadLeft(11, '0');
 
-                            var dataInicial = configuracaoEmpresa.MetodoBusca == EMetodoBusca.MesAtual ? UtilitarioDatas.ConvertToIntDate(DateTime.Now.AddDays(-30)) : UtilitarioDatas.ConvertToIntDate(DateTime.Now.AddDays(-90));
+                            var dataInicial = configuracaoEmpresa.MetodoBusca == EMetodoBusca.UltimosTrintaDias ? UtilitarioDatas.ConvertToIntDate(DateTime.Now.AddDays(-30)) : UtilitarioDatas.ConvertToIntDate(DateTime.Now.AddDays(-90));
                             var dataFinal = UtilitarioDatas.ConvertToIntDate(DateTime.Now.AddDays(-1));
 
                             var dadosBuscaMatoGrosso = new DadosBuscaMatoGrossoDTO(tenantId, $"{dadosBuscaDTO.Inscricao} - {inscricaoEstadual}", dadosBuscaDTO.Inscricao,
@@ -812,7 +812,7 @@ namespace TronBox.Application.Services
                     {
                         if (inscricaoComplementar.ConsultaPortalEstadual && inscricaoComplementar.Situacao == eSituacao.Ativo)
                         {
-                            var dataInicial = configuracaoEmpresa.MetodoBusca == EMetodoBusca.MesAtual ? UtilitarioDatas.ConvertToIntDate(DateTime.Now.AddDays(-30)) : UtilitarioDatas.ConvertToIntDate(DateTime.Now.AddDays(-90));
+                            var dataInicial = configuracaoEmpresa.MetodoBusca == EMetodoBusca.UltimosTrintaDias ? UtilitarioDatas.ConvertToIntDate(DateTime.Now.AddDays(-30)) : UtilitarioDatas.ConvertToIntDate(DateTime.Now.AddDays(-90));
                             var dataFinal = UtilitarioDatas.ConvertToIntDate(DateTime.Now.AddDays(-1));
 
                             var dadosBuscaMatoGrossoSul = new DadosBuscaMatoGrossoSulDTO(tenantId, dadosBuscaDTO.Inscricao, dadosBuscaDTO.Inscricao,

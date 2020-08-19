@@ -300,7 +300,7 @@ namespace TronBox.Application.Services
 
             var dataInicial = dataFinalConsultada != null && dataFinalConsultada.HasValue
                 ? UtilitarioDatas.ConvertToIntDate(dataFinalConsultada.Value.AddDays(-7))
-                : configuracaoEmpresa.MetodoBusca == EMetodoBusca.MesAtual
+                : configuracaoEmpresa.MetodoBusca == EMetodoBusca.UltimosTrintaDias
                     ? UtilitarioDatas.ConvertToIntDate(DateTime.Now.AddMonths(-1))
                     : UtilitarioDatas.ConvertToIntDate(DateTime.Now.AddMonths(-3));
 
@@ -332,7 +332,7 @@ namespace TronBox.Application.Services
 
             var dataInicial = dataFinalConsultada != null && dataFinalConsultada.HasValue
                 ? UtilitarioDatas.ConvertToIntDate(dataFinalConsultada.Value.AddDays(-7))
-                : configuracaoEmpresa.MetodoBusca == EMetodoBusca.MesAtual
+                : configuracaoEmpresa.MetodoBusca == EMetodoBusca.UltimosTrintaDias
                     ? UtilitarioDatas.ConvertToIntDate(DateTime.Now.AddMonths(-1))
                     : UtilitarioDatas.ConvertToIntDate(DateTime.Now.AddMonths(-3));
 
