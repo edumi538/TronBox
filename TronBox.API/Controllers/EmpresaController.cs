@@ -34,7 +34,7 @@ namespace TronBox.UI.Controllers
 
         [HttpPut]
         [IdentificadorOperacao(eFuncaoTronBox.ID_EMPRESA, "Atualizar Empresa", eOperacaoSuite.ID_OP_EDITAR, typeof(eOperacaoSuite), typeof(eFuncaoTronBox), "/empresas/editar/:id")]
-        public IActionResult Put([FromBody]EmpresaDTO empresa)
+        public IActionResult Put([FromBody] EmpresaDTO empresa)
         {
             AppServiceFactory.Instancie<IConfiguracaoEmpresaAppService>().AtualizarEmpresa(empresa);
 
@@ -82,7 +82,7 @@ namespace TronBox.UI.Controllers
         }
 
         [HttpPut("atualizar-email")]
-        public IActionResult AtualizarEmail([FromBody]AtualizacaoEmailDTO empregado)
+        public IActionResult AtualizarEmail([FromBody] AtualizacaoEmailDTO empregado)
         {
             AppServiceFactory.Instancie<IConfiguracaoEmpresaAppService>().AtualizarEmail(empregado);
 
@@ -111,9 +111,9 @@ namespace TronBox.UI.Controllers
         public IActionResult SituacaoCertificado() => Ok(AppServiceFactory.Instancie<IConfiguracaoEmpresaAppService>().SituacaoCertificado());
 
         [HttpPost("notificar-acesso-invalido")]
-        public IActionResult NotificarContadorAcessoInvalido([FromBody]NotificaSenhaInvalidaDTO sefaz)
+        public async Task<IActionResult> NotificarContadorAcessoInvalido([FromBody] NotificaSenhaInvalidaDTO sefaz)
         {
-            AppServiceFactory.Instancie<IConfiguracaoEmpresaAppService>().NotificarContadorAcessoInvalido(sefaz.Estado);
+            await AppServiceFactory.Instancie<IConfiguracaoEmpresaAppService>().NotificarContadorAcessoInvalido(sefaz.Estado);
 
             return Ok(new
             {

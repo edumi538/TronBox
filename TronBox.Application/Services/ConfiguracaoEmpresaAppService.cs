@@ -176,10 +176,7 @@ namespace TronBox.Application.Services
             var pessoas = _repositoryFactory.Instancie<IPessoaRepository>().BuscarTodos(c => administradores.Contains(c.Id) && !regex.IsMatch(c.Email));
 
             foreach (var pessoa in pessoas)
-            {
-               await TemplateEmail.EnviarEmailSefazSenhaInvalida(pessoa.Email, empresa.RazaoSocial, ESefazEstado.MT);
-            }
-
+               await TemplateEmail.EnviarEmailSefazSenhaInvalida(pessoa.Email, empresa.RazaoSocial, estado);
         }
 
         #region Private Methods
