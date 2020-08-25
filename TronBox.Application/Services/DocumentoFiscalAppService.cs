@@ -47,7 +47,7 @@ namespace TronBox.Application.Services
     {
         public static string path = "documentosfiscais/{tipo}/{anomes}";
         public static string URL_AGENTE_MANIFESTACAO_NFE = "http://10.20.30.28:8085";
-        public static string URL_AGENTE_MANIFESTACAO_CTE = "http://10.20.30.28:8083";
+        public static string URL_AGENTE_MANIFESTACAO_CTE = "http://10.20.30.28:8005";
         public static string URL_SCRAPER_SEFAZ_MT = "http://10.20.30.28:7002";
         public static string URL_SCRAPER_SEFAZ_MS = "http://10.20.30.28:7007";
 
@@ -759,9 +759,12 @@ namespace TronBox.Application.Services
 
         private static void RealizarBuscaCTe(DadosBuscaDTO dadosBuscaDTO)
         {
-            var dadosBusca = new DadosManifestacaoCTeDTO("0", dadosBuscaDTO.UF, (int)ETipoConsulta.Manual, dadosBuscaDTO.MetodoBusca == EMetodoBusca.UltimosTrintaDias);
+            var tenantId = FabricaGeral.Instancie<ITenantProvider>().GetTenant().Id.ToString();
 
-            UtilitarioHttpClient.PostRequest(string.Empty, URL_AGENTE_MANIFESTACAO_CTE, $"cte/customer/{dadosBuscaDTO.Inscricao}/new-documents", dadosBusca);
+            var dadosBusca = new DadosManifestacaoCTeDTO(dadosBuscaDTO.Inscricao, "0", dadosBuscaDTO.UF, (int)ETipoConsulta.Manual,
+                dadosBuscaDTO.MetodoBusca == EMetodoBusca.UltimosTrintaDias, tenantId);
+
+            UtilitarioHttpClient.PostRequest(string.Empty, URL_AGENTE_MANIFESTACAO_CTE, $"api/ctes/consultar", dadosBusca);
         }
 
         private static void RealizarBuscaManualPortal(DadosBuscaDTO dadosBuscaDTO, string tenantId)
