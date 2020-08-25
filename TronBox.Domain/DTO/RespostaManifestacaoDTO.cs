@@ -2,7 +2,7 @@
 {
     public class RespostaManifestacaoDTO
     {
-        public bool Success { get; set; }
+        public bool Sucesso { get; set; }
         public DataDTO Data { get; set; }
 
         public class DataDTO

@@ -4,31 +4,23 @@ namespace TronBox.Domain.DTO
 {
     public class DadosManifestacaoNFeDTO
     {
-        [JsonProperty("ultNSU")]
-        public string UltimoNSU { get; set; }
+        [JsonProperty("chaveDocumentoFiscal")]
+        public string ChaveDocumentoFiscal { get; set; }
+        [JsonProperty("inscricaoEmpresa")]
+        public string InscricaoEmpresa { get; set; }
+        [JsonProperty("uf")]
         public string UF { get; set; }
-        [JsonProperty("previousInvoices")]       
-        public string MetodoBusca { get; set; }
-        [JsonProperty("consultType")]
-        public int TipoConsulta { get; set; }
-        [JsonProperty("autoManifest")]
-        public bool ManifestarAutomaticamente { get; set; }
-        [JsonProperty("saveOnlyManifestedInvoices")]
-        public bool SalvarSomenteManifestadas { get; set; }
-        [JsonProperty("limitConsults")]
-        public bool LimitarConsulta { get; set; }
+        [JsonProperty("tpEvent")]
+        public string TipoManifestacao { get; set; }
         [JsonProperty("tenantId")]
         public string Empresa { get; set; }
 
-        public DadosManifestacaoNFeDTO(string ultimoNSU, string uf, string metodoBusca, int tipoConsulta, bool manifestarAutomaticamente, bool salvarSomenteManifestadas, bool limitarConsulta, string empresa)
+        public DadosManifestacaoNFeDTO(string chaveDocumentoFiscal, string inscricaoEmpresa, string uF, string tipoManifestacao, string empresa)
         {
-            UltimoNSU = ultimoNSU;
-            UF = uf;
-            MetodoBusca = metodoBusca;
-            TipoConsulta = tipoConsulta;
-            ManifestarAutomaticamente = manifestarAutomaticamente;
-            SalvarSomenteManifestadas = salvarSomenteManifestadas;
-            LimitarConsulta = limitarConsulta;
+            ChaveDocumentoFiscal = chaveDocumentoFiscal;
+            InscricaoEmpresa = inscricaoEmpresa;
+            UF = uF;
+            TipoManifestacao = tipoManifestacao;
             Empresa = empresa;
         }
     }

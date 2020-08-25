@@ -2,7 +2,7 @@
 
 namespace TronBox.Domain.DTO
 {
-    public class DadosManifestacaoCTeDTO
+    public class DadosConsultaCTeDTO
     {
         [JsonProperty("inscricaoEmpresa")]
         public string InscricaoEmpresa { get; set; }
@@ -17,7 +17,7 @@ namespace TronBox.Domain.DTO
         [JsonProperty("tenantId")]
         public string Empresa { get; set; }
 
-        public DadosManifestacaoCTeDTO(string inscricaoEmpresa, string ultimoNSU, string uf, int tipoConsulta, bool buscarSomenteMesAtual, string empresa)
+        public DadosConsultaCTeDTO(string inscricaoEmpresa, string ultimoNSU, string uf, int tipoConsulta, bool buscarSomenteMesAtual, string empresa)
         {
             InscricaoEmpresa = inscricaoEmpresa;
             UltimoNSU = ultimoNSU;

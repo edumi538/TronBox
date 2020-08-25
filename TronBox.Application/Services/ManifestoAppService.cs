@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Comum.Domain.Aggregates.EmpresaAgg.Repository;
 using Newtonsoft.Json;
+using Sentinela.Domain.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +16,7 @@ using TronBox.Domain.Enums;
 using TronCore.Dominio.Bus;
 using TronCore.Dominio.JsonPatch;
 using TronCore.Dominio.Notifications;
+using TronCore.InjecaoDependencia;
 using TronCore.Persistencia.Interfaces;
 using TronCore.Utilitarios;
 using TronCore.Utilitarios.Specifications;
@@ -102,19 +104,16 @@ namespace TronBox.Application.Services
                 return null;
             }
 
-            var manifestacao = new
-            {
-                configuracaoEmpresa.InscricoesComplementares.FirstOrDefault().UF,
-                registry = empresa.Inscricao,
-                keyNFe = manifestarDTO.ChaveDocumentoFiscal,
-                tpEvent = ObterTIpoManifestacao(manifestarDTO.TipoManifestacao)
-            };
-
             var manifesto = _repositoryFactory.Instancie<IManifestoRepository>().BuscarPorExpressao(c => c.ChaveDocumentoFiscal == manifestarDTO.ChaveDocumentoFiscal);
 
             if (manifesto != null && (manifesto.SituacaoManifesto != ESituacaoManifesto.Cancelado && manifesto.SituacaoManifesto != ESituacaoManifesto.CienciaAutomatica))
             {
-                var result = await UtilitarioHttpClient.PostRequest(string.Empty, URL_AGENTE_MANIFESTACAO, "mdf-e/manifest-document", manifestacao);
+                var tenantId = FabricaGeral.Instancie<ITenantProvider>().GetTenant().Id.ToString();
+
+                var manifestacao = new DadosManifestacaoNFeDTO(manifestarDTO.ChaveDocumentoFiscal, empresa.Inscricao, configuracaoEmpresa.InscricoesComplementares.FirstOrDefault().UF,
+                    ObterTipoManifestacao(manifestarDTO.TipoManifestacao), tenantId);
+
+                var result = await UtilitarioHttpClient.PostRequest(string.Empty, URL_AGENTE_MANIFESTACAO, "api/nfes/manifestar", manifestacao);
 
                 var respostaManifestacao = JsonConvert.DeserializeObject<RespostaManifestacaoDTO>(result);
 
@@ -130,7 +129,7 @@ namespace TronBox.Application.Services
         #region Private Methods
         private void AtualizarManifesto(ManifestarDTO manifestarDTO, Manifesto manifesto, RespostaManifestacaoDTO respostaManifestacao)
         {
-            if (respostaManifestacao.Success)
+            if (respostaManifestacao.Sucesso)
                 manifesto.SituacaoManifesto = manifestarDTO.TipoManifestacao;
             if (respostaManifestacao.Data.InfEvento.CStat == "650")
                 manifesto.SituacaoManifesto = ESituacaoManifesto.Cancelado;
@@ -163,7 +162,7 @@ namespace TronBox.Application.Services
             return validator.IsValid;
         }
 
-        private string ObterTIpoManifestacao(ESituacaoManifesto tipoManifestacao)
+        private string ObterTipoManifestacao(ESituacaoManifesto tipoManifestacao)
         {
             switch (tipoManifestacao)
             {

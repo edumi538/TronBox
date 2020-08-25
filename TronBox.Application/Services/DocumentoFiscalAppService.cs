@@ -761,18 +761,18 @@ namespace TronBox.Application.Services
         {
             var tenantId = FabricaGeral.Instancie<ITenantProvider>().GetTenant().Id.ToString();
 
-            var dadosBusca = new DadosManifestacaoCTeDTO(dadosBuscaDTO.Inscricao, "0", dadosBuscaDTO.UF, (int)ETipoConsulta.Manual,
+            var dadosBusca = new DadosConsultaCTeDTO(dadosBuscaDTO.Inscricao, "0", dadosBuscaDTO.UF, (int)ETipoConsulta.Manual,
                 dadosBuscaDTO.MetodoBusca == EMetodoBusca.UltimosTrintaDias, tenantId);
 
-            UtilitarioHttpClient.PostRequest(string.Empty, URL_AGENTE_MANIFESTACAO_CTE, $"api/ctes/consultar", dadosBusca);
+            UtilitarioHttpClient.PostRequest(string.Empty, URL_AGENTE_MANIFESTACAO_CTE, "api/ctes/consultar", dadosBusca);
         }
 
         private static void RealizarBuscaManualPortal(DadosBuscaDTO dadosBuscaDTO, string tenantId)
         {
-            var dadosBusca = new DadosManifestacaoNFeDTO("0", dadosBuscaDTO.UF, dadosBuscaDTO.MetodoBusca == EMetodoBusca.UltimosMeses ? "last_three_months" : "current_month",
-                (int)ETipoConsulta.Manual, dadosBuscaDTO.ManifestarAutomaticamente, dadosBuscaDTO.SalvarSomenteManifestadas, false, tenantId);
+            var dadosBusca = new DadosConsultaNFeDTO(dadosBuscaDTO.Inscricao, "0", dadosBuscaDTO.ManifestarAutomaticamente, dadosBuscaDTO.UF,
+                dadosBuscaDTO.MetodoBusca == EMetodoBusca.UltimosTrintaDias, dadosBuscaDTO.SalvarSomenteManifestadas, false, (int)ETipoConsulta.Manual, tenantId);
 
-            UtilitarioHttpClient.PostRequest(string.Empty, URL_AGENTE_MANIFESTACAO_NFE, $"mdf-e/send-nsu/registry/{dadosBuscaDTO.Inscricao}", dadosBusca);
+            UtilitarioHttpClient.PostRequest(string.Empty, URL_AGENTE_MANIFESTACAO_NFE, "api/nfes/consultar", dadosBusca);
         }
 
         private void RealizarBuscaManualMatoGrosso(DadosBuscaDTO dadosBuscaDTO, string tenantId)
