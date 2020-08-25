@@ -32,7 +32,7 @@ namespace TronBox.Domain.Enums
         public static eFuncao Empresa { get { return new eFuncao(Guid.Parse(ID_EMPRESA), "Empresa", Modulo.Box, "/empresas", "building", eTipoFuncao.ROTA_MENU, 2); } }
         public static eFuncao DocumentoFiscal { get { return new eFuncao(Guid.Parse(ID_DOCUMENTO_FISCAL), "Consulta Documentos", Modulo.Box, "/documentos-fiscais", "file-code-o", eTipoFuncao.ROTA_MENU, 3); } }
         public static eFuncao Upload { get { return new eFuncao(Guid.Parse(ID_UPLOAD), "Enviar Documentos", Modulo.Box, "/enviar-documentos", "cloud-upload", eTipoFuncao.ROTA_MENU, 4); } }
-        public static eFuncao Manifesto { get { return new eFuncao(Guid.Parse(ID_MANIFESTO), "Manifesto", Modulo.Box, "/manifestos", "file-text", eTipoFuncao.ROTA_MENU, 5); } }
+        public static eFuncao Manifesto { get { return new eFuncao(Guid.Parse(ID_MANIFESTO), "Manifestos", Modulo.Box, "/manifestos", "file-text", eTipoFuncao.ROTA_MENU, 5); } }
         public static eFuncao AgrupadorHistoricoConsulta { get { return new eFuncao(Guid.Parse(ID_AGR_HISTORICO_CONSULTA), "Histórico de Consultas", Modulo.Box, "", "history", eTipoFuncao.AGRUPADOR, 6); } }
         public static eFuncao HistoricoConsultaPortalNacional { get { return new eFuncao(Guid.Parse(ID_HISTORICO_CONSULTA), "Portal Nacional", Modulo.Box, "/historicos-consulta", "", eTipoFuncao.ROTA_MENU, AgrupadorHistoricoConsulta, 1); } }
         public static eFuncao HistoricoConsultaSefazMt { get { return new eFuncao(Guid.Parse(ID_HISTORICO_CONSULTA_PORTAL_ESTADUAL), "Portal Estadual", Modulo.Box, "/historicos-consulta-portal-estadual", "", eTipoFuncao.ROTA_MENU, AgrupadorHistoricoConsulta, 2); } }
