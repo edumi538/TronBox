@@ -12,6 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Sentinela.Domain.Aggregates.LoggingAgg;
 using TronBox.Application.Services;
 using TronBox.Application.Services.Interfaces;
+using TronBox.Domain.Aggregates.ChaveDocumentoCanceladoAgg.Repository;
 using TronBox.Domain.Aggregates.ConfiguracaoEmpresaAgg.Repository;
 using TronBox.Domain.Aggregates.DadosComputadorMonitorAgg.Repository;
 using TronBox.Domain.Aggregates.DocumentoFiscalAgg.Repository;
@@ -59,6 +60,7 @@ namespace TronBox.Infra.IoC
             services.AddScoped<IHistoricoConsultaMatoGrossoRepository, HistoricoConsultaMatoGrossoRepository>();
             services.AddScoped<IHistoricoConsultaMatoGrossoSulRepository, HistoricoConsultaMatoGrossoSulRepository>();
             services.AddScoped<IManifestoRepository, ManifestoRepository>();
+            services.AddScoped<IChaveDocumentoCanceladoRepository, ChaveDocumentoCanceladoRepository>();
 
             #region Add Comum
             services.AddScoped<IEmpresaAppService, EmpresaNoSqlAppService>();

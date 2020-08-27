@@ -21,6 +21,8 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using TronBox.Application.Services.Interfaces;
+using TronBox.Domain.Aggregates.ChaveDocumentoCanceladoAgg;
+using TronBox.Domain.Aggregates.ChaveDocumentoCanceladoAgg.Repository;
 using TronBox.Domain.Aggregates.ConfiguracaoEmpresaAgg.Repository;
 using TronBox.Domain.Aggregates.DocumentoFiscalAgg;
 using TronBox.Domain.Aggregates.DocumentoFiscalAgg.Repository;
@@ -215,19 +217,29 @@ namespace TronBox.Application.Services
         #region Private Methods
         private void AtualizaCancelamentoDocumentos(List<DocumentoFiscal> documentosValidos)
         {
-            var chaves = documentosValidos.Select(c => c.ChaveDocumentoFiscal);
+            var chaveDocumentoRepository = _repositoryFactory.Instancie<IChaveDocumentoCanceladoRepository>();
+
+            var chaves = documentosValidos.Select(c => c.ChaveDocumentoFiscal)
+                .ToList();
+
+            var cancelamentos = chaveDocumentoRepository.BuscarTodos(c => chaves.Contains(c.ChaveDocumentoFiscal))
+                .ToList();
 
             var manifestos = _repositoryFactory.Instancie<IManifestoRepository>()
-                 .BuscarTodos(m => chaves.Contains(m.ChaveDocumentoFiscal))
+                 .BuscarTodos(m => chaves.Contains(m.ChaveDocumentoFiscal) && m.SituacaoManifesto == ESituacaoManifesto.Cancelado)
                  .ToList();
+
 
             foreach (var documento in documentosValidos)
             {
-                var manifesto = manifestos.FirstOrDefault(m => m.ChaveDocumentoFiscal == documento.ChaveDocumentoFiscal);
+                var cancelamento = cancelamentos.FirstOrDefault(c => c.ChaveDocumentoFiscal == documento.ChaveDocumentoFiscal);
 
-                if (manifesto == null) continue;
+                documento.Cancelado = cancelamento != null
+                    || manifestos.Any(m => m.ChaveDocumentoFiscal == documento.ChaveDocumentoFiscal);
 
-                documento.Cancelado = manifesto.SituacaoManifesto == ESituacaoManifesto.Cancelado;
+                if(cancelamento != null)
+                    chaveDocumentoRepository.Excluir(cancelamento);
+
             }
         }
 
@@ -564,6 +576,12 @@ namespace TronBox.Application.Services
 
                 if (documentoGerado.Cancelado && documentoGerado.NumeroDocumentoFiscal == null)
                 {
+                    var repository = _repositoryFactory.Instancie<IChaveDocumentoCanceladoRepository>();
+                    var cancelado = repository.BuscarPorExpressao(c => c.ChaveDocumentoFiscal == documentoGerado.ChaveDocumentoFiscal);
+
+                    if (cancelado == null) 
+                        repository.Inserir(new ChaveDocumentoCancelado { ChaveDocumentoFiscal = documentoGerado.ChaveDocumentoFiscal });
+
                     _bus.RaiseEvent(new DomainNotification(documentoGerado.NomeArquivo, "Não foi encontrado documento para o cancelamento enviado."));
                     continue;
                 }
