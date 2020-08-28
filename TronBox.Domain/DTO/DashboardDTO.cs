@@ -32,6 +32,7 @@ namespace TronBox.Domain.DTO
         public int NfeSaida { get; set; }
         public int CteEntrada { get; set; }
         public int CteSaida { get; set; }
+        public int CteNaoTomador { get; set; }
         public int Nfce { get; set; }
         public int NfseEntrada { get; set; }
         public int NfseSaida { get; set; }

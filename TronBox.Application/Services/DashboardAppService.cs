@@ -34,8 +34,6 @@ namespace TronBox.Application.Services
         {
         }
 
-        public long ContarDocumentos() => _repositoryFactory.Instancie<IDocumentoFiscalRepository>().Contar(new DirectSpecification<DocumentoFiscal>(c => true));
-
         public long ContarSemManifesto() => _repositoryFactory.Instancie<IManifestoRepository>().Contar(new DirectSpecification<Manifesto>(c => c.SituacaoManifesto == ESituacaoManifesto.SemManifesto));
 
         public List<DashboardDocumentosDTO> ObterDadosDocumentosArmazenados(int dataInicial, int dataFinal)
@@ -119,6 +117,9 @@ namespace TronBox.Application.Services
                     case ETipoDocumentoFiscal.NfseSaida:
                         dus.NfseSaida++;
                         break;
+                    case ETipoDocumentoFiscal.CTeNaoTomador:
+                        dus.CteNaoTomador++;
+                        break;
                     default:
                         break;
                 }
@@ -148,6 +149,7 @@ namespace TronBox.Application.Services
                 new DashboardDocumentosDTO() { Tipo = ETipoDocumentoFiscal.NfeSaida, Quantidade = 0 },
                 new DashboardDocumentosDTO() { Tipo = ETipoDocumentoFiscal.CteEntrada, Quantidade = 0 },
                 new DashboardDocumentosDTO() { Tipo = ETipoDocumentoFiscal.CteSaida, Quantidade = 0 },
+                new DashboardDocumentosDTO() { Tipo = ETipoDocumentoFiscal.CTeNaoTomador, Quantidade = 0 },
                 new DashboardDocumentosDTO() { Tipo = ETipoDocumentoFiscal.Nfce, Quantidade = 0 },
                 new DashboardDocumentosDTO() { Tipo = ETipoDocumentoFiscal.NfseEntrada, Quantidade = 0 },
                 new DashboardDocumentosDTO() { Tipo = ETipoDocumentoFiscal.NfseSaida, Quantidade = 0 },

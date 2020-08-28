@@ -6,7 +6,6 @@ namespace TronBox.Application.Services.Interfaces
 {
     public interface IDashboardAppService : IDisposable
     {
-        long ContarDocumentos();
         long ContarSemManifesto();
         List<DashboardDocumentosDTO> ObterDadosDocumentosArmazenados(int dataInicial, int dataFinal);
         List<DashboardOrigemDocumentoDTO> ObterDadosOrigemDocumentos(int dataInicial, int dataFinal);
