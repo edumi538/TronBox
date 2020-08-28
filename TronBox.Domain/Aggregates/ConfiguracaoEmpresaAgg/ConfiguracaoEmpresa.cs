@@ -14,6 +14,8 @@ namespace TronBox.Domain.Aggregates.ConfiguracaoEmpresaAgg
         [BsonIgnoreIfDefault]
         public bool SalvarCteSaida { get; set; }
         [BsonIgnoreIfDefault]
+        public bool SalvarCteNaoTomador { get; set; }
+        [BsonIgnoreIfDefault]
         public bool ManifestarAutomaticamente { get; set; }
         [BsonIgnoreIfDefault]
         public bool SalvarSomenteManifestadas { get; set; }

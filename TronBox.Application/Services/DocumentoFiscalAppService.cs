@@ -135,6 +135,7 @@ namespace TronBox.Application.Services
         public async Task<IEnumerable<RetornoDocumentoFiscalDTO>> Inserir(EnviarArquivosDTO arquivos)
         {
             var empresa = _mapper.Map<EmpresaDTO>(_repositoryFactory.Instancie<IEmpresaRepository>().BuscarTodos().FirstOrDefault());
+            empresa.ConfiguracaoEmpresa = _mapper.Map<ConfiguracaoEmpresaDTO>(_repositoryFactory.Instancie<IConfiguracaoEmpresaRepository>().BuscarTodos().FirstOrDefault());
 
             var documentosFiscais = await ProcessarArquivosEnviados(arquivos, empresa);
 
@@ -276,7 +277,8 @@ namespace TronBox.Application.Services
                         }
                         else if (Regex.IsMatch(conteudoXML, "<chCTe>(.*?)</chCTe>", RegexOptions.IgnoreCase))
                         {
-                            var conhecimentoTransporte = ProcessarXMLparaCTe(empresa.Inscricao, conteudoXML, arquivo.FileName);
+                            var conhecimentoTransporte = ProcessarXMLparaCTe(empresa.Inscricao, empresa.ConfiguracaoEmpresa != null && empresa.ConfiguracaoEmpresa.SalvarCteNaoTomador,
+                                conteudoXML, arquivo.FileName);
 
                             if (conhecimentoTransporte != null)
                                 documentosFiscais.Add(await PrepararDocumentoFiscal(dadosOrigem, conhecimentoTransporte, arquivo.FileName, arquivo.OpenReadStream()));
@@ -337,11 +339,11 @@ namespace TronBox.Application.Services
             }
         }
 
-        private DocumentoFiscalDTO ProcessarXMLparaCTe(string inscricaoEmpresa, string conteudoXML, string nomeArquivo)
+        private DocumentoFiscalDTO ProcessarXMLparaCTe(string inscricaoEmpresa, bool salvarCteNaoTomador, string conteudoXML, string nomeArquivo)
         {
             var cte = UtilitarioXML.XmlStringParaClasse<cteProc>(conteudoXML);
 
-            var conhecimentoTransporte = ObterConhecimentoTransporteFromObject(inscricaoEmpresa, cte);
+            var conhecimentoTransporte = ObterConhecimentoTransporteFromObject(inscricaoEmpresa, salvarCteNaoTomador, cte);
 
             if (conhecimentoTransporte == null)
             {
@@ -382,7 +384,7 @@ namespace TronBox.Application.Services
             return notaFiscalServicoEletronica;
         }
 
-        private DocumentoFiscalDTO ObterConhecimentoTransporteFromObject(string inscricaoEmpresa, cteProc cte)
+        private DocumentoFiscalDTO ObterConhecimentoTransporteFromObject(string inscricaoEmpresa, bool salvarCteNaoTomador, cteProc cte)
         {
             var documentoFiscal = new DocumentoFiscalDTO()
             {
@@ -402,7 +404,7 @@ namespace TronBox.Application.Services
                 }
             };
 
-            if (documentoFiscal.TipoDocumentoFiscal == 0) return null;
+            if (documentoFiscal.TipoDocumentoFiscal == 0 || (documentoFiscal.TipoDocumentoFiscal == ETipoDocumentoFiscal.CTeNaoTomador && !salvarCteNaoTomador)) return null;
 
             return documentoFiscal;
         }
@@ -511,20 +513,20 @@ namespace TronBox.Application.Services
         private ETipoDocumentoFiscal ObterTipoConhecimentoTransporte(string inscricaoEmpresa, cteProc cte)
         {
             if (cte.CTe.infCte.ide.tomaBase3 == null && cte.CTe.infCte.ide.toma4 != null)
-                return inscricaoEmpresa == (cte.CTe.infCte.ide.toma4.CNPJ ?? cte.CTe.infCte.ide.toma4.CPF) ? ETipoDocumentoFiscal.CteEntrada : ETipoDocumentoFiscal.CteSaida;
+                return inscricaoEmpresa == (cte.CTe.infCte.ide.toma4.CNPJ ?? cte.CTe.infCte.ide.toma4.CPF) ? ETipoDocumentoFiscal.CteEntrada : ETipoDocumentoFiscal.CTeNaoTomador;
 
             switch (cte.CTe.infCte.ide.tomaBase3.toma)
             {
                 case CTe.Classes.Informacoes.Tipos.toma.Remetente:
-                    return inscricaoEmpresa == (cte.CTe.infCte.rem.CNPJ ?? cte.CTe.infCte.rem.CPF) ? ETipoDocumentoFiscal.CteEntrada : ETipoDocumentoFiscal.CteSaida;
+                    return inscricaoEmpresa == (cte.CTe.infCte.rem.CNPJ ?? cte.CTe.infCte.rem.CPF) ? ETipoDocumentoFiscal.CteEntrada : ETipoDocumentoFiscal.CTeNaoTomador;
                 case CTe.Classes.Informacoes.Tipos.toma.Expedidor:
-                    return inscricaoEmpresa == (cte.CTe.infCte.exped.CNPJ ?? cte.CTe.infCte.exped.CPF) ? ETipoDocumentoFiscal.CteEntrada : ETipoDocumentoFiscal.CteSaida;
+                    return inscricaoEmpresa == (cte.CTe.infCte.exped.CNPJ ?? cte.CTe.infCte.exped.CPF) ? ETipoDocumentoFiscal.CteEntrada : ETipoDocumentoFiscal.CTeNaoTomador;
                 case CTe.Classes.Informacoes.Tipos.toma.Recebedor:
-                    return inscricaoEmpresa == (cte.CTe.infCte.receb.CNPJ ?? cte.CTe.infCte.receb.CPF) ? ETipoDocumentoFiscal.CteEntrada : ETipoDocumentoFiscal.CteSaida;
+                    return inscricaoEmpresa == (cte.CTe.infCte.receb.CNPJ ?? cte.CTe.infCte.receb.CPF) ? ETipoDocumentoFiscal.CteEntrada : ETipoDocumentoFiscal.CTeNaoTomador;
                 case CTe.Classes.Informacoes.Tipos.toma.Destinatario:
-                    return inscricaoEmpresa == (cte.CTe.infCte.dest.CNPJ ?? cte.CTe.infCte.dest.CPF) ? ETipoDocumentoFiscal.CteEntrada : ETipoDocumentoFiscal.CteSaida;
+                    return inscricaoEmpresa == (cte.CTe.infCte.dest.CNPJ ?? cte.CTe.infCte.dest.CPF) ? ETipoDocumentoFiscal.CteEntrada : ETipoDocumentoFiscal.CTeNaoTomador;
                 case CTe.Classes.Informacoes.Tipos.toma.Outros:
-                    return inscricaoEmpresa == (cte.CTe.infCte.ide.toma4.CNPJ ?? cte.CTe.infCte.ide.toma4.CPF) ? ETipoDocumentoFiscal.CteEntrada : ETipoDocumentoFiscal.CteSaida;
+                    return inscricaoEmpresa == (cte.CTe.infCte.ide.toma4.CNPJ ?? cte.CTe.infCte.ide.toma4.CPF) ? ETipoDocumentoFiscal.CteEntrada : ETipoDocumentoFiscal.CTeNaoTomador;
                 default:
                     return 0;
             };

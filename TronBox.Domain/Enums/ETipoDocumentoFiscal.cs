@@ -24,5 +24,8 @@ namespace TronBox.Domain.Enums
 
         [Display(Name = "NFse Saída")]
         NfseSaida = 7,
+
+        [Display(Name = "CTe não Tomador")]
+        CTeNaoTomador = 8
     }
 }
