@@ -112,7 +112,7 @@ namespace TronBox.Application.Services
 
             if ((documentoFiscal.TipoDocumentoFiscal == ETipoDocumentoFiscal.NfeEntrada) || (documentoFiscal.TipoDocumentoFiscal == ETipoDocumentoFiscal.NfeSaida) || (documentoFiscal.TipoDocumentoFiscal == ETipoDocumentoFiscal.Nfce))
                 detalhesDocumento.NotaFiscalEletronica = FuncoesXml.XmlStringParaClasse<nfeProc>(conteudoXML);
-            else if ((documentoFiscal.TipoDocumentoFiscal == ETipoDocumentoFiscal.CteEntrada) || (documentoFiscal.TipoDocumentoFiscal == ETipoDocumentoFiscal.CteSaida))
+            else if (documentoFiscal.TipoDocumentoFiscal == ETipoDocumentoFiscal.CteEntrada || documentoFiscal.TipoDocumentoFiscal == ETipoDocumentoFiscal.CteSaida || documentoFiscal.TipoDocumentoFiscal == ETipoDocumentoFiscal.CTeNaoTomador)
                 detalhesDocumento.ConhecimentoTransporteEletronico = FuncoesXml.XmlStringParaClasse<cteProc>(conteudoXML);
             else if ((documentoFiscal.TipoDocumentoFiscal == ETipoDocumentoFiscal.NfseEntrada) || (documentoFiscal.TipoDocumentoFiscal == ETipoDocumentoFiscal.NfseSaida))
                 detalhesDocumento.NotaFiscalServicoEletronico = UtilitarioXML.XmlStringParaClasse<CompNfse>(conteudoXML.Replace("tc:", ""));
