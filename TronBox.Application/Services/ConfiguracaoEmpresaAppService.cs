@@ -176,7 +176,16 @@ namespace TronBox.Application.Services
             var pessoas = _repositoryFactory.Instancie<IPessoaRepository>().BuscarTodos(c => administradores.Contains(c.Id) && !regex.IsMatch(c.Email));
 
             foreach (var pessoa in pessoas)
-               await TemplateEmail.EnviarEmailSefazSenhaInvalida(pessoa.Email, empresa.RazaoSocial, estado);
+                await TemplateEmail.EnviarEmailSefazSenhaInvalida(pessoa.Email, empresa.RazaoSocial, estado);
+        }
+
+        public void CriarPessoa(PessoaUsuarioDTO pessoaUsuarioDto)
+        {
+            var pessoaId = InserirPessoa(pessoaUsuarioDto);
+
+            InserirPessoaUsuario(pessoaUsuarioDto.UsuarioId, pessoaId);
+
+            InserirPessoaEmpresa(pessoaUsuarioDto, pessoaId);
         }
 
         #region Private Methods
@@ -490,6 +499,52 @@ namespace TronBox.Application.Services
         {
             foreach (var error in validator.Errors)
                 _bus.RaiseEvent(new DomainNotification(error.PropertyName, error.ErrorMessage));
+        }
+
+        private Guid InserirPessoa(PessoaUsuarioDTO pessoaUsuarioDto)
+        {
+            var pessoa = new Pessoa()
+            {
+                Id = Guid.NewGuid(),
+                Email = pessoaUsuarioDto.Email,
+                Cpf = pessoaUsuarioDto.Cpf,
+                Nome = pessoaUsuarioDto.Nome,
+                Cep = pessoaUsuarioDto.Cep,
+                Logradouro = pessoaUsuarioDto.Logradouro,
+                Numero = pessoaUsuarioDto.Numero,
+                Complemento = pessoaUsuarioDto.Complemento,
+                Bairro = pessoaUsuarioDto.Bairro,
+                TelefoneFixo = pessoaUsuarioDto.TelefoneFixo,
+                TelefoneCelular = pessoaUsuarioDto.TelefoneCelular,
+                Status = true,
+            };
+
+            _repositoryFactory.Instancie<IPessoaRepository>().Inserir(pessoa);
+
+            return pessoa.Id;
+        }
+
+        private void InserirPessoaUsuario(Guid usuarioID, Guid pessoaId)
+        {
+            var pessoaUsuario = new PessoaUsuario
+            {
+                UsuarioId = usuarioID,
+                PessoaId = pessoaId
+            };
+
+            _repositoryFactory.Instancie<IPessoaUsuarioRepository>().Inserir(pessoaUsuario);
+        }
+
+        private void InserirPessoaEmpresa(PessoaUsuarioDTO pessoaUsuarioDto, Guid pessoaId)
+        {
+            var pessoaEmpresa = new PessoaEmpresa
+            {
+                PessoaId = pessoaId,
+                EmpresaId = pessoaUsuarioDto.EmpresaId,
+                ClassificacaoFuncionario = pessoaUsuarioDto.Tipo
+            };
+
+            _repositoryFactory.Instancie<IPessoaEmpresaRepository>().Inserir(pessoaEmpresa);
         }
         #endregion
     }

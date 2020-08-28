@@ -59,6 +59,32 @@ namespace TronBox.UI.Controllers
             });
         }
 
+        [HttpPost("pessoa")]
+        public IActionResult Post([FromBody] PessoaUsuarioDTO pessoaUsuario)
+        {
+            AppServiceFactory.Instancie<IConfiguracaoEmpresaAppService>().CriarPessoa(pessoaUsuario);
+
+            if (_notifications.HasNotifications())
+            {
+                return BadRequest(new
+                {
+                    sucesso = false,
+                    erro = _notifications.GetNotifications()
+                        .Select(c => new
+                        {
+                            Chave = c.Key,
+                            Mensagem = c.Value
+                        })
+                });
+            }
+
+            return Ok(new
+            {
+                sucesso = true,
+                mensagem = "Operação realizada com sucesso."
+            });
+        }
+
         [HttpPost("certificado/upload")]
         public async Task<IActionResult> Upload([FromForm] CertificadoCreateDTO certificadoCreateDTO)
         {
@@ -121,6 +147,5 @@ namespace TronBox.UI.Controllers
                 mensagem = "Operação realizada com sucesso."
             });
         }
-
     }
 }

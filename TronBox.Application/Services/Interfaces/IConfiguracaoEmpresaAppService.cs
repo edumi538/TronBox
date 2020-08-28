@@ -16,5 +16,6 @@ namespace TronBox.Application.Services.Interfaces
         void AtualizarEmail(AtualizacaoEmailDTO empregado);
         CertificadoSituacaoDTO SituacaoCertificado();
         Task NotificarContadorAcessoInvalido(ESefazEstado estado);
+        void CriarPessoa(PessoaUsuarioDTO pessoaUsuario);
     }
 }
