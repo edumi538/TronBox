@@ -30,6 +30,7 @@ namespace TronBox.UI.Controllers
         public IActionResult Post([FromBody]InquilinoMongoDTO inquilinoConnect)
         {
             var empresaExistente = AppServiceFactory.Instancie<IEmpresaAppService>().BuscarPorInscricao(inquilinoConnect.Inscricao);
+            eTipoInscricaoEmpresa tipoInscricao = ObterTipoInscricao(inquilinoConnect);
 
             if (empresaExistente == null)
             {
@@ -37,7 +38,7 @@ namespace TronBox.UI.Controllers
                 {
                     RazaoSocial = inquilinoConnect.Nome,
                     Inscricao = inquilinoConnect.Inscricao,
-                    TipoInscricao = eTipoInscricaoEmpresa.CNPJ
+                    TipoInscricao = tipoInscricao
                 };
 
                 AppServiceFactory.Instancie<IEmpresaAppService>().Inserir(empresa);
@@ -168,6 +169,18 @@ namespace TronBox.UI.Controllers
                     AppServiceFactory.Instancie<IPessoaEmpresaAppService>().Inserir(pessoaEmpresa);
                 }
             }
+        }
+
+        private static eTipoInscricaoEmpresa ObterTipoInscricao(InquilinoMongoDTO inquilinoConnect)
+        {
+            var tipoInscricao = eTipoInscricaoEmpresa.CNPJ;
+
+            if (inquilinoConnect.Inscricao.Length == 11)
+            {
+                tipoInscricao = eTipoInscricaoEmpresa.CPF;
+            }
+
+            return tipoInscricao;
         }
         #endregion
     }
