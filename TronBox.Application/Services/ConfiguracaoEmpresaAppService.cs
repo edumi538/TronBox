@@ -6,6 +6,7 @@ using Comum.Domain.Aggregates.PessoaAgg;
 using Comum.Domain.Aggregates.PessoaAgg.Repository;
 using Comum.Domain.Enums;
 using Comum.Domain.Interfaces;
+using Comum.Domain.ViewModels;
 using Comum.DTO;
 using Comum.DTO.Usuario;
 using FluentValidation.Results;
@@ -20,6 +21,8 @@ using System.Threading.Tasks;
 using TronBox.Application.Services.Interfaces;
 using TronBox.Domain.Aggregates.ConfiguracaoEmpresaAgg;
 using TronBox.Domain.Aggregates.ConfiguracaoEmpresaAgg.Repository;
+using TronBox.Domain.Aggregates.ConfiguracaoUsuarioAgg;
+using TronBox.Domain.Aggregates.ConfiguracaoUsuarioAgg.Repository;
 using TronBox.Domain.DTO;
 using TronBox.Domain.Enums;
 using TronCore.DefinicoesConfiguracoes;
@@ -169,14 +172,38 @@ namespace TronBox.Application.Services
         {
             var regex = new Regex(@"\bDB-(GC|CN|LR|BX)-[0-9]{4}@tron.com.br\b", RegexOptions.None);
 
-            var administradores = _repositoryFactory.Instancie<IPessoaEmpresaRepository>()
-                .BuscarTodos(c => c.ClassificacaoFuncionario == eClassificacaoPessoa.Administrador)
-                .Select(c => c.PessoaId);
             var empresa = _repositoryFactory.Instancie<IEmpresaRepository>().BuscarTodos().FirstOrDefault();
-            var pessoas = _repositoryFactory.Instancie<IPessoaRepository>().BuscarTodos(c => administradores.Contains(c.Id) && !regex.IsMatch(c.Email));
+            var configuracoes = _repositoryFactory.Instancie<IConfiguracaoUsuarioRepository>().BuscarTodos(c => c.NotificarPortalEstadual);
 
-            foreach (var pessoa in pessoas)
-                await TemplateEmail.EnviarEmailSefazSenhaInvalida(pessoa.Email, empresa.RazaoSocial, estado);
+            foreach (var configuracao in configuracoes)
+            {
+                var pessoa = _repositoryFactory.Instancie<IPessoaRepository>().BuscarPorExpressao(c => c.Cpf == configuracao.Inscricao);
+
+                if (pessoa != null && !string.IsNullOrEmpty(pessoa.Email) && !regex.IsMatch(pessoa.Email))
+                    await TemplateEmail.EnviarEmailSefazSenhaInvalida(pessoa.Email, empresa.RazaoSocial, estado);
+            }
+        }
+
+        public void AlterarPessoa(PessoaViewModel pessoa)
+        {
+            var pessoaExistente = _repositoryFactory.Instancie<IPessoaRepository>().BuscarPorId(pessoa.Id);
+
+            if (pessoaExistente != null)
+            {
+                if (pessoa.Cpf != pessoaExistente.Cpf)
+                {
+                    var configuracao = _repositoryFactory.Instancie<IConfiguracaoUsuarioRepository>().BuscarPorExpressao(c => c.Inscricao == pessoaExistente.Cpf);
+
+                    if (configuracao != null)
+                    {
+                        configuracao.Inscricao = pessoa.Cpf;
+
+                        _repositoryFactory.Instancie<IConfiguracaoUsuarioRepository>().Atualizar(configuracao);
+                    }
+                }
+
+                _repositoryFactory.Instancie<IPessoaRepository>().Atualizar(_mapper.Map<Pessoa>(pessoa));
+            }
         }
 
         public void CriarPessoa(PessoaUsuarioDTO pessoaUsuarioDto)
@@ -186,6 +213,8 @@ namespace TronBox.Application.Services
             InserirPessoaUsuario(pessoaUsuarioDto.UsuarioId, pessoaId);
 
             InserirPessoaEmpresa(pessoaUsuarioDto, pessoaId);
+
+            InserirConfiguracaoUsuario(pessoaUsuarioDto.Cpf);
         }
 
         #region Private Methods
@@ -545,6 +574,17 @@ namespace TronBox.Application.Services
             };
 
             _repositoryFactory.Instancie<IPessoaEmpresaRepository>().Inserir(pessoaEmpresa);
+        }
+
+        private void InserirConfiguracaoUsuario(string cpf)
+        {
+            var configuracao = new ConfiguracaoUsuario
+            {
+                Inscricao = cpf,
+                NotificarPortalEstadual = true
+            };
+
+            _repositoryFactory.Instancie<IConfiguracaoUsuarioRepository>().Inserir(configuracao);
         }
         #endregion
     }

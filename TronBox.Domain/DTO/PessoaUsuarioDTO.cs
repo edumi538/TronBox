@@ -8,6 +8,7 @@ namespace TronBox.Domain.DTO
         public eClassificacaoPessoa Tipo { get; set; }
         public Guid UsuarioId { get; set; }
         public Guid EmpresaId { get; set; }
+        public Guid Id { get; set; }
         public string Email { get; set; }
         public string Cpf { get; set; }
         public string Nome { get; set; }

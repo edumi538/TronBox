@@ -1,4 +1,5 @@
-﻿using Comum.DTO;
+﻿using Comum.Domain.ViewModels;
+using Comum.DTO;
 using System;
 using System.Threading.Tasks;
 using TronBox.Domain.DTO;
@@ -16,6 +17,7 @@ namespace TronBox.Application.Services.Interfaces
         void AtualizarEmail(AtualizacaoEmailDTO empregado);
         CertificadoSituacaoDTO SituacaoCertificado();
         Task NotificarContadorAcessoInvalido(ESefazEstado estado);
+        void AlterarPessoa(PessoaViewModel pessoa);
         void CriarPessoa(PessoaUsuarioDTO pessoaUsuario);
     }
 }

@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Comum.Domain.Aggregates.EmpresaAgg;
 using TronBox.Domain.Aggregates.ConfiguracaoEmpresaAgg;
+using TronBox.Domain.Aggregates.ConfiguracaoUsuarioAgg;
 using TronBox.Domain.Aggregates.DadosComputadorMonitorAgg;
 using TronBox.Domain.Aggregates.DocumentoFiscalAgg;
 using TronBox.Domain.Aggregates.HistoricoConsultaAgg;
@@ -33,6 +34,7 @@ namespace TronBox.Domain.Automapper
             CreateMap<DadosFornecedorDTO, DadosFornecedor>();
             CreateMap<DadosImportacaoDTO, DadosImportacao>();
             CreateMap<DadosOrigemDocumentoFiscalDTO, DadosOrigemDocumentoFiscal>();
+            CreateMap<ConfiguracaoUsuarioDTO, ConfiguracaoUsuario>();
         }
     }
 }

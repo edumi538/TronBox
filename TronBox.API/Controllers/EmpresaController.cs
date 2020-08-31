@@ -1,4 +1,5 @@
-﻿using Comum.DTO;
+﻿using Comum.Domain.ViewModels;
+using Comum.DTO;
 using Comum.Enums;
 using Comum.UI.Controllers;
 using Microsoft.AspNetCore.Authorization;
@@ -63,6 +64,32 @@ namespace TronBox.UI.Controllers
         public IActionResult Post([FromBody] PessoaUsuarioDTO pessoaUsuario)
         {
             AppServiceFactory.Instancie<IConfiguracaoEmpresaAppService>().CriarPessoa(pessoaUsuario);
+
+            if (_notifications.HasNotifications())
+            {
+                return BadRequest(new
+                {
+                    sucesso = false,
+                    erro = _notifications.GetNotifications()
+                        .Select(c => new
+                        {
+                            Chave = c.Key,
+                            Mensagem = c.Value
+                        })
+                });
+            }
+
+            return Ok(new
+            {
+                sucesso = true,
+                mensagem = "Operação realizada com sucesso."
+            });
+        }
+
+        [HttpPut("pessoa")]
+        public IActionResult Put([FromBody] PessoaViewModel pessoa)
+        {
+            AppServiceFactory.Instancie<IConfiguracaoEmpresaAppService>().AlterarPessoa(pessoa);
 
             if (_notifications.HasNotifications())
             {

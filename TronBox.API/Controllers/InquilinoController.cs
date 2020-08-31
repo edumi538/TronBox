@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Linq;
+using TronBox.Application.Services.Interfaces;
+using TronBox.Domain.DTO;
 using TronCore.Domain.Factories;
 using TronCore.Dominio.Notifications;
 
@@ -88,6 +90,18 @@ namespace TronBox.UI.Controllers
             var pessoaId = CriarRelacionamentoPessoaUsuario(pessoa);
 
             CriarRelacionamentoPessoaEmpresa(pessoaId);
+            CriarConfiguracaoUsuario(pessoa.Cpf);
+        }
+
+        private void CriarConfiguracaoUsuario(string cpf)
+        {
+            var configuracao = new ConfiguracaoUsuarioDTO
+            {
+                Inscricao = cpf,
+                NotificarPortalEstadual = true
+            };
+
+            AppServiceFactory.Instancie<IConfiguracaoUsuarioAppService>().InserirOuAtualizar(configuracao);
         }
 
         private Guid CriarRelacionamentoPessoaUsuario(PessoaViewModel pessoa)
