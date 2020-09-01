@@ -165,7 +165,7 @@ namespace TronBox.Application.Services
         public void Deletar(Guid id) => _repositoryFactory.Instancie<IDocumentoFiscalRepository>().Excluir(id);
 
         public bool ExisteNaoProcessado() => _repositoryFactory.Instancie<IDocumentoFiscalRepository>().Contar(
-            new DirectSpecification<DocumentoFiscal>(c => c.DadosImportacao == null || c.DadosImportacao.DataImportacao == 0)) > 0;
+            new DirectSpecification<DocumentoFiscal>(c => c.TipoDocumentoFiscal != ETipoDocumentoFiscal.CTeNaoTomador && c.DadosImportacao == null || c.DadosImportacao.DataImportacao == 0)) > 0;
 
         public void ConfirmarImportacao(Guid id, DadosImportacaoDTO dadosImportacao)
         {
