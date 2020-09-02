@@ -170,7 +170,7 @@ namespace TronBox.Application.Services
 
         public async Task NotificarContadorAcessoInvalido(ESefazEstado estado)
         {
-            var regex = new Regex(@"\bDB-(GC|CN|LR|BX)-[0-9]{4}@tron.com.br\b", RegexOptions.None);
+            var regex = new Regex(@"\bDB-(GC|CN|LR|BX)-[0-9]{4,6}@tron.com.br\b", RegexOptions.None);
 
             var empresa = _repositoryFactory.Instancie<IEmpresaRepository>().BuscarTodos().FirstOrDefault();
             var configuracoes = _repositoryFactory.Instancie<IConfiguracaoUsuarioRepository>().BuscarTodos(c => c.NotificarPortalEstadual);
