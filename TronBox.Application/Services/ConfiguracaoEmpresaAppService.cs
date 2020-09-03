@@ -229,6 +229,8 @@ namespace TronBox.Application.Services
 
             var certificado = JsonConvert.DeserializeObject<CertificadoSimplificadoDTO>(certificadoResposta);
 
+            if (certificado == null) return new CertificadoSituacaoDTO(empresa.Inscricao, empresa.RazaoSocial);
+
             return new CertificadoSituacaoDTO()
             {
                 InscricaoEmpresa = empresa.Inscricao,
