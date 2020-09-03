@@ -88,6 +88,19 @@ namespace TronBox.Application.Services
             PublicarErros(configuracaoUsuario);
         }
 
+        public void Inserir(ConfiguracaoUsuarioDTO configuracaoUsuarioDTO)
+        {
+            if (configuracaoUsuarioDTO == null)
+            {
+                _bus.RaiseEvent(new DomainNotification("NaoEncontrado", "Configuração de Usuário não informado ou está inválido."));
+                return;
+            }
+
+            var configuracaoUsuario = _mapper.Map<ConfiguracaoUsuario>(configuracaoUsuarioDTO);
+
+            if (configuracaoUsuario.EhValido()) _repositoryFactory.Instancie<IConfiguracaoUsuarioRepository>().Inserir(configuracaoUsuario);
+        }
+
         #region Private Methods
         private Pessoa ObterPessoaLogada()
         {

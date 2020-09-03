@@ -7,5 +7,6 @@ namespace TronBox.Application.Services.Interfaces
     {
         ConfiguracaoUsuarioDTO BuscarConfiguracaoUsuario();
         void InserirOuAtualizar(ConfiguracaoUsuarioDTO configuracaoUsuarioDTO);
+        void Inserir(ConfiguracaoUsuarioDTO configuracaoUsuarioDTO);
     }
 }

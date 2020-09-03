@@ -19,11 +19,8 @@ namespace TronBox.UI.Controllers
     [Route("api/inquilinos")]
     public class InquilinoController : BaseController
     {
-        readonly IDomainNotificationHandler<DomainNotification> _notifications;
-
         public InquilinoController(IDomainNotificationHandler<DomainNotification> notifications, IAppServiceFactory appServiceFactory) : base(notifications, appServiceFactory)
         {
-            _notifications = notifications;
         }
 
         [HttpPost]
@@ -42,12 +39,12 @@ namespace TronBox.UI.Controllers
 
                 AppServiceFactory.Instancie<IEmpresaAppService>().Inserir(empresa);
 
-                if (_notifications.HasNotifications())
+                if (Notifications.HasNotifications())
                 {
                     return BadRequest(new
                     {
                         sucesso = false,
-                        erro = _notifications.GetNotifications()
+                        erro = Notifications.GetNotifications()
                             .Select(c => new
                             {
                                 Chave = c.Key,
@@ -62,12 +59,12 @@ namespace TronBox.UI.Controllers
                 if (inquilinoConnect.PessoaImplantacao != null)
                     CriarPessoa(inquilinoConnect.PessoaImplantacao);
 
-                if (_notifications.HasNotifications())
+                if (Notifications.HasNotifications())
                 {
                     return BadRequest(new
                     {
                         sucesso = false,
-                        erro = _notifications.GetNotifications()
+                        erro = Notifications.GetNotifications()
                             .Select(c => new
                             {
                                 Chave = c.Key,
@@ -101,7 +98,7 @@ namespace TronBox.UI.Controllers
                 NotificarPortalEstadual = true
             };
 
-            AppServiceFactory.Instancie<IConfiguracaoUsuarioAppService>().InserirOuAtualizar(configuracao);
+            AppServiceFactory.Instancie<IConfiguracaoUsuarioAppService>().Inserir(configuracao);
         }
 
         private Guid CriarRelacionamentoPessoaUsuario(PessoaViewModel pessoa)

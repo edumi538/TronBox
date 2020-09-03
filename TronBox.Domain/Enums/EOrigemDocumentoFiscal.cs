@@ -16,7 +16,7 @@ namespace TronBox.Domain.Enums
         [Display(Name = "Agente Manifestação")]
         AgenteManifestacao = 4,
 
-        [Display(Name = "MonitorA3")]
+        [Display(Name = "Monitor A3")]
         MonitorA3 = 5,
 
         [Display(Name = "Portal Estadual")]
