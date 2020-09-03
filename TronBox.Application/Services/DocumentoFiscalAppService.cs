@@ -177,12 +177,15 @@ namespace TronBox.Application.Services
                 return;
             }
 
-            documentoFiscalEncontrado.DadosImportacao = dadosImportacao;
+            if (!documentoFiscalEncontrado.Processado || dadosImportacao.Desfazer)
+            {
+                documentoFiscalEncontrado.DadosImportacao = dadosImportacao.Desfazer ?  null : dadosImportacao;
 
-            var documentoFiscal = _mapper.Map<DocumentoFiscal>(documentoFiscalEncontrado);
+                var documentoFiscal = _mapper.Map<DocumentoFiscal>(documentoFiscalEncontrado);
 
-            if (EhValido(documentoFiscal))
-                _repositoryFactory.Instancie<IDocumentoFiscalRepository>().Atualizar(documentoFiscal);
+                if (EhValido(documentoFiscal))
+                    _repositoryFactory.Instancie<IDocumentoFiscalRepository>().Atualizar(documentoFiscal);
+            }
         }
 
         public void CancelarDocumentos(IEnumerable<string> chavesCancelamento)
@@ -238,7 +241,7 @@ namespace TronBox.Application.Services
                 documento.Cancelado = cancelamento != null
                     || manifestos.Any(m => m.ChaveDocumentoFiscal == documento.ChaveDocumentoFiscal);
 
-                if(cancelamento != null)
+                if (cancelamento != null)
                     chaveDocumentoRepository.Excluir(cancelamento);
 
             }
@@ -581,7 +584,7 @@ namespace TronBox.Application.Services
                     var repository = _repositoryFactory.Instancie<IChaveDocumentoCanceladoRepository>();
                     var cancelado = repository.BuscarPorExpressao(c => c.ChaveDocumentoFiscal == documentoGerado.ChaveDocumentoFiscal);
 
-                    if (cancelado == null) 
+                    if (cancelado == null)
                         repository.Inserir(new ChaveDocumentoCancelado { ChaveDocumentoFiscal = documentoGerado.ChaveDocumentoFiscal });
 
                     _bus.RaiseEvent(new DomainNotification(documentoGerado.NomeArquivo, "Não foi encontrado documento para o cancelamento enviado."));
