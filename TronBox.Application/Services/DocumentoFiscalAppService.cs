@@ -179,7 +179,7 @@ namespace TronBox.Application.Services
 
             if (!documentoFiscalEncontrado.Processado || dadosImportacao.Desfazer)
             {
-                documentoFiscalEncontrado.DadosImportacao = dadosImportacao.Desfazer ?  null : dadosImportacao;
+                documentoFiscalEncontrado.DadosImportacao = dadosImportacao.Desfazer ? null : dadosImportacao;
 
                 var documentoFiscal = _mapper.Map<DocumentoFiscal>(documentoFiscalEncontrado);
 
@@ -298,7 +298,9 @@ namespace TronBox.Application.Services
 
                             foreach (Match match in matches)
                             {
-                                var notaFiscalServico = ProcessarXMLparaNFse(empresa.Inscricao, match.Value.Replace("tc:", ""), arquivo.FileName);
+                                var xml = match.Value.Replace("tc:", "").Replace("ns2:", "");
+
+                                var notaFiscalServico = ProcessarXMLparaNFse(empresa.Inscricao, xml, arquivo.FileName);
 
                                 if (notaFiscalServico != null)
                                 {
