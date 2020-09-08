@@ -115,7 +115,7 @@ namespace TronBox.Application.Services
             else if (documentoFiscal.TipoDocumentoFiscal == ETipoDocumentoFiscal.CteEntrada || documentoFiscal.TipoDocumentoFiscal == ETipoDocumentoFiscal.CteSaida || documentoFiscal.TipoDocumentoFiscal == ETipoDocumentoFiscal.CTeNaoTomador)
                 detalhesDocumento.ConhecimentoTransporteEletronico = FuncoesXml.XmlStringParaClasse<cteProc>(conteudoXML);
             else if ((documentoFiscal.TipoDocumentoFiscal == ETipoDocumentoFiscal.NfseEntrada) || (documentoFiscal.TipoDocumentoFiscal == ETipoDocumentoFiscal.NfseSaida))
-                detalhesDocumento.NotaFiscalServicoEletronico = UtilitarioXML.XmlStringParaClasse<CompNfse>(conteudoXML.Replace("tc:", ""));
+                detalhesDocumento.NotaFiscalServicoEletronico = UtilitarioXML.XmlStringParaClasse<CompNfse>(GetXml(conteudoXML));
 
             return detalhesDocumento;
         }
@@ -288,7 +288,7 @@ namespace TronBox.Application.Services
                         }
                         else
                         {
-                            var matches = Regex.Matches(conteudoXML, "<CompNfse[^>]*?>(.*?)</CompNfse>", RegexOptions.IgnoreCase | RegexOptions.Multiline | RegexOptions.Singleline);
+                            var matches = Regex.Matches(conteudoXML, "<CompNfse[^>]*?>(.*?)</CompNfse>|<ComplNfse[^>]*?>(.*?)</ComplNfse>", RegexOptions.IgnoreCase | RegexOptions.Multiline | RegexOptions.Singleline);
 
                             if (matches.Count == 0)
                             {
@@ -298,9 +298,7 @@ namespace TronBox.Application.Services
 
                             foreach (Match match in matches)
                             {
-                                var xml = match.Value.Replace("tc:", "").Replace("ns2:", "");
-
-                                var notaFiscalServico = ProcessarXMLparaNFse(empresa.Inscricao, xml, arquivo.FileName);
+                                var notaFiscalServico = ProcessarXMLparaNFse(empresa.Inscricao, GetXml(match.Value), arquivo.FileName);
 
                                 if (notaFiscalServico != null)
                                 {
@@ -714,6 +712,13 @@ namespace TronBox.Application.Services
             if (modelo == "65") return "nfce";
 
             return "cte";
+        }
+
+        private static string GetXml(string conteudoXML)
+        {
+            var regex = new Regex("tc:|ns2:|ns3:");
+
+            return regex.Replace(conteudoXML, string.Empty).Replace("ComplNfse", "CompNfse");
         }
 
         private void AtualizarManifestoDocumentoCancelado(IEnumerable<RetornoDocumentoFiscalDTO> retornoDocumentosCancelados)
