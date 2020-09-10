@@ -34,6 +34,7 @@ using TronBox.Domain.Enums;
 using TronBox.Domain.InnerClass;
 using TronBox.Infra.Data.Utilitarios;
 using TronCore.DefinicoesConfiguracoes;
+using TronCore.Dominio.Base;
 using TronCore.Dominio.Bus;
 using TronCore.Dominio.Notifications;
 using TronCore.Dominio.Specifications;
@@ -481,14 +482,20 @@ namespace TronBox.Application.Services
 
             var inscricaoTomador = dadosTomador.IdentificacaoTomador.CpfCnpj.Cnpj ?? dadosTomador.IdentificacaoTomador.CpfCnpj.Cpf;
 
-            if (inscricaoEmpresa == inscricaoPrestador)
+            if (!string.IsNullOrEmpty(inscricaoPrestador) && inscricaoEmpresa == inscricaoPrestador.RemoveMascaras())
                 documentoFiscal.TipoDocumentoFiscal = ETipoDocumentoFiscal.NfseSaida;
-            else if (inscricaoEmpresa == inscricaoTomador)
+            else if (!string.IsNullOrEmpty(inscricaoTomador) && inscricaoEmpresa == inscricaoTomador.RemoveMascaras())
                 documentoFiscal.TipoDocumentoFiscal = ETipoDocumentoFiscal.NfseEntrada;
 
-            if (compNfse.Nfse.InfNfse.Servico != null)
+            if (compNfse.Nfse.InfNfse.Servico != null && compNfse.Nfse.InfNfse.Servico.Valores.ValorServicos > 0)
                 documentoFiscal.ValorDocumentoFiscal = (double)compNfse.Nfse.InfNfse.Servico.Valores.ValorServicos;
-            else if (compNfse.Nfse.InfNfse.DeclaracaoPrestacaoServico != null)
+            if (compNfse.Nfse.InfNfse.ValoresNfse != null && compNfse.Nfse.InfNfse.ValoresNfse.ValorServicos > 0)
+                documentoFiscal.ValorDocumentoFiscal = (double)compNfse.Nfse.InfNfse.ValoresNfse.ValorServicos;
+            else if (compNfse.Nfse.InfNfse.DeclaracaoPrestacaoServico != null &&
+                compNfse.Nfse.InfNfse.DeclaracaoPrestacaoServico.InfDeclaracaoPrestacaoServico != null &&
+                compNfse.Nfse.InfNfse.DeclaracaoPrestacaoServico.InfDeclaracaoPrestacaoServico.Servico != null &&
+                compNfse.Nfse.InfNfse.DeclaracaoPrestacaoServico.InfDeclaracaoPrestacaoServico.Servico.Valores != null &&
+                compNfse.Nfse.InfNfse.DeclaracaoPrestacaoServico.InfDeclaracaoPrestacaoServico.Servico.Valores.ValorServicos > 0)
                 documentoFiscal.ValorDocumentoFiscal = (double)compNfse.Nfse.InfNfse.DeclaracaoPrestacaoServico.InfDeclaracaoPrestacaoServico.Servico.Valores.ValorServicos;
 
             if (documentoFiscal.TipoDocumentoFiscal == 0) return null;

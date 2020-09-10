@@ -32,6 +32,7 @@ namespace TronBox.Domain.Classes.NFSe
     {
         public string BaseCalculo { get; set; }
         public string Aliquota { get; set; }
+        public decimal ValorServicos { get; set; }
         public string ValorIss { get; set; }
         public string ValorLiquidoNfse { get; set; }
     }
