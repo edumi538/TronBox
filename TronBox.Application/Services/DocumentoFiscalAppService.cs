@@ -351,7 +351,7 @@ namespace TronBox.Application.Services
 
             if (conhecimentoTransporte == null)
             {
-                NotificarDocumentoInvalidos(nomeArquivo, "Documento não pertence a empresa selecionada.");
+                NotificarAplicacao(nomeArquivo, "Documento não pertence a empresa selecionada.");
                 return null;
             }
 
@@ -366,7 +366,7 @@ namespace TronBox.Application.Services
 
             if (notaFiscal == null)
             {
-                NotificarDocumentoInvalidos(nomeArquivo, "Documento não pertence a empresa selecionada.");
+                NotificarAplicacao(nomeArquivo, "Documento não pertence a empresa selecionada.");
                 return null;
             }
 
@@ -381,7 +381,7 @@ namespace TronBox.Application.Services
 
             if (notaFiscalServicoEletronica == null)
             {
-                NotificarDocumentoInvalidos(nomeArquivo, "Documento não pertence a empresa selecionada.");
+                NotificarAplicacao(nomeArquivo, "Documento não pertence a empresa selecionada.");
                 return null;
             }
 
@@ -760,7 +760,7 @@ namespace TronBox.Application.Services
 
             await NotificarEmail(empresa, arquivo);
 
-            _bus.RaiseEvent(new DomainNotification(arquivo.FileName, mensagem));
+            NotificarAplicacao(arquivo.FileName, mensagem);
         }
 
         private static void NotificarExcecaoSentry(IFormFile arquivo, Exception ex)
@@ -789,6 +789,7 @@ namespace TronBox.Application.Services
             }
         }
 
+        private void NotificarAplicacao(string nomeArquivo, string mensagem) => _bus.RaiseEvent(new DomainNotification(nomeArquivo, mensagem));
 
         private void CriarMensagensErro(string nomeArquivo, ValidationResult validation)
         {
