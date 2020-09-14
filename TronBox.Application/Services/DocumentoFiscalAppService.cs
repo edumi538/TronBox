@@ -41,6 +41,7 @@ using TronCore.Dominio.Specifications;
 using TronCore.InjecaoDependencia;
 using TronCore.Persistencia.Interfaces;
 using TronCore.Utilitarios;
+using TronCore.Utilitarios.Email;
 using TronCore.Utilitarios.EnvioDeArquivo.Interface;
 using TronCore.Utilitarios.Specifications;
 
@@ -293,7 +294,7 @@ namespace TronBox.Application.Services
 
                             if (matches.Count == 0)
                             {
-                                NotificarDocumentoInvalidos(arquivo.FileName, "Documento não suportado.");
+                                await NotificarDocumentoInvalidos(empresa, arquivo, null, "Documento não suportado.");
                                 continue;
                             }
 
@@ -312,8 +313,7 @@ namespace TronBox.Application.Services
                 }
                 catch (Exception ex)
                 {
-                    NotificarExcecaoSentry(arquivo, ex);
-                    NotificarDocumentoInvalidos(arquivo.FileName, "Documento não suportado.");
+                    await NotificarDocumentoInvalidos(empresa, arquivo, ex, "Documento não suportado.");
                     continue;
                 }
             }
@@ -616,8 +616,6 @@ namespace TronBox.Application.Services
             }
         }
 
-        private void NotificarDocumentoInvalidos(string nomeArquivo, string mensagem) => _bus.RaiseEvent(new DomainNotification(nomeArquivo, mensagem));
-
         private bool EhValido(DocumentoFiscal documentoFiscal)
         {
             var valido = true;
@@ -756,6 +754,15 @@ namespace TronBox.Application.Services
             }
         }
 
+        private async Task NotificarDocumentoInvalidos(EmpresaDTO empresa, IFormFile arquivo, Exception ex, string mensagem)
+        {
+            if (ex != null) NotificarExcecaoSentry(arquivo, ex);
+
+            await NotificarEmail(empresa, arquivo);
+
+            _bus.RaiseEvent(new DomainNotification(arquivo.FileName, mensagem));
+        }
+
         private static void NotificarExcecaoSentry(IFormFile arquivo, Exception ex)
         {
             if (arquivo != null)
@@ -770,6 +777,18 @@ namespace TronBox.Application.Services
                 }
             }
         }
+
+        private static async Task NotificarEmail(EmpresaDTO empresa, IFormFile arquivo)
+        {
+            using (var memoryStream = new MemoryStream())
+            {
+                await arquivo.CopyToAsync(memoryStream);
+
+                await TemplateEmail.EnviarEmailDocumentoNaoSuportado("suporte.smart@tron.com.br", $"{empresa.Inscricao.AdicionarMascaraInscricao()} - {empresa.RazaoSocial}",
+                    arquivo.FileName, memoryStream);
+            }
+        }
+
 
         private void CriarMensagensErro(string nomeArquivo, ValidationResult validation)
         {
