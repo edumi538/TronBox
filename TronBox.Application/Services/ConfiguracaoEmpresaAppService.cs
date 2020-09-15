@@ -210,7 +210,7 @@ namespace TronBox.Application.Services
         {
             var pessoaId = InserirPessoa(pessoaUsuarioDto);
 
-            InserirPessoaUsuario(pessoaUsuarioDto.UsuarioId, pessoaId);
+            InserirPessoaUsuario(pessoaUsuarioDto, pessoaId);
 
             InserirPessoaEmpresa(pessoaUsuarioDto, pessoaId);
 
@@ -555,15 +555,16 @@ namespace TronBox.Application.Services
             return pessoa.Id;
         }
 
-        private void InserirPessoaUsuario(Guid usuarioID, Guid pessoaId)
+        private void InserirPessoaUsuario(PessoaUsuarioDTO pessoaUsuarioDto, Guid pessoaId)
         {
-            var pessoaUsuario = new PessoaUsuario
+            var usuarioTenant = new UsuarioTenantDTO
             {
-                UsuarioId = usuarioID,
-                PessoaId = pessoaId
+                UsuarioEmail = pessoaUsuarioDto.Email,
+                TenantId = _usuarioLogado.GetTenantId(),
+                ClassificacaoFuncionario = ObterClassificacao(pessoaUsuarioDto.Tipo).ToString()
             };
 
-            _repositoryFactory.Instancie<IPessoaUsuarioRepository>().Inserir(pessoaUsuario);
+            PersistirUsuario(usuarioTenant, pessoaId);
         }
 
         private void InserirPessoaEmpresa(PessoaUsuarioDTO pessoaUsuarioDto, Guid pessoaId)
@@ -572,7 +573,7 @@ namespace TronBox.Application.Services
             {
                 PessoaId = pessoaId,
                 EmpresaId = pessoaUsuarioDto.EmpresaId,
-                ClassificacaoFuncionario = pessoaUsuarioDto.Tipo
+                ClassificacaoFuncionario = ObterClassificacao(pessoaUsuarioDto.Tipo)
             };
 
             _repositoryFactory.Instancie<IPessoaEmpresaRepository>().Inserir(pessoaEmpresa);
@@ -587,6 +588,14 @@ namespace TronBox.Application.Services
             };
 
             _repositoryFactory.Instancie<IConfiguracaoUsuarioRepository>().Inserir(configuracao);
+        }
+
+        private static eClassificacaoPessoa ObterClassificacao(eClassificacaoPessoa tipo)
+        {
+            if (tipo == eClassificacaoPessoa.Visitante || tipo == eClassificacaoPessoa.Padrao)
+                return eClassificacaoPessoa.Colaborador;
+
+            return tipo;
         }
         #endregion
     }
