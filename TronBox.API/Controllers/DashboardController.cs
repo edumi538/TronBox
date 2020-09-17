@@ -20,8 +20,8 @@ namespace TronBox.API.Controllers
         {
         }
 
-
         [HttpGet("total-sem-manifesto")]
+        [IdentificadorOperacao(eFuncaoTronBox.ID_DASHBOARD, "Obter Dados do Dashboard", eOperacaoSuite.ID_OP_ACESSO, typeof(eOperacaoSuite), typeof(eFuncaoTronBox), "/dashboards")]
         public IActionResult ContarSemManifesto() => Ok(AppServiceFactory.Instancie<IDashboardAppService>().ContarSemManifesto());
 
         [HttpGet("documento-fiscal")]
