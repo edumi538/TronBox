@@ -39,7 +39,11 @@ namespace TronBox.Application.Services
 {
     public class ConfiguracaoEmpresaAppService : IConfiguracaoEmpresaAppService
     {
+#if DEBUG
         public static string URL_FILA_EMPRESA = "http://10.20.30.28:7000";
+#else
+        public static string URL_FILA_EMPRESA = "http://10.20.30.28:2001";
+#endif
 
         #region Membros
         private readonly IBus _bus;
