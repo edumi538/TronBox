@@ -55,7 +55,7 @@ namespace TronBox.API.Tests.Config
 
             ClientExternal = new HttpClient()
             {
-                BaseAddress = new Uri(Constantes.URI_BASE_ST)
+                BaseAddress = new Uri(Constantes.URI_BASE_ST_API)
             };
         }
 

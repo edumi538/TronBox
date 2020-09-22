@@ -52,15 +52,15 @@ namespace TronBox.Application.Services
         public static string path = "documentosfiscais/{tipo}/{anomes}";
 
 #if DEBUG
-        public static string URL_AGENTE_MANIFESTACAO_NFE = "http://10.20.30.28:8085";
-        public static string URL_AGENTE_MANIFESTACAO_CTE = "http://10.20.30.28:8005";
-        public static string URL_SCRAPER_SEFAZ_MT = "http://10.20.30.28:7002";
-        public static string URL_SCRAPER_SEFAZ_MS = "http://10.20.30.28:7007";
+        public static string URL_AGENTE_MANIFESTACAO_NFE = "http://10.20.30.33:5001";
+        public static string URL_AGENTE_MANIFESTACAO_CTE = "http://10.20.30.33:5002";
+        public static string URL_SCRAPER_SEFAZ_MT = "http://10.20.30.33:5009";
+        public static string URL_SCRAPER_SEFAZ_MS = "http://10.20.30.33:5010";
 #else
-        public static string URL_AGENTE_MANIFESTACAO_NFE = "http://10.20.30.28:2003";
-        public static string URL_AGENTE_MANIFESTACAO_CTE = "http://10.20.30.28:2008";
-        public static string URL_SCRAPER_SEFAZ_MT = "http://10.20.30.28:2013";
-        public static string URL_SCRAPER_SEFAZ_MS = "http://10.20.30.28:2015";
+        public static string URL_AGENTE_MANIFESTACAO_NFE = "http://10.20.30.33:3001";
+        public static string URL_AGENTE_MANIFESTACAO_CTE = "http://10.20.30.33:3005";
+        public static string URL_SCRAPER_SEFAZ_MT = "http://10.20.30.33:3009";
+        public static string URL_SCRAPER_SEFAZ_MS = "http://10.20.30.33:3010";
 #endif
 
         #region Membros

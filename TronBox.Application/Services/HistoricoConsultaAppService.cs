@@ -16,8 +16,6 @@ namespace TronBox.Application.Services
 {
     public class HistoricoConsultaAppService : IHistoricoConsultaAppService
     {
-
-
         #region Membros
         private readonly IBus _bus;
         private readonly IMapper _mapper;

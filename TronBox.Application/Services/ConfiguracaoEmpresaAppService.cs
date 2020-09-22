@@ -40,9 +40,9 @@ namespace TronBox.Application.Services
     public class ConfiguracaoEmpresaAppService : IConfiguracaoEmpresaAppService
     {
 #if DEBUG
-        public static string URL_FILA_EMPRESA = "http://10.20.30.28:7000";
+        public static string URL_FILA_EMPRESA = "http://10.20.30.33:5000";
 #else
-        public static string URL_FILA_EMPRESA = "http://10.20.30.28:2001";
+        public static string URL_FILA_EMPRESA = "http://10.20.30.33:3000";
 #endif
 
         #region Membros
