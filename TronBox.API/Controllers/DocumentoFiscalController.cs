@@ -3,6 +3,7 @@ using Comum.UI.Controllers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using TronBox.Application.Services.Interfaces;
@@ -102,6 +103,18 @@ namespace TronBox.UI.Controllers
                         })
                 });
             }
+
+            return Ok(new
+            {
+                sucesso = true,
+                mensagem = "Operação realizada com sucesso."
+            });
+        }
+
+        [HttpPut("confirmar-importacao")]
+        public IActionResult ConfirmarImportacao([FromBody] IEnumerable<DadosImportacaoDTO> dadosImportacoes)
+        {
+            AppServiceFactory.Instancie<IDocumentoFiscalAppService>().ConfirmarImportacao(dadosImportacoes);
 
             return Ok(new
             {

@@ -198,6 +198,27 @@ namespace TronBox.Application.Services
             }
         }
 
+        public void ConfirmarImportacao(IEnumerable<DadosImportacaoDTO> dadosImportacoes)
+        {
+            foreach (var dadosImportacao in dadosImportacoes)
+            {
+                var documentoFiscalEncontrado = _mapper.Map<DocumentoFiscalDTO>(_repositoryFactory.Instancie<IDocumentoFiscalRepository>()
+                    .BuscarPorExpressao(c => c.ChaveDocumentoFiscal == dadosImportacao.ChaveDocumentoFiscal));
+
+                if (documentoFiscalEncontrado == null) continue;
+
+                if (!documentoFiscalEncontrado.Processado)
+                {
+                    documentoFiscalEncontrado.DadosImportacao = dadosImportacao;
+
+                    var documentoFiscal = _mapper.Map<DocumentoFiscal>(documentoFiscalEncontrado);
+
+                    if (EhValido(documentoFiscal))
+                        _repositoryFactory.Instancie<IDocumentoFiscalRepository>().Atualizar(documentoFiscal);
+                }
+            }
+        }
+
         public void CancelarDocumentos(IEnumerable<string> chavesCancelamento)
         {
             var documentosExistentes = _repositoryFactory.Instancie<IDocumentoFiscalRepository>()

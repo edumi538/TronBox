@@ -9,5 +9,6 @@ namespace TronBox.Domain.DTO.InnerClassDTO
         public DateTime DataImportacaoFormatada { get => UtilitarioDatas.ConvertIntToDateTime(DataImportacao); }
         public string Usuario { get; set; }
         public bool Desfazer { get; set; }
+        public string ChaveDocumentoFiscal{ get; set; }
     }
 }

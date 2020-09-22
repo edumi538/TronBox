@@ -3,6 +3,7 @@ using Comum.UI.Controllers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using TronBox.Application.Services.Interfaces;
@@ -36,7 +37,7 @@ namespace TronBox.UI.Controllers
 
         [HttpPatch("{id}")]
         [IdentificadorOperacao(eFuncaoTronBox.ID_MANIFESTO, "Atualizar Manifesto", eOperacaoSuite.ID_OP_EDITAR, typeof(eOperacaoSuite), typeof(eFuncaoTronBox), "/manifestos/editar/:id")]
-        public IActionResult Patch(Guid id, [FromBody]dynamic manifestoDTO)
+        public IActionResult Patch(Guid id, [FromBody] dynamic manifestoDTO)
         {
             AppServiceFactory.Instancie<IManifestoAppService>().Atualizar(id, manifestoDTO);
 
@@ -63,7 +64,7 @@ namespace TronBox.UI.Controllers
 
         [HttpPost]
         [IdentificadorOperacao(eFuncaoTronBox.ID_MANIFESTO, "Inserir Manifesto", eOperacaoSuite.ID_OP_INSERIR, typeof(eOperacaoSuite), typeof(eFuncaoTronBox), "/manifestos/adicionar")]
-        public IActionResult Post([FromBody]ManifestoDTO manifestoDTO)
+        public IActionResult Post([FromBody] ManifestoDTO manifestoDTO)
         {
             AppServiceFactory.Instancie<IManifestoAppService>().Inserir(manifestoDTO);
 
@@ -101,8 +102,27 @@ namespace TronBox.UI.Controllers
             );
         }
 
+        [HttpPost("multiple")]
+        public IActionResult Post([FromBody] IEnumerable<ManifestoDTO> manifestos)
+        {
+            foreach (var manifestoDto in manifestos)
+            {
+                try
+                {
+                    AppServiceFactory.Instancie<IManifestoAppService>().Inserir(manifestoDto);
+                }
+                catch (Exception)
+                {
+                }
+            }
+
+            var inseridos = manifestos.Count() - _notifications.GetNotifications().Count();
+
+            return Ok(new { inseridos });
+        }
+
         [HttpDelete("{id:GUID}")]
-        [IdentificadorOperacao(eFuncaoTronBox.ID_MANIFESTO, "Excluir Manifesto", eOperacaoSuite.ID_OP_EXCLUIR, typeof(eOperacaoSuite), typeof(eFuncaoTronBox), "/manifestoss/excluir")]
+        [IdentificadorOperacao(eFuncaoTronBox.ID_MANIFESTO, "Excluir Manifesto", eOperacaoSuite.ID_OP_EXCLUIR, typeof(eOperacaoSuite), typeof(eFuncaoTronBox), "/manifestos/excluir")]
         public IActionResult Delete(Guid id)
         {
             AppServiceFactory.Instancie<IManifestoAppService>().Deletar(id);
@@ -129,6 +149,6 @@ namespace TronBox.UI.Controllers
         }
 
         [HttpPost("manifestar")]
-        public async Task<IActionResult> Manifestar([FromBody]ManifestarDTO manifestarDTO) => Ok(await AppServiceFactory.Instancie<IManifestoAppService>().Manifestar(manifestarDTO));
+        public async Task<IActionResult> Manifestar([FromBody] ManifestarDTO manifestarDTO) => Ok(await AppServiceFactory.Instancie<IManifestoAppService>().Manifestar(manifestarDTO));
     }
 }
