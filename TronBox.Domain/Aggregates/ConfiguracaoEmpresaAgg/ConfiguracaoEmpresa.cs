@@ -83,6 +83,8 @@ namespace TronBox.Domain.Aggregates.ConfiguracaoEmpresaAgg
         {
             RuleFor(a => a.InscricoesComplementares)
                .NotNull().WithMessage(MensagensValidacao.Requerido("Inscrições Complementares"));
+            RuleFor(x => x.MetodoBusca).IsInEnum().WithMessage(MensagensValidacao.Requerido("Método de busca"));
+
         }
     }
 }
