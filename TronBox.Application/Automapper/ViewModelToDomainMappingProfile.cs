@@ -4,6 +4,7 @@ using TronBox.Domain.Aggregates.ConfiguracaoEmpresaAgg;
 using TronBox.Domain.Aggregates.ConfiguracaoUsuarioAgg;
 using TronBox.Domain.Aggregates.DadosComputadorMonitorAgg;
 using TronBox.Domain.Aggregates.DocumentoFiscalAgg;
+using TronBox.Domain.Aggregates.EstatisticaAgg;
 using TronBox.Domain.Aggregates.HistoricoConsultaAgg;
 using TronBox.Domain.Aggregates.HistoricoConsultaMatoGrossoAgg;
 using TronBox.Domain.Aggregates.HistoricoConsultaMatoGrossoSulAgg;
@@ -35,6 +36,7 @@ namespace TronBox.Domain.Automapper
             CreateMap<DadosImportacaoDTO, DadosImportacao>();
             CreateMap<DadosOrigemDocumentoFiscalDTO, DadosOrigemDocumentoFiscal>();
             CreateMap<ConfiguracaoUsuarioDTO, ConfiguracaoUsuario>();
+            CreateMap<EstatisticaDTO, Estatistica>();
         }
     }
 }

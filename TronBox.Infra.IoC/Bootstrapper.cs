@@ -17,6 +17,7 @@ using TronBox.Domain.Aggregates.ConfiguracaoEmpresaAgg.Repository;
 using TronBox.Domain.Aggregates.ConfiguracaoUsuarioAgg.Repository;
 using TronBox.Domain.Aggregates.DadosComputadorMonitorAgg.Repository;
 using TronBox.Domain.Aggregates.DocumentoFiscalAgg.Repository;
+using TronBox.Domain.Aggregates.EstatisticaAgg.Repository;
 using TronBox.Domain.Aggregates.HistoricoConsultaAgg.Repository;
 using TronBox.Domain.Aggregates.HistoricoConsultaMatoGrossoAgg.Repository;
 using TronBox.Domain.Aggregates.HistoricoConsultaMatoGrossoSulAgg.Repository;
@@ -53,6 +54,7 @@ namespace TronBox.Infra.IoC
             services.AddScoped<IHistoricoConsultaMatoGrossoSulAppService, HistoricoConsultaMatoGrossoSulAppService>();
             services.AddScoped<IManifestoAppService, ManifestoAppService>();
             services.AddScoped<IConfiguracaoUsuarioAppService, ConfiguracaoUsuarioAppService>();
+            services.AddScoped<IEstatisticaAppService, EstatisticaAppService>();
 
             // Repositorios
             services.AddScoped<IConfiguracaoEmpresaRepository, ConfiguracaoEmpresaRepository>();
@@ -64,6 +66,7 @@ namespace TronBox.Infra.IoC
             services.AddScoped<IManifestoRepository, ManifestoRepository>();
             services.AddScoped<IChaveDocumentoCanceladoRepository, ChaveDocumentoCanceladoRepository>();
             services.AddScoped<IConfiguracaoUsuarioRepository, ConfiguracaoUsuarioRepository>();
+            services.AddScoped<IEstatisticaRepository, EstatisticaRepository>();
 
             #region Add Comum
             services.AddScoped<IEmpresaAppService, EmpresaNoSqlAppService>();
