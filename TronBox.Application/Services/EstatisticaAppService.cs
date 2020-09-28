@@ -96,7 +96,7 @@ namespace TronBox.Application.Services
             var certificado = await UtilitarioHttpClient.GetRequest(_usuarioLogado.GetToken(), Constantes.URI_BASE_CT,
                 $"api/v1/certificados/{empresa.Inscricao}");
 
-            if (certificado != null) return false;
+            if (certificado == null) return false;
 
             var dadosCertificado = JsonConvert.DeserializeObject<CertificadoSimplificadoDTO>(certificado);
 
