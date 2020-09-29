@@ -25,8 +25,11 @@ namespace TronBox.Application.Services
 {
     public class ManifestoAppService : IManifestoAppService
     {
-        //public static string URL_AGENTE_MANIFESTACAO = "http://192.168.10.229:3000";
-        public static string URL_AGENTE_MANIFESTACAO = "http://10.20.30.28:8085";
+#if DEBUG
+        public static string URL_AGENTE_MANIFESTACAO = "http://10.20.30.33:5001";
+#else
+        public static string URL_AGENTE_MANIFESTACAO = "http://10.20.30.33:3001";
+#endif
 
         #region Membros
         private readonly IBus _bus;
