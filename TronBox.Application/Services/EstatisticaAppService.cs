@@ -58,19 +58,91 @@ namespace TronBox.Application.Services
 
                 var documentosFiscais = _repositoryFactory.Instancie<IDocumentoFiscalRepository>().BuscarTodos();
 
-                var estatisticaDto = new EstatisticaDTO
+                #region Iniciando Variaveis
+                var notaFiscalEntrada = 0;
+                var notaFiscalSaida = 0;
+                var notaFiscalConsumidor = 0;
+                var notaFiscalServicoEntrada = 0;
+                var notaFiscalServicoSaida = 0;
+                var conhecimentoTransporteEntrada = 0;
+                var conhecimentoTransporteSaida = 0;
+                var conhecimentoTransporteNaoTomador = 0;
+                var origemEmail = 0;
+                var origemUploadManual = 0;
+                var origemDownloadAgente = 0;
+                var origemAgenteManifestacao = 0;
+                var origemMonitorA3 = 0;
+                var origemPortalEstadual = 0;
+                var origemMonitorSincronizacao = 0;
+                #endregion
+
+                #region Populando Variaveis
+                using (var enumerator = documentosFiscais.GetEnumerator())
                 {
-                    DataHora = dataHora,
-                    CertificadoAtivo = certificadoAtivo,
-                    NotaFiscalEntrada = documentosFiscais.Count(c => c.TipoDocumentoFiscal == ETipoDocumentoFiscal.NfeEntrada),
-                    NotaFiscalSaida = documentosFiscais.Count(c => c.TipoDocumentoFiscal == ETipoDocumentoFiscal.NfeSaida),
-                    NotaFiscalConsumidor = documentosFiscais.Count(c => c.TipoDocumentoFiscal == ETipoDocumentoFiscal.Nfce),
-                    NotaFiscalServicoEntrada = documentosFiscais.Count(c => c.TipoDocumentoFiscal == ETipoDocumentoFiscal.NfseEntrada),
-                    NotaFiscalServicoSaida = documentosFiscais.Count(c => c.TipoDocumentoFiscal == ETipoDocumentoFiscal.NfseSaida),
-                    ConhecimentoTransporteEntrada = documentosFiscais.Count(c => c.TipoDocumentoFiscal == ETipoDocumentoFiscal.CteEntrada),
-                    ConhecimentoTransporteSaida = documentosFiscais.Count(c => c.TipoDocumentoFiscal == ETipoDocumentoFiscal.CteSaida),
-                    ConhecimentoTransporteNaoTomador = documentosFiscais.Count(c => c.TipoDocumentoFiscal == ETipoDocumentoFiscal.CTeNaoTomador),
-                };
+                    while (enumerator.MoveNext())
+                    {
+                        var documentoFiscal = enumerator.Current;
+
+                        switch (documentoFiscal.TipoDocumentoFiscal)
+                        {
+                            case ETipoDocumentoFiscal.NfeEntrada:
+                                notaFiscalEntrada += 1;
+                                break;
+                            case ETipoDocumentoFiscal.NfeSaida:
+                                notaFiscalSaida += 1;
+                                break;
+                            case ETipoDocumentoFiscal.CteEntrada:
+                                conhecimentoTransporteEntrada += 1;
+                                break;
+                            case ETipoDocumentoFiscal.CteSaida:
+                                conhecimentoTransporteSaida += 1;
+                                break;
+                            case ETipoDocumentoFiscal.Nfce:
+                                notaFiscalConsumidor += 1;
+                                break;
+                            case ETipoDocumentoFiscal.NfseEntrada:
+                                notaFiscalServicoEntrada += 1;
+                                break;
+                            case ETipoDocumentoFiscal.NfseSaida:
+                                notaFiscalServicoSaida += 1;
+                                break;
+                            case ETipoDocumentoFiscal.CTeNaoTomador:
+                                conhecimentoTransporteNaoTomador += 1;
+                                break;
+                        }
+
+                        switch (documentoFiscal.DadosOrigem.Origem)
+                        {
+                            case EOrigemDocumentoFiscal.Email:
+                                origemEmail += 1;
+                                break;
+                            case EOrigemDocumentoFiscal.UploadManual:
+                                origemUploadManual += 1;
+                                break;
+                            case EOrigemDocumentoFiscal.DownloadAgente:
+                                origemDownloadAgente += 1;
+                                break;
+                            case EOrigemDocumentoFiscal.AgenteManifestacao:
+                                origemAgenteManifestacao += 1;
+                                break;
+                            case EOrigemDocumentoFiscal.MonitorA3:
+                                origemMonitorA3 += 1;
+                                break;
+                            case EOrigemDocumentoFiscal.PortalEstadual:
+                                origemPortalEstadual += 1;
+                                break;
+                            case EOrigemDocumentoFiscal.MonitorSincronizacao:
+                                origemMonitorSincronizacao += 1;
+                                break;
+                        }
+                    }
+                }
+                #endregion
+
+                var estatisticaDto = new EstatisticaDTO(dataHora, certificadoAtivo, notaFiscalEntrada, notaFiscalSaida, notaFiscalConsumidor,
+                    notaFiscalServicoEntrada, notaFiscalServicoSaida, conhecimentoTransporteEntrada, conhecimentoTransporteSaida,
+                    conhecimentoTransporteNaoTomador, origemEmail, origemUploadManual, origemDownloadAgente, origemAgenteManifestacao,
+                    origemMonitorA3, origemPortalEstadual, origemMonitorSincronizacao);
 
                 var estatistica = _mapper.Map<Estatistica>(estatisticaDto);
 
