@@ -294,7 +294,7 @@ namespace TronBox.Application.Services
                 {
                     using (StreamReader reader = new StreamReader(arquivo.OpenReadStream()))
                     {
-                        var conteudoXML = reader.ReadToEnd();
+                        var conteudoXML = reader.ReadToEnd().Trim();
 
                         if (Regex.IsMatch(conteudoXML, "<descEvento>Cancelamento</descEvento>", RegexOptions.IgnoreCase))
                         {
@@ -724,7 +724,7 @@ namespace TronBox.Application.Services
                 using (MemoryStream originalFileMemoryStream = new MemoryStream(anexoDownloaded.ToArray()))
                 {
                     using (StreamReader reader = new StreamReader(originalFileMemoryStream))
-                        return reader.ReadToEnd();
+                        return reader.ReadToEnd().Trim();
                 }
             }
 
@@ -756,7 +756,7 @@ namespace TronBox.Application.Services
         {
             var regex = new Regex("tc:|ns2:|ns3:");
 
-            return regex.Replace(conteudoXML, string.Empty).Replace("ComplNfse", "CompNfse");
+            return regex.Replace(conteudoXML, string.Empty).Replace("ComplNfse", "CompNfse").Trim();
         }
 
         private void AtualizarManifestoDocumentoCancelado(IEnumerable<RetornoDocumentoFiscalDTO> retornoDocumentosCancelados)
