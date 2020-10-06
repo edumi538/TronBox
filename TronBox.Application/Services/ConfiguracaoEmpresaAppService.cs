@@ -114,7 +114,8 @@ namespace TronBox.Application.Services
                 }
                 else _repositoryFactory.Instancie<IConfiguracaoEmpresaRepository>().Inserir(configuracaoEmpresa);
 
-                _repositoryFactory.Instancie<IEmpresaRepository>().Atualizar(empresa);
+                if (empresa != null && (int)empresa.TipoInscricao > 0)
+                    _repositoryFactory.Instancie<IEmpresaRepository>().Atualizar(empresa);
 
                 ExcluirUsuarioCriarNovo(empresaExistente, empresa.EmailPrincipal);
             }
@@ -162,7 +163,8 @@ namespace TronBox.Application.Services
 
             ExcluirUsuarioCriarNovo(empresa, atualizacaoEmail.Email);
 
-            _repositoryFactory.Instancie<IEmpresaRepository>().Atualizar(empresa);
+            if (empresa != null && (int)empresa.TipoInscricao > 0)
+                _repositoryFactory.Instancie<IEmpresaRepository>().Atualizar(empresa);
         }
 
         public CertificadoSituacaoDTO SituacaoCertificado()
