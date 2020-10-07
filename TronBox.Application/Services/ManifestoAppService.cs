@@ -50,50 +50,44 @@ namespace TronBox.Application.Services
         {
         }
 
-        public void Atualizar(Guid id, dynamic manifestoDTO)
-        {
-            var manifestoDb = BuscarPorId(id);
-
-            var manifesto = _mapper.Map<Manifesto>(AjudanteJsonPatch.Instancia.ApplyPatch(manifestoDb, manifestoDTO));
-
-            // Quando o manifesto está cancelado não permitido alterar a situação.
-            if (manifestoDb.SituacaoManifesto == ESituacaoManifesto.Cancelado && manifesto.SituacaoManifesto != manifestoDb.SituacaoManifesto)
-                manifesto.SituacaoManifesto = manifestoDb.SituacaoManifesto;
-            // Quando o manifesto existente é Ciência Automática e for enviado 
-            // evento de Ciência não é permitido alterar a situação para Ciência.
-            if ((manifesto.SituacaoManifesto == ESituacaoManifesto.Ciencia) && (manifestoDb.SituacaoManifesto == ESituacaoManifesto.CienciaAutomatica))
-                manifesto.SituacaoManifesto = ESituacaoManifesto.CienciaAutomatica;
-
-            if (EhValido(manifesto)) _repositoryFactory.Instancie<IManifestoRepository>().Atualizar(manifesto);
-        }
-
         public ManifestoDTO BuscarPorId(Guid id) => _mapper.Map<ManifestoDTO>(_repositoryFactory.Instancie<IManifestoRepository>().BuscarPorId(id));
 
         public IEnumerable<ManifestoDTO> BuscarTodos(string filtro) => _mapper.Map<IEnumerable<ManifestoDTO>>(_repositoryFactory.Instancie<IManifestoRepository>()
             .BuscarTodos(new UtilitarioSpecification<Manifesto>().CriarEspecificacaoFiltro(filtro)));
 
+        public IEnumerable<ManifestoDTO> BuscarPorChaves(IEnumerable<string> chaves) => _mapper.Map<IEnumerable<ManifestoDTO>>(_repositoryFactory.Instancie<IManifestoRepository>()
+            .BuscarTodos(c => chaves.Contains(c.ChaveDocumentoFiscal)));
+
         public void Deletar(Guid id) => _repositoryFactory.Instancie<IManifestoRepository>().Excluir(id);
 
-        public void Inserir(ManifestoDTO manifestoDTO)
+        public int InserirOuAtualizar(IEnumerable<dynamic> manifestosDTO)
         {
-            if (manifestoDTO == null)
+            if (manifestosDTO == null)
             {
-                _bus.RaiseEvent(new DomainNotification("Manifesto", "Manifesto enviado não informado ou está inválido."));
-                return;
+                _bus.RaiseEvent(new DomainNotification("Manifesto", "Manifestos não informados ou inválidos."));
+                return 0;
             }
 
-            if (manifestoDTO.Id == null)
-                manifestoDTO.Id = Guid.NewGuid().ToString();
+            var inseridos = 0;
 
-            var manifesto = _mapper.Map<Manifesto>(manifestoDTO);
+            var listaChaves = manifestosDTO.Select(c => c.ChaveDocumentoFiscal);
 
-            if (_repositoryFactory.Instancie<IManifestoRepository>().BuscarTodos(c => c.ChaveDocumentoFiscal == manifesto.ChaveDocumentoFiscal).Any())
+            var manifestosExistentes = _mapper.Map<IEnumerable<ManifestoDTO>>(_repositoryFactory.Instancie<IManifestoRepository>()
+                .BuscarTodos(c => listaChaves.Contains(c.ChaveDocumentoFiscal)));
+
+            foreach (var manifestoDTO in manifestosDTO)
             {
-                _bus.RaiseEvent(new DomainNotification("ManifestoExistente", "Manifesto já existente na base de dados."));
-                return;
+                var manifestoExistente = manifestosExistentes.FirstOrDefault(c => c.ChaveDocumentoFiscal == manifestoDTO.ChaveDocumentoFiscal);
+
+                if (manifestoExistente == null)
+                    Inserir(manifestoDTO);
+                else
+                    Atualizar(manifestoExistente, manifestoDTO);
+
+                inseridos += manifestoExistente == null ? 1 : 0;
             }
 
-            if (EhValido(manifesto)) _repositoryFactory.Instancie<IManifestoRepository>().Inserir(manifesto);
+            return inseridos;
         }
 
         public async Task<RespostaManifestacaoDTO> Manifestar(ManifestarDTO manifestarDTO)
@@ -130,6 +124,31 @@ namespace TronBox.Application.Services
         }
 
         #region Private Methods
+        private void Atualizar(ManifestoDTO manifestoExistente, dynamic manifestoDTO)
+        {
+            var manifesto = _mapper.Map<Manifesto>(AjudanteJsonPatch.Instancia.ApplyPatch(manifestoExistente, manifestoDTO));
+
+            // Quando o manifesto está cancelado não permitido alterar a situação.
+            if (manifestoExistente.SituacaoManifesto == ESituacaoManifesto.Cancelado && manifesto.SituacaoManifesto != manifestoExistente.SituacaoManifesto)
+                manifesto.SituacaoManifesto = manifestoExistente.SituacaoManifesto;
+            // Quando o manifesto existente é Ciência Automática e for enviado 
+            // evento de Ciência não é permitido alterar a situação para Ciência.
+            if ((manifesto.SituacaoManifesto == ESituacaoManifesto.Ciencia) && (manifestoExistente.SituacaoManifesto == ESituacaoManifesto.CienciaAutomatica))
+                manifesto.SituacaoManifesto = ESituacaoManifesto.CienciaAutomatica;
+
+            if (EhValido(manifesto)) _repositoryFactory.Instancie<IManifestoRepository>().Atualizar(manifesto);
+        }
+
+        private void Inserir(ManifestoDTO manifestoDTO)
+        {
+            if (manifestoDTO.Id == null)
+                manifestoDTO.Id = Guid.NewGuid().ToString();
+
+            var manifesto = _mapper.Map<Manifesto>(manifestoDTO);
+
+            if (EhValido(manifesto)) _repositoryFactory.Instancie<IManifestoRepository>().Inserir(manifesto);
+        }
+
         private void AtualizarManifesto(ManifestarDTO manifestarDTO, Manifesto manifesto, RespostaManifestacaoDTO respostaManifestacao)
         {
             if (respostaManifestacao.Sucesso)

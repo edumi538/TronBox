@@ -59,8 +59,8 @@ namespace TronBox.Application.Services
 #else
         public static string URL_AGENTE_MANIFESTACAO_NFE = "http://10.20.30.33:3001";
         public static string URL_AGENTE_MANIFESTACAO_CTE = "http://10.20.30.33:3005";
-        public static string URL_SCRAPER_SEFAZ_MT = "http://10.20.30.33:3009";
-        public static string URL_SCRAPER_SEFAZ_MS = "http://10.20.30.33:3010";
+        public static string URL_SCRAPER_SEFAZ_MT = "http://10.20.30.28:3009";
+        public static string URL_SCRAPER_SEFAZ_MS = "http://10.20.30.28:3010";
 #endif
 
         #region Membros

@@ -32,55 +32,19 @@ namespace TronBox.UI.Controllers
         [IdentificadorOperacao(eFuncaoTronBox.ID_MANIFESTO, "Carregar Manifestos", eOperacaoSuite.ID_OP_ACESSO, typeof(eOperacaoSuite), typeof(eFuncaoTronBox), "/manifestos")]
         public IActionResult Get(string filtro) => Ok(AppServiceFactory.Instancie<IManifestoAppService>().BuscarTodos(filtro));
 
+        [HttpPost("obter")]
+        public IActionResult ObterVarios(IEnumerable<string> chaves) => Ok(AppServiceFactory.Instancie<IManifestoAppService>().BuscarPorChaves(chaves));
+
         [HttpGet("{id:GUID}")]
         public IActionResult Get(Guid id) => Ok(AppServiceFactory.Instancie<IManifestoAppService>().BuscarPorId(id));
 
-        [HttpPatch("{id}")]
-        [IdentificadorOperacao(eFuncaoTronBox.ID_MANIFESTO, "Atualizar Manifesto", eOperacaoSuite.ID_OP_EDITAR, typeof(eOperacaoSuite), typeof(eFuncaoTronBox), "/manifestos/editar/:id")]
-        public IActionResult Patch(Guid id, [FromBody] dynamic manifestoDTO)
-        {
-            AppServiceFactory.Instancie<IManifestoAppService>().Atualizar(id, manifestoDTO);
-
-            if (_notifications.HasNotifications())
-            {
-                return BadRequest(new
-                {
-                    sucesso = false,
-                    erros = _notifications.GetNotifications()
-                        .Select(c => new
-                        {
-                            Chave = c.Key,
-                            Mensagem = c.Value
-                        })
-                });
-            }
-
-            return Ok(new
-            {
-                sucesso = true,
-                mensagem = "Operação realizada com sucesso."
-            });
-        }
-
         [HttpPost]
-        [IdentificadorOperacao(eFuncaoTronBox.ID_MANIFESTO, "Inserir Manifesto", eOperacaoSuite.ID_OP_INSERIR, typeof(eOperacaoSuite), typeof(eFuncaoTronBox), "/manifestos/adicionar")]
-        public IActionResult Post([FromBody] ManifestoDTO manifestoDTO)
+        public IActionResult Post([FromBody] IEnumerable<dynamic> manifestos)
         {
-            AppServiceFactory.Instancie<IManifestoAppService>().Inserir(manifestoDTO);
+            var inseridos = AppServiceFactory.Instancie<IManifestoAppService>().InserirOuAtualizar(manifestos);
 
             if (_notifications.HasNotifications())
             {
-                var notification = _notifications.GetNotifications().FirstOrDefault();
-
-                if (notification.Key == "ManifestoExistente")
-                {
-                    return Conflict(new
-                    {
-                        sucesso = false,
-                        mensagem = notification.Value
-                    });
-                }
-
                 return BadRequest(new
                 {
                     sucesso = false,
@@ -92,37 +56,11 @@ namespace TronBox.UI.Controllers
                         })
                 });
             }
-
-            return Created(manifestoDTO.Id,
-                new
-                {
-                    sucesso = true,
-                    mensagem = "Operação realizada com sucesso."
-                }
-            );
-        }
-
-        [HttpPost("multiple")]
-        public IActionResult Post([FromBody] IEnumerable<ManifestoDTO> manifestos)
-        {
-            foreach (var manifestoDto in manifestos)
-            {
-                try
-                {
-                    AppServiceFactory.Instancie<IManifestoAppService>().Inserir(manifestoDto);
-                }
-                catch (Exception)
-                {
-                }
-            }
-
-            var inseridos = manifestos.Count() - _notifications.GetNotifications().Count();
 
             return Ok(new { inseridos });
         }
 
         [HttpDelete("{id:GUID}")]
-        [IdentificadorOperacao(eFuncaoTronBox.ID_MANIFESTO, "Excluir Manifesto", eOperacaoSuite.ID_OP_EXCLUIR, typeof(eOperacaoSuite), typeof(eFuncaoTronBox), "/manifestos/excluir")]
         public IActionResult Delete(Guid id)
         {
             AppServiceFactory.Instancie<IManifestoAppService>().Deletar(id);
