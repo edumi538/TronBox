@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 using Sentinela.Domain.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
 using System.Threading.Tasks;
 using TronBox.Application.Services.Interfaces;
@@ -80,7 +81,7 @@ namespace TronBox.Application.Services
                 var manifestoExistente = manifestosExistentes.FirstOrDefault(c => c.ChaveDocumentoFiscal == manifestoDTO.ChaveDocumentoFiscal);
 
                 if (manifestoExistente == null)
-                    Inserir(manifestoDTO);
+                    Inserir(JsonConvert.DeserializeObject<ManifestoDTO>(JsonConvert.SerializeObject(manifestoDTO)));
                 else
                     Atualizar(manifestoExistente, manifestoDTO);
 
