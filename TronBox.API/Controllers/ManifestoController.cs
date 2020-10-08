@@ -33,7 +33,7 @@ namespace TronBox.UI.Controllers
         public IActionResult Get(string filtro) => Ok(AppServiceFactory.Instancie<IManifestoAppService>().BuscarTodos(filtro));
 
         [HttpPost("obter")]
-        public IActionResult ObterVarios(IEnumerable<string> chaves) => Ok(AppServiceFactory.Instancie<IManifestoAppService>().BuscarPorChaves(chaves));
+        public IActionResult ObterVarios([FromBody] IEnumerable<string> chaves) => Ok(AppServiceFactory.Instancie<IManifestoAppService>().BuscarPorChaves(chaves));
 
         [HttpGet("{id:GUID}")]
         public IActionResult Get(Guid id) => Ok(AppServiceFactory.Instancie<IManifestoAppService>().BuscarPorId(id));
@@ -64,6 +64,32 @@ namespace TronBox.UI.Controllers
         public IActionResult Delete(Guid id)
         {
             AppServiceFactory.Instancie<IManifestoAppService>().Deletar(id);
+
+            if (_notifications.HasNotifications())
+            {
+                return BadRequest(new
+                {
+                    sucesso = false,
+                    erros = _notifications.GetNotifications()
+                        .Select(c => new
+                        {
+                            Chave = c.Key,
+                            Mensagem = c.Value
+                        })
+                });
+            }
+
+            return Ok(new
+            {
+                sucesso = true,
+                mensagem = "Operação realizada com sucesso."
+            });
+        }
+
+        [HttpDelete("duplicados")]
+        public IActionResult DeleteDuplicados()
+        {
+            AppServiceFactory.Instancie<IManifestoAppService>().DeletarDuplicados();
 
             if (_notifications.HasNotifications())
             {

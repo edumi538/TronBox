@@ -61,6 +61,21 @@ namespace TronBox.Application.Services
 
         public void Deletar(Guid id) => _repositoryFactory.Instancie<IManifestoRepository>().Excluir(id);
 
+        public void DeletarDuplicados()
+        {
+            var manifestos = _mapper.Map<IEnumerable<ManifestoDTO>>(_repositoryFactory.Instancie<IManifestoRepository>().BuscarTodos());
+
+            var listaDuplicados = manifestos.GroupBy(c => c.ChaveDocumentoFiscal).Where(c => c.Count() > 1);
+
+            foreach (var duplicados in listaDuplicados)
+            {
+                var manifestoMantido = duplicados.Last();
+
+                foreach (var manifesto in duplicados)
+                    if (manifesto.Id != manifestoMantido.Id) Deletar(Guid.Parse(manifesto.Id));
+            }
+        }
+
         public int InserirOuAtualizar(IEnumerable<dynamic> manifestosDTO)
         {
             if (manifestosDTO == null)
@@ -71,14 +86,14 @@ namespace TronBox.Application.Services
 
             var inseridos = 0;
 
-            var listaChaves = manifestosDTO.Select(c => c.ChaveDocumentoFiscal);
+            var listaChaves = manifestosDTO.Select(c => c.chaveDocumentoFiscal);
 
             var manifestosExistentes = _mapper.Map<IEnumerable<ManifestoDTO>>(_repositoryFactory.Instancie<IManifestoRepository>()
                 .BuscarTodos(c => listaChaves.Contains(c.ChaveDocumentoFiscal)));
 
             foreach (var manifestoDTO in manifestosDTO)
             {
-                var manifestoExistente = manifestosExistentes.FirstOrDefault(c => c.ChaveDocumentoFiscal == manifestoDTO.ChaveDocumentoFiscal);
+                var manifestoExistente = manifestosExistentes.FirstOrDefault(c => c.ChaveDocumentoFiscal == manifestoDTO.chaveDocumentoFiscal.Value);
 
                 if (manifestoExistente == null)
                     Inserir(JsonConvert.DeserializeObject<ManifestoDTO>(JsonConvert.SerializeObject(manifestoDTO)));

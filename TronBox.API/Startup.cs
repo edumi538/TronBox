@@ -167,13 +167,13 @@ namespace TronBox
             {
                 builder.Run(async context =>
                 {
-                    context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                    context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
 
                     var error = context.Features.Get<IExceptionHandlerFeature>();
 
                     if (error != null)
                     {
-                        var result = JsonConvert.SerializeObject(new { sucesso = false, erro = error.Error.Message });
+                        var result = JsonConvert.SerializeObject(new { sucesso = false, erro = error.Error.Message, stackTrace = error.Error.StackTrace });
                         context.Response.ContentType = "application/json";
 
                         context.Response.AddApplicationError(error.Error.Message);

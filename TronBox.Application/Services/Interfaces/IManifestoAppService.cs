@@ -10,6 +10,7 @@ namespace TronBox.Application.Services.Interfaces
         Task<RespostaManifestacaoDTO> Manifestar(ManifestarDTO manifestarDTO);
         int InserirOuAtualizar(IEnumerable<dynamic> manifestosDTO);
         void Deletar(Guid id);
+        void DeletarDuplicados();
         IEnumerable<ManifestoDTO> BuscarTodos(string filtro);
         IEnumerable<ManifestoDTO> BuscarPorChaves(IEnumerable<string> chaves);
         ManifestoDTO BuscarPorId(Guid id);
