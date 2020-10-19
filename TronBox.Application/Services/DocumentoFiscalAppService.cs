@@ -2,6 +2,7 @@
 using Comum.Domain.Aggregates.EmpresaAgg.Repository;
 using Comum.Domain.Enums;
 using CTe.Classes;
+using CTe.Classes.Informacoes;
 using DFe.Classes.Flags;
 using DFe.Utils;
 using FluentValidation.Results;
@@ -439,6 +440,8 @@ namespace TronBox.Application.Services
 
             if (documentoFiscal.TipoDocumentoFiscal == 0 || (documentoFiscal.TipoDocumentoFiscal == ETipoDocumentoFiscal.CTeNaoTomador && !salvarCteNaoTomador)) return null;
 
+            documentoFiscal.InscricaoEstadual = ObterInscricaoEstadualConhecimentoFrete(inscricaoEmpresa, cte.CTe.infCte);
+
             return documentoFiscal;
         }
 
@@ -573,6 +576,24 @@ namespace TronBox.Application.Services
                 default:
                     return 0;
             };
+        }
+
+        private static string ObterInscricaoEstadualConhecimentoFrete(string inscricaoEmpresa, infCte infCte)
+        {
+            if (inscricaoEmpresa == infCte.emit.CNPJ)
+                return infCte.emit.IE;
+            if (inscricaoEmpresa == (infCte.dest.CNPJ ?? infCte.dest.CPF))
+                return infCte.dest.CNPJ ?? infCte.dest.CPF;
+            if (inscricaoEmpresa == (infCte.rem.CNPJ ?? infCte.rem.CPF))
+                return infCte.rem.CNPJ ?? infCte.rem.CPF;
+            if (inscricaoEmpresa == (infCte.exped.CNPJ ?? infCte.exped.CPF))
+                return infCte.exped.CNPJ ?? infCte.exped.CPF;
+            if (inscricaoEmpresa == (infCte.receb.CNPJ ?? infCte.receb.CPF))
+                return infCte.receb.CNPJ ?? infCte.receb.CPF;
+            if (inscricaoEmpresa == (infCte.ide.toma4.CNPJ ?? infCte.ide.toma4.CPF))
+                return infCte.ide.toma4.CNPJ ?? infCte.ide.toma4.CPF;
+
+            return string.Empty;
         }
 
         private ETipoDocumentoFiscal ObterTipoNotaFiscal(string inscricaoEmpresa, TipoNFe tpNF, emit emit, dest dest, det det)
