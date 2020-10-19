@@ -118,6 +118,10 @@ namespace TronBox.Application.Services
                     _repositoryFactory.Instancie<IEmpresaRepository>().Atualizar(empresa);
 
                 ExcluirUsuarioCriarNovo(empresaExistente, empresa.EmailPrincipal);
+
+                var consultarCte = configuracaoEmpresa.SalvarCteEntrada || configuracaoEmpresa.SalvarCteSaida;
+
+                if (!consultarCte) RemoverEmpresaFilaCte(empresa.Inscricao);
             }
         }
 
@@ -399,6 +403,8 @@ namespace TronBox.Application.Services
 
             UtilitarioHttpClient.PostRequest(string.Empty, URL_FILA_EMPRESA, "api/mato-grosso-sul", empresaFila);
         }
+
+        private static void RemoverEmpresaFilaCte(string inscricaoEmpresa) => UtilitarioHttpClient.DeleteRequest(string.Empty, URL_FILA_EMPRESA, $"api/ctes/{inscricaoEmpresa}");
 
         private void ExcluirUsuarioCriarNovo(Empresa empresa, string novoEmail)
         {
