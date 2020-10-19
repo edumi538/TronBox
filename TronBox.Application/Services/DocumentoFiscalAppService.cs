@@ -775,7 +775,7 @@ namespace TronBox.Application.Services
 
         private static string GetXml(string conteudoXML)
         {
-            var regex = new Regex("tc:|ns2:|ns3:");
+            var regex = new Regex("tc:|ns2:|ns3:|ii:");
 
             return regex.Replace(conteudoXML, string.Empty).Replace("ComplNfse", "CompNfse").Trim();
         }
