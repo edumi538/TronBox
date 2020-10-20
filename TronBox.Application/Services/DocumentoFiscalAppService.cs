@@ -250,6 +250,39 @@ namespace TronBox.Application.Services
                 RealizarBuscaCTe(dadosBuscaDTO);
         }
 
+        public async Task<int> AtualizarInscricaoEstadualCte(int dataInicial, int dataFinal)
+        {
+            var documentosFiscais = _mapper.Map<IEnumerable<DocumentoFiscalDTO>>(_repositoryFactory.Instancie<IDocumentoFiscalRepository>().BuscarTodos(c => c.DataEmissaoDocumento >= dataInicial && c.DataEmissaoDocumento <= dataFinal &&
+                (c.TipoDocumentoFiscal == ETipoDocumentoFiscal.CteEntrada || c.TipoDocumentoFiscal == ETipoDocumentoFiscal.CteSaida || c.TipoDocumentoFiscal == ETipoDocumentoFiscal.CTeNaoTomador)));
+
+            var documentos = new List<DocumentoFiscal>();
+
+            if (documentosFiscais.Any())
+            {
+                var empresa = _repositoryFactory.Instancie<IEmpresaRepository>().BuscarTodos().FirstOrDefault();
+
+                foreach (var documentoFiscal in documentosFiscais)
+                {
+                    if (documentoFiscal.InscricaoEstadual != null && documentoFiscal.InscricaoEstadual != string.Empty && documentoFiscal.InscricaoEstadual != empresa.Inscricao) continue;
+
+                    var conteudoXML = await BuscarConteudoXML(documentoFiscal);
+
+                    var cte = FuncoesXml.XmlStringParaClasse<cteProc>(conteudoXML);
+
+                    if (cte != null)
+                    {
+                        documentoFiscal.InscricaoEstadual = ObterInscricaoEstadualConhecimentoFrete(empresa.Inscricao, cte.CTe.infCte);
+
+                        documentos.Add(_mapper.Map<DocumentoFiscal>(documentoFiscal));
+                    }
+                }
+
+                if (documentos.Any()) _repositoryFactory.Instancie<IDocumentoFiscalRepository>().AtualizarTodos(documentos);
+            }
+
+            return documentos.Count();
+        }
+
         #region Private Methods
         private void AtualizaCancelamentoDocumentos(List<DocumentoFiscal> documentosValidos)
         {
@@ -580,18 +613,18 @@ namespace TronBox.Application.Services
 
         private static string ObterInscricaoEstadualConhecimentoFrete(string inscricaoEmpresa, infCte infCte)
         {
-            if (inscricaoEmpresa == infCte.emit.CNPJ)
+            if (infCte.emit != null && inscricaoEmpresa == infCte.emit.CNPJ)
                 return infCte.emit.IE;
-            if (inscricaoEmpresa == (infCte.dest.CNPJ ?? infCte.dest.CPF))
-                return infCte.dest.CNPJ ?? infCte.dest.CPF;
-            if (inscricaoEmpresa == (infCte.rem.CNPJ ?? infCte.rem.CPF))
-                return infCte.rem.CNPJ ?? infCte.rem.CPF;
-            if (inscricaoEmpresa == (infCte.exped.CNPJ ?? infCte.exped.CPF))
-                return infCte.exped.CNPJ ?? infCte.exped.CPF;
-            if (inscricaoEmpresa == (infCte.receb.CNPJ ?? infCte.receb.CPF))
-                return infCte.receb.CNPJ ?? infCte.receb.CPF;
-            if (inscricaoEmpresa == (infCte.ide.toma4.CNPJ ?? infCte.ide.toma4.CPF))
-                return infCte.ide.toma4.CNPJ ?? infCte.ide.toma4.CPF;
+            if (infCte.dest != null && inscricaoEmpresa == (infCte.dest.CNPJ ?? infCte.dest.CPF))
+                return infCte.dest.IE;
+            if (infCte.rem != null && inscricaoEmpresa == (infCte.rem.CNPJ ?? infCte.rem.CPF))
+                return infCte.rem.IE;
+            if (infCte.exped != null && inscricaoEmpresa == (infCte.exped.CNPJ ?? infCte.exped.CPF))
+                return infCte.exped.IE;
+            if (infCte.receb != null && inscricaoEmpresa == (infCte.receb.CNPJ ?? infCte.receb.CPF))
+                return infCte.receb.IE;
+            if (infCte.ide.toma4 != null && inscricaoEmpresa == (infCte.ide.toma4.CNPJ ?? infCte.ide.toma4.CPF))
+                return infCte.ide.toma4.IE;
 
             return string.Empty;
         }

@@ -124,7 +124,7 @@ namespace TronBox.UI.Controllers
         }
 
         [HttpPost("realizar-busca/{tipo}")]
-        public IActionResult BuscarManualmente(ETipoDocumentoConsulta tipo, [FromBody]DadosBuscaDTO dadosBuscaDTO)
+        public IActionResult BuscarManualmente(ETipoDocumentoConsulta tipo, [FromBody] DadosBuscaDTO dadosBuscaDTO)
         {
             AppServiceFactory.Instancie<IDocumentoFiscalAppService>().BuscarManualmente(tipo, dadosBuscaDTO);
 
@@ -148,5 +148,8 @@ namespace TronBox.UI.Controllers
                 mensagem = "Operação realizada com sucesso."
             });
         }
+
+        [HttpPut("atualizar-inscricao-estadual")]
+        public async Task<IActionResult> AtualizarInscricaoEstadualCte(int dataInicial, int dataFinal) => Ok(await AppServiceFactory.Instancie<IDocumentoFiscalAppService>().AtualizarInscricaoEstadualCte(dataInicial, dataFinal));
     }
 }
