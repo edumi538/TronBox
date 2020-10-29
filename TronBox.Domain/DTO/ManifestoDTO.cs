@@ -35,5 +35,9 @@ namespace TronBox.Domain.DTO
         {
             get => EnumHelper<ESituacaoManifesto>.GetDisplayValue(SituacaoManifesto);
         }
+        public string DescricaoSituacaoDocumentoFiscal
+        {
+            get => EnumHelper<ESituacaoDocumentoFiscal>.GetDisplayValue(SituacaoDocumentoFiscal);
+        }
     }
 }
