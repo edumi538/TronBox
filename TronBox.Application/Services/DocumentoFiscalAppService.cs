@@ -634,6 +634,8 @@ namespace TronBox.Application.Services
             var inscricaoEmitente = emit.CNPJ ?? emit.CPF;
             var inscricaoDestinatario = dest.CNPJ ?? dest.CPF;
 
+            if (inscricaoEmitente == inscricaoDestinatario) return (ETipoDocumentoFiscal)tpNF + 1;
+
             if (inscricaoEmpresa == inscricaoDestinatario) return tpNF == TipoNFe.tnEntrada ? ETipoDocumentoFiscal.NfeSaida : ETipoDocumentoFiscal.NfeEntrada;
 
             if (inscricaoEmpresa == inscricaoEmitente)
