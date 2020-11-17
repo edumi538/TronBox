@@ -119,7 +119,7 @@ namespace TronBox.Application.Services
 
             var manifesto = _repositoryFactory.Instancie<IManifestoRepository>().BuscarPorExpressao(c => c.ChaveDocumentoFiscal == manifestarDTO.ChaveDocumentoFiscal);
 
-            if (manifesto != null && (manifesto.SituacaoManifesto != ESituacaoManifesto.Cancelado && manifesto.SituacaoManifesto != ESituacaoManifesto.CienciaAutomatica))
+            if (manifesto != null && (manifesto.SituacaoManifesto != ESituacaoManifesto.Cancelado && !(manifestarDTO.TipoManifestacao == ESituacaoManifesto.Ciencia && manifesto.SituacaoManifesto == ESituacaoManifesto.CienciaAutomatica)))
             {
                 var tenantId = FabricaGeral.Instancie<ITenantProvider>().GetTenant().Id.ToString();
 
