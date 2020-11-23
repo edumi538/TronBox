@@ -483,7 +483,8 @@ namespace TronBox.Application.Services
             var documentoFiscal = new DocumentoFiscalDTO()
             {
                 DataArmazenamento = UtilitarioDatas.ConvertToIntDateTime(DateTime.Now),
-                DataEmissaoDocumento = UtilitarioDatas.ConvertToIntDate(nfe.NFe.infNFe.ide.dhEmi.UtcDateTime),
+                DataEmissaoDocumento = UtilitarioDatas.ConvertToIntDate(nfe.NFe.infNFe.ide.dEmi) == UtilitarioDatas.ConvertToIntDate(default) // Validação data default
+                ? UtilitarioDatas.ConvertToIntDate(nfe.NFe.infNFe.ide.dhEmi.UtcDateTime) : UtilitarioDatas.ConvertToIntDate(nfe.NFe.infNFe.ide.dEmi),
                 ChaveDocumentoFiscal = nfe.protNFe.infProt.chNFe,
                 SerieDocumentoFiscal = nfe.NFe.infNFe.ide.serie.ToString(),
                 NumeroDocumentoFiscal = nfe.NFe.infNFe.ide.nNF.ToString(),
