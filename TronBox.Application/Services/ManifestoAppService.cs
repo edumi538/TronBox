@@ -96,7 +96,13 @@ namespace TronBox.Application.Services
                 var manifestoExistente = manifestosExistentes.FirstOrDefault(c => c.ChaveDocumentoFiscal == manifestoDTO.chaveDocumentoFiscal.Value);
 
                 if (manifestoExistente == null)
-                    Inserir(JsonConvert.DeserializeObject<ManifestoDTO>(JsonConvert.SerializeObject(manifestoDTO)));
+                {
+                    ManifestoDTO manifesto = JsonConvert.DeserializeObject<ManifestoDTO>(JsonConvert.SerializeObject(manifestoDTO));
+                    manifesto.DataArmazenamento = UtilitarioDatas.ConvertToIntDateTime(DateTime.Now);
+
+                    Inserir(manifesto);
+
+                }
                 else
                     Atualizar(manifestoExistente, manifestoDTO);
 
