@@ -157,7 +157,14 @@ namespace TronBox.Application.Services
             if (documentosValidos.Count > 0)
             {
                 AtualizaCancelamentoDocumentos(documentosValidos);
-                _repositoryFactory.Instancie<IDocumentoFiscalRepository>().InserirTodos(documentosValidos);
+                try
+                {
+                    _repositoryFactory.Instancie<IDocumentoFiscalRepository>().InserirTodos(documentosValidos);
+                }
+                catch (Exception ex)
+                {
+                    NotificarDocumentoDuplicado(ex.Message);
+                }
             }
 
             if (documentosCancelamento.Count > 0)
@@ -920,6 +927,14 @@ namespace TronBox.Application.Services
                     }
                 }
             }
+        }
+
+        private void NotificarDocumentoDuplicado(string mensagem)
+        {
+            var match = Regex.Match(mensagem, @"([\d]{44})");
+            var chave = match.Groups[0].Value;
+
+            NotificarAplicacao(chave, "Documento já existente na base de dados.");
         }
         #endregion
     }
