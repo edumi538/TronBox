@@ -247,15 +247,15 @@ namespace TronBox.Application.Services
                 _repositoryFactory.Instancie<IManifestoRepository>().AtualizarTodos(manifestosAtualizados);
             }
 
-            var chavesDocNaoExistes = chavesCancelamento.Except(documentosExistentes.Select(d => d.ChaveDocumentoFiscal))
+            var chavesDocNaoExistentes = chavesCancelamento.Except(documentosExistentes.Select(d => d.ChaveDocumentoFiscal))
                 .ToList();
 
-            if (chavesDocNaoExistes.Any())
+            if (chavesDocNaoExistentes.Any())
             {
                 var repository = _repositoryFactory.Instancie<IChaveDocumentoCanceladoRepository>();
 
-                var chavesDb = repository.BuscarTodos(c => chavesDocNaoExistes.Contains(c.ChaveDocumentoFiscal));
-                var chavesInserir = chavesDocNaoExistes.Except(chavesDb.Select(c => c.ChaveDocumentoFiscal))
+                var chavesDb = repository.BuscarTodos(c => chavesDocNaoExistentes.Contains(c.ChaveDocumentoFiscal));
+                var chavesInserir = chavesDocNaoExistentes.Except(chavesDb.Select(c => c.ChaveDocumentoFiscal))
                     .Select(d => new ChaveDocumentoCancelado { ChaveDocumentoFiscal = d })
                     .ToList();
 
