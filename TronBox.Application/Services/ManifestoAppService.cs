@@ -174,7 +174,11 @@ namespace TronBox.Application.Services
         private void AtualizarManifesto(ManifestarDTO manifestarDTO, Manifesto manifesto, RespostaManifestacaoDTO respostaManifestacao)
         {
             if (respostaManifestacao.Sucesso)
+            {
                 manifesto.SituacaoManifesto = manifestarDTO.TipoManifestacao;
+                manifesto.DataManifesto = UtilitarioDatas.ConvertToIntDate(DateTime.Now);
+            }
+
             if (respostaManifestacao.Data.InfEvento.CStat == "650")
                 manifesto.SituacaoManifesto = ESituacaoManifesto.Cancelado;
 
