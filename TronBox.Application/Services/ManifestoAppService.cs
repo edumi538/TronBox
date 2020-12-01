@@ -175,10 +175,10 @@ namespace TronBox.Application.Services
         {
             if (respostaManifestacao.Sucesso)
             {
-                manifesto.SituacaoManifesto = manifestarDTO.TipoManifestacao;
-
-                if(manifesto.DataManifesto == default)
+                if((manifesto.SituacaoManifesto != manifestarDTO.TipoManifestacao && manifesto.SituacaoManifesto != ESituacaoManifesto.CienciaAutomatica) || manifesto.DataManifesto == default)
                     manifesto.DataManifesto = UtilitarioDatas.ConvertToIntDate(DateTime.Now);
+
+                manifesto.SituacaoManifesto = manifestarDTO.TipoManifestacao;
             }
 
             if (respostaManifestacao.Data.InfEvento.CStat == "650")
