@@ -176,7 +176,9 @@ namespace TronBox.Application.Services
             if (respostaManifestacao.Sucesso)
             {
                 manifesto.SituacaoManifesto = manifestarDTO.TipoManifestacao;
-                manifesto.DataManifesto = UtilitarioDatas.ConvertToIntDate(DateTime.Now);
+
+                if(manifesto.DataManifesto == default)
+                    manifesto.DataManifesto = UtilitarioDatas.ConvertToIntDate(DateTime.Now);
             }
 
             if (respostaManifestacao.Data.InfEvento.CStat == "650")
