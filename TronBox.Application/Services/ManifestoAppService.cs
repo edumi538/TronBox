@@ -215,9 +215,9 @@ namespace TronBox.Application.Services
                 case ESituacaoManifesto.Confirmado:
                     return "210200";
                 case ESituacaoManifesto.Desconhecido:
-                    return "210240";
-                case ESituacaoManifesto.NaoRealizado:
                     return "210220";
+                case ESituacaoManifesto.NaoRealizado:
+                    return "210240";
                 case ESituacaoManifesto.Cancelado:
                     return "110111";
                 default:
