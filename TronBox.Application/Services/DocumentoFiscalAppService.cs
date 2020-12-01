@@ -367,7 +367,7 @@ namespace TronBox.Application.Services
                         }
                         else if (Regex.IsMatch(conteudoXML, "<chCTe>(.*?)</chCTe>", RegexOptions.IgnoreCase))
                         {
-                            var conhecimentoTransporte = ProcessarXMLparaCTe(empresa.Inscricao, empresa.ConfiguracaoEmpresa != null && empresa.ConfiguracaoEmpresa.SalvarCteNaoTomador,
+                            var conhecimentoTransporte = ProcessarXMLparaCTe(empresa.Inscricao, empresa.ConfiguracaoEmpresa != null && empresa.ConfiguracaoEmpresa.SalvarCteEntrada, empresa.ConfiguracaoEmpresa != null && empresa.ConfiguracaoEmpresa.SalvarCteSaida, empresa.ConfiguracaoEmpresa != null && empresa.ConfiguracaoEmpresa.SalvarCteNaoTomador,
                                 conteudoXML, arquivo.FileName);
 
                             if (conhecimentoTransporte != null)
@@ -428,11 +428,11 @@ namespace TronBox.Application.Services
             }
         }
 
-        private DocumentoFiscalDTO ProcessarXMLparaCTe(string inscricaoEmpresa, bool salvarCteNaoTomador, string conteudoXML, string nomeArquivo)
+        private DocumentoFiscalDTO ProcessarXMLparaCTe(string inscricaoEmpresa, bool salvarCteEntrada, bool salvarCteSaida, bool salvarCteNaoTomador, string conteudoXML, string nomeArquivo)
         {
             var cte = UtilitarioXML.XmlStringParaClasse<cteProc>(conteudoXML);
 
-            var conhecimentoTransporte = ObterConhecimentoTransporteFromObject(inscricaoEmpresa, salvarCteNaoTomador, cte);
+            var conhecimentoTransporte = ObterConhecimentoTransporteFromObject(inscricaoEmpresa, salvarCteEntrada, salvarCteSaida, salvarCteNaoTomador, cte);
 
             if (conhecimentoTransporte == null)
             {
@@ -473,7 +473,7 @@ namespace TronBox.Application.Services
             return notaFiscalServicoEletronica;
         }
 
-        private DocumentoFiscalDTO ObterConhecimentoTransporteFromObject(string inscricaoEmpresa, bool salvarCteNaoTomador, cteProc cte)
+        private DocumentoFiscalDTO ObterConhecimentoTransporteFromObject(string inscricaoEmpresa, bool salvarCteEntrada, bool salvarCteSaida, bool salvarCteNaoTomador, cteProc cte)
         {
             var documentoFiscal = new DocumentoFiscalDTO()
             {
@@ -493,7 +493,13 @@ namespace TronBox.Application.Services
                 }
             };
 
-            if (documentoFiscal.TipoDocumentoFiscal == 0 || (documentoFiscal.TipoDocumentoFiscal == ETipoDocumentoFiscal.CTeNaoTomador && !salvarCteNaoTomador)) return null;
+            if (documentoFiscal.TipoDocumentoFiscal == 0) return null;
+
+            if (documentoFiscal.TipoDocumentoFiscal == ETipoDocumentoFiscal.CteSaida && !salvarCteSaida) return null;
+
+            if (documentoFiscal.TipoDocumentoFiscal == ETipoDocumentoFiscal.CteEntrada && !salvarCteEntrada) return null;
+
+            if (documentoFiscal.TipoDocumentoFiscal == ETipoDocumentoFiscal.CTeNaoTomador && !salvarCteNaoTomador) return null;
 
             documentoFiscal.InscricaoEstadual = ObterInscricaoEstadualConhecimentoFrete(inscricaoEmpresa, cte.CTe.infCte);
 
