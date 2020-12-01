@@ -158,7 +158,14 @@ namespace TronBox.Application.Services
             if (documentosValidos.Count > 0)
             {
                 AtualizaCancelamentoDocumentos(documentosValidos);
-                _repositoryFactory.Instancie<IDocumentoFiscalRepository>().InserirTodos(documentosValidos);
+                try
+                {
+                    _repositoryFactory.Instancie<IDocumentoFiscalRepository>().InserirTodos(documentosValidos);
+                }
+                catch (Exception ex)
+                {
+                    NotificarDocumentoDuplicado(ex.Message);
+                }
             }
 
             if (documentosCancelamento.Count > 0)
@@ -223,7 +230,7 @@ namespace TronBox.Application.Services
         public void CancelarDocumentos(IEnumerable<string> chavesCancelamento)
         {
             var documentosExistentes = _repositoryFactory.Instancie<IDocumentoFiscalRepository>()
-                .BuscarTodos(d => chavesCancelamento.Contains(d.ChaveDocumentoFiscal)).ToList();
+                .BuscarTodos(d => chavesCancelamento.Contains(d.ChaveDocumentoFiscal)).ToList();            
 
             if (documentosExistentes.Any())
             {
@@ -239,6 +246,21 @@ namespace TronBox.Application.Services
                 var manifestosAtualizados = manifestosExistentes.Select(c => { c.SituacaoManifesto = ESituacaoManifesto.Cancelado; return c; });
 
                 _repositoryFactory.Instancie<IManifestoRepository>().AtualizarTodos(manifestosAtualizados);
+            }
+
+            var chavesDocNaoExistentes = chavesCancelamento.Except(documentosExistentes.Select(d => d.ChaveDocumentoFiscal))
+                .ToList();
+
+            if (chavesDocNaoExistentes.Any())
+            {
+                var repository = _repositoryFactory.Instancie<IChaveDocumentoCanceladoRepository>();
+
+                var chavesDb = repository.BuscarTodos(c => chavesDocNaoExistentes.Contains(c.ChaveDocumentoFiscal));
+                var chavesInserir = chavesDocNaoExistentes.Except(chavesDb.Select(c => c.ChaveDocumentoFiscal))
+                    .Select(d => new ChaveDocumentoCancelado { ChaveDocumentoFiscal = d })
+                    .ToList();
+
+                if(chavesInserir.Any()) repository.InserirTodos(chavesInserir);
             }
         }
 
@@ -974,6 +996,14 @@ namespace TronBox.Application.Services
                     }
                 }
             }
+        }
+
+        private void NotificarDocumentoDuplicado(string mensagem)
+        {
+            var match = Regex.Match(mensagem, @"([\d]{44})");
+            var chave = match.Groups[0].Value;
+
+            NotificarAplicacao(chave, "Documento já existente na base de dados.");
         }
         #endregion
     }
