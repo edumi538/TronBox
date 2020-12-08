@@ -962,7 +962,7 @@ namespace TronBox.Application.Services
             }
 
             var pInicial = (long)periodoInicial * 10_000;
-            var pFinal = (long)periodoFinal * 10_000;
+            var pFinal = (long)periodoFinal * 10_000 + 2359;
 
             var spec = new DirectSpecification<DocumentoFiscal>(d =>
                 d.DataArmazenamento != 0
