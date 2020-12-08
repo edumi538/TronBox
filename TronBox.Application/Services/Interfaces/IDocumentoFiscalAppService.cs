@@ -20,5 +20,6 @@ namespace TronBox.Application.Services.Interfaces
         void ConfirmarImportacao(IEnumerable<DadosImportacaoDTO> dadosImportacoes);
         void CancelarDocumentos(IEnumerable<string> chavesCancelamento);
         void BuscarManualmente(ETipoDocumentoConsulta tipo, DadosBuscaDTO dadosBuscaDTO);
+        TotalDocumentosArmazenadosDTO ObterTotalDocumentosArmazenados(int periodoInicial, int periodoFinal);
     }
 }
