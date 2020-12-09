@@ -50,6 +50,7 @@ namespace TronBox.Application.Services
     public class DocumentoFiscalAppService : IDocumentoFiscalAppService
     {
         public static string path = "documentosfiscais/{tipo}/{anomes}";
+        public static string MigracaoTronBox = "Migração do TronBox";
 
 #if DEBUG
         public static string URL_AGENTE_MANIFESTACAO_NFE = "http://10.20.30.33:5001";
@@ -229,7 +230,7 @@ namespace TronBox.Application.Services
         public void CancelarDocumentos(IEnumerable<string> chavesCancelamento)
         {
             var documentosExistentes = _repositoryFactory.Instancie<IDocumentoFiscalRepository>()
-                .BuscarTodos(d => chavesCancelamento.Contains(d.ChaveDocumentoFiscal)).ToList();            
+                .BuscarTodos(d => chavesCancelamento.Contains(d.ChaveDocumentoFiscal)).ToList();
 
             if (documentosExistentes.Any())
             {
@@ -259,7 +260,7 @@ namespace TronBox.Application.Services
                     .Select(d => new ChaveDocumentoCancelado { ChaveDocumentoFiscal = d })
                     .ToList();
 
-                if(chavesInserir.Any()) repository.InserirTodos(chavesInserir);
+                if (chavesInserir.Any()) repository.InserirTodos(chavesInserir);
             }
         }
 
@@ -950,6 +951,37 @@ namespace TronBox.Application.Services
             var chave = match.Groups[0].Value;
 
             NotificarAplicacao(chave, "Documento já existente na base de dados.");
+        }
+
+        public TotalDocumentosArmazenadosDTO ObterTotalDocumentosArmazenados(int periodoInicial, int periodoFinal)
+        {
+            if(periodoInicial == default || periodoFinal == default)
+            {
+                _bus.RaiseEvent(new DomainNotification("ErrorParams", "O periodo inicial ou o perido final não podem ser vazios."));
+                return null;
+            }
+
+            var pInicial = (long)periodoInicial * 10_000;
+            var pFinal = (long)periodoFinal * 10_000 + 2359;
+
+            var spec = new DirectSpecification<DocumentoFiscal>(d =>
+                d.DataArmazenamento != 0
+                && d.DataArmazenamento >= pInicial
+                && d.DataArmazenamento <= pFinal
+                && !d.DadosOrigem.Originador.Equals(MigracaoTronBox));
+
+            var total = _repositoryFactory.Instancie<IDocumentoFiscalRepository>()
+                .BuscarTodos(spec).Count();
+
+            var tenantId = FabricaGeral.Instancie<ITenantProvider>().GetTenant().Id;
+
+            return new TotalDocumentosArmazenadosDTO
+            {
+                TenantId = tenantId,
+                PeriodoInicial = periodoInicial,
+                PeriodoFinal = periodoFinal,
+                TotalDocumentos = total
+            };
         }
         #endregion
     }

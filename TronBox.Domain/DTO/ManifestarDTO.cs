@@ -6,5 +6,6 @@ namespace TronBox.Domain.DTO
     {
         public string ChaveDocumentoFiscal { get; set; }
         public ESituacaoManifesto TipoManifestacao { get; set; }
+        public string Justificativa { get; set; }
     }
 }

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
+using System.Linq;
 using System.Threading.Tasks;
 using TronBox.Application.Services.Interfaces;
 using TronBox.Domain.DTO;
@@ -48,6 +49,20 @@ namespace TronBox.API.Controllers
             };
 
             return Json(estatistica, settings);
+        }
+
+        [HttpGet("total-documentos")]
+        public IActionResult GetTotalDocumentosArmazenados(int periodoInicial, int periodoFinal)
+        {
+            var result = AppServiceFactory.Instancie<IDocumentoFiscalAppService>().ObterTotalDocumentosArmazenados(periodoInicial, periodoFinal);
+
+            if (Notifications.HasNotifications())
+            {
+                var notification = Notifications.GetNotifications().FirstOrDefault();
+                return BadRequest(new { notification.Key, Mensagem = notification.Value });
+            }
+
+            return Ok(result);
         }
     }
 }
