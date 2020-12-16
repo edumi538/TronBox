@@ -955,7 +955,7 @@ namespace TronBox.Application.Services
 
         public TotalDocumentosArmazenadosDTO ObterTotalDocumentosArmazenados(int periodoInicial, int periodoFinal)
         {
-            if(periodoInicial == default || periodoFinal == default)
+            if (periodoInicial == default || periodoFinal == default)
             {
                 _bus.RaiseEvent(new DomainNotification("ErrorParams", "O periodo inicial ou o perido final não podem ser vazios."));
                 return null;
@@ -983,6 +983,10 @@ namespace TronBox.Application.Services
                 TotalDocumentos = total
             };
         }
+
+        public async Task CriarIndexChaveDocumentoFiscalAsync()
+            => await _repositoryFactory.Instancie<IDocumentoFiscalRepository>().CreateIndexAsync(d => d.ChaveDocumentoFiscal);
+
         #endregion
     }
 }
