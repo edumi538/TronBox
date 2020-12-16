@@ -13,8 +13,8 @@
     <PackageReference Include="AutoMapper" Version="9.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.2.6" />
     <PackageReference Include="Sentry.AspNetCore" Version="2.1.1" />
-    <PackageReference Include="Zeus.Net.CTe" Version="1.0.0.1031" />
-    <PackageReference Include="Zeus.Net.NFe.NFCe" Version="1.0.1.1031" />
+    <PackageReference Include="Zeus.Net.CTe" Version="1.0.0.1049" />
+    <PackageReference Include="Zeus.Net.NFe.NFCe" Version="1.0.1.1049" />
     <PackageReference Include="ZionDanfe" Version="0.92.0" />
   </ItemGroup>
 
