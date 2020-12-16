@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using TronBox.Application.Services.Interfaces;
 using TronBox.Domain.DTO;
 using TronCore.Domain.Factories;
@@ -24,20 +25,21 @@ namespace TronBox.UI.Controllers
         }
 
         [HttpPost]
-        public IActionResult Post([FromBody]InquilinoMongoDTO inquilinoConnect)
+        public async Task<IActionResult> Post([FromBody]InquilinoMongoDTO inquilino)
         {
-            var empresaExistente = AppServiceFactory.Instancie<IEmpresaAppService>().BuscarPorInscricao(inquilinoConnect.Inscricao);
+            var empresaExistente = AppServiceFactory.Instancie<IEmpresaAppService>().BuscarPorInscricao(inquilino.Inscricao);
 
             if (empresaExistente == null)
             {
                 var empresa = new EmpresaViewModel
                 {
-                    RazaoSocial = inquilinoConnect.Nome,
-                    Inscricao = inquilinoConnect.Inscricao,
-                    TipoInscricao = inquilinoConnect.Inscricao.Length == 11 ? eTipoInscricaoEmpresa.CPF : eTipoInscricaoEmpresa.CNPJ
+                    RazaoSocial = inquilino.Nome,
+                    Inscricao = inquilino.Inscricao,
+                    TipoInscricao = inquilino.Inscricao.Length == 11 ? eTipoInscricaoEmpresa.CPF : eTipoInscricaoEmpresa.CNPJ
                 };
 
                 AppServiceFactory.Instancie<IEmpresaAppService>().Inserir(empresa);
+                await AppServiceFactory.Instancie<IDocumentoFiscalAppService>().CriarIndexChaveDocumentoFiscalAsync();
 
                 if (Notifications.HasNotifications())
                 {
@@ -53,11 +55,11 @@ namespace TronBox.UI.Controllers
                     });
                 }
 
-                if (inquilinoConnect.PessoaAdministrador != null)
-                    CriarPessoa(inquilinoConnect.PessoaAdministrador);
+                if (inquilino.PessoaAdministrador != null)
+                    CriarPessoa(inquilino.PessoaAdministrador);
 
-                if (inquilinoConnect.PessoaImplantacao != null)
-                    CriarPessoa(inquilinoConnect.PessoaImplantacao);
+                if (inquilino.PessoaImplantacao != null)
+                    CriarPessoa(inquilino.PessoaImplantacao);
 
                 if (Notifications.HasNotifications())
                 {
