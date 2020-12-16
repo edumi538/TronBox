@@ -114,6 +114,12 @@ namespace TronBox.Application.Services
 
         public async Task<RespostaManifestacaoDTO> Manifestar(ManifestarDTO manifestarDTO)
         {
+            if (manifestarDTO.TipoManifestacao == ESituacaoManifesto.NaoRealizado && string.IsNullOrWhiteSpace(manifestarDTO.Justificativa))
+            {
+                _bus.RaiseEvent(new DomainNotification("SemJustificativa", "A justificativa deve ser preenchida."));
+                return null;
+            }
+
             var empresa = _mapper.Map<EmpresaDTO>(_repositoryFactory.Instancie<IEmpresaRepository>().BuscarTodos().FirstOrDefault());
             var configuracaoEmpresa = _mapper.Map<ConfiguracaoEmpresaDTO>(_repositoryFactory.Instancie<IConfiguracaoEmpresaRepository>().BuscarTodos().FirstOrDefault());
 
@@ -129,8 +135,14 @@ namespace TronBox.Application.Services
             {
                 var tenantId = FabricaGeral.Instancie<ITenantProvider>().GetTenant().Id.ToString();
 
-                var manifestacao = new DadosManifestacaoNFeDTO(manifestarDTO.ChaveDocumentoFiscal, empresa.Inscricao, configuracaoEmpresa.InscricoesComplementares.FirstOrDefault().UF,
-                    ObterTipoManifestacao(manifestarDTO.TipoManifestacao), tenantId);
+                var manifestacao = new DadosManifestacaoNFeDTO {
+                    ChaveDocumentoFiscal = manifestarDTO.ChaveDocumentoFiscal,
+                    InscricaoEmpresa = empresa.Inscricao,
+                    UF = configuracaoEmpresa.InscricoesComplementares.FirstOrDefault().UF,
+                    TipoManifestacao = ObterTipoManifestacao(manifestarDTO.TipoManifestacao),
+                    Empresa = tenantId,
+                    Justificativa = manifestarDTO.Justificativa ?? string.Empty
+                };
 
                 var result = await UtilitarioHttpClient.PostRequest(string.Empty, URL_AGENTE_MANIFESTACAO, "api/nfes/manifestar", manifestacao);
 
@@ -174,7 +186,20 @@ namespace TronBox.Application.Services
         private void AtualizarManifesto(ManifestarDTO manifestarDTO, Manifesto manifesto, RespostaManifestacaoDTO respostaManifestacao)
         {
             if (respostaManifestacao.Sucesso)
+            {
+                if(manifesto.DataManifesto == default 
+                    || (manifesto.SituacaoManifesto != manifestarDTO.TipoManifestacao 
+                            && manifesto.SituacaoManifesto == ESituacaoManifesto.CienciaAutomatica 
+                            && manifestarDTO.TipoManifestacao != ESituacaoManifesto.Ciencia)
+                    || (manifesto.SituacaoManifesto != manifestarDTO.TipoManifestacao
+                            && manifesto.SituacaoManifesto != ESituacaoManifesto.CienciaAutomatica
+                            && manifestarDTO.TipoManifestacao == ESituacaoManifesto.Ciencia))
+
+                    manifesto.DataManifesto = UtilitarioDatas.ConvertToIntDate(DateTime.Now);
+
                 manifesto.SituacaoManifesto = manifestarDTO.TipoManifestacao;
+            }
+
             if (respostaManifestacao.Data.InfEvento.CStat == "650")
                 manifesto.SituacaoManifesto = ESituacaoManifesto.Cancelado;
 
@@ -215,9 +240,9 @@ namespace TronBox.Application.Services
                 case ESituacaoManifesto.Confirmado:
                     return "210200";
                 case ESituacaoManifesto.Desconhecido:
-                    return "210240";
-                case ESituacaoManifesto.NaoRealizado:
                     return "210220";
+                case ESituacaoManifesto.NaoRealizado:
+                    return "210240";
                 case ESituacaoManifesto.Cancelado:
                     return "110111";
                 default:

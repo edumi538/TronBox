@@ -14,14 +14,7 @@ namespace TronBox.Domain.DTO
         public string TipoManifestacao { get; set; }
         [JsonProperty("tenantId")]
         public string Empresa { get; set; }
-
-        public DadosManifestacaoNFeDTO(string chaveDocumentoFiscal, string inscricaoEmpresa, string uF, string tipoManifestacao, string empresa)
-        {
-            ChaveDocumentoFiscal = chaveDocumentoFiscal;
-            InscricaoEmpresa = inscricaoEmpresa;
-            UF = uF;
-            TipoManifestacao = tipoManifestacao;
-            Empresa = empresa;
-        }
+        [JsonProperty("justificativa")]
+        public string Justificativa { get; set; }
     }
 }

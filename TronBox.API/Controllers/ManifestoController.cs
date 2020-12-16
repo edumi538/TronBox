@@ -113,6 +113,7 @@ namespace TronBox.UI.Controllers
         }
 
         [HttpPost("manifestar")]
-        public async Task<IActionResult> Manifestar([FromBody] ManifestarDTO manifestarDTO) => Ok(await AppServiceFactory.Instancie<IManifestoAppService>().Manifestar(manifestarDTO));
+        public async Task<IActionResult> Manifestar([FromBody] ManifestarDTO manifestarDTO) 
+            => Ok(await AppServiceFactory.Instancie<IManifestoAppService>().Manifestar(manifestarDTO));
     }
 }

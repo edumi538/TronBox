@@ -21,5 +21,7 @@ namespace TronBox.Application.Services.Interfaces
         void CancelarDocumentos(IEnumerable<string> chavesCancelamento);
         void BuscarManualmente(ETipoDocumentoConsulta tipo, DadosBuscaDTO dadosBuscaDTO);
         Task<int> AtualizarInscricaoEstadualCte(int dataInicial, int dataFinal);
+        TotalDocumentosArmazenadosDTO ObterTotalDocumentosArmazenados(int periodoInicial, int periodoFinal);
+        Task CriarIndexChaveDocumentoFiscalAsync();
     }
 }
