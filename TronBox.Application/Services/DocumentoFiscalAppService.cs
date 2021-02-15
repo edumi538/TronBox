@@ -462,7 +462,7 @@ namespace TronBox.Application.Services
 
             if (conhecimentoTransporte == null)
             {
-                NotificarAplicacao(nomeArquivo, "Documento não pertence a empresa selecionada.");
+                NotificarAplicacao(nomeArquivo, "Documento não importado, verifique as configurações de cadastro da empresa.");
                 return null;
             }
 
