@@ -18,6 +18,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Sentinela.Domain.Aggregates.TenantAgg;
+using Sentinela.Domain.DTO.ViewModels;
 using TronBox.Application.Services.Interfaces;
 using TronBox.Domain.Aggregates.ConfiguracaoEmpresaAgg;
 using TronBox.Domain.Aggregates.ConfiguracaoEmpresaAgg.Repository;
@@ -83,7 +85,9 @@ namespace TronBox.Application.Services
 
         public void AtualizarEmpresa(EmpresaDTO empresaDto)
         {
-            var empresaExistente = _repositoryFactory.Instancie<IEmpresaRepository>().BuscarTodos().FirstOrDefault();
+            var empresaRepository = _repositoryFactory.Instancie<IEmpresaRepository>();
+            
+            var empresaExistente = empresaRepository.BuscarTodos().FirstOrDefault();
             var empresa = _mapper.Map<Empresa>(empresaDto);
 
             empresa.Id = empresaExistente.Id;
@@ -96,34 +100,84 @@ namespace TronBox.Application.Services
                 configuracaoEmpresa.InscricoesComplementares = configuracaoEmpresa.InscricoesComplementares
                     .Select(c =>
                     {
-                        if (c.Id == null || c.Id == Guid.Empty)
+                        if (c.Id == Guid.Empty)
                             c.Id = Guid.NewGuid();
 
                         return c;
                     });
             }
 
-            if (EhValido(configuracaoEmpresa))
+            if (!EhValido(configuracaoEmpresa)) return;
+            var configuracaoExistente = BuscarConfiguracaoEmpresa();
+
+            if (configuracaoExistente != null)
             {
-                var configuracaoExistente = BuscarConfiguracaoEmpresa();
-
-                if (configuracaoExistente != null)
-                {
-                    configuracaoEmpresa.Id = configuracaoExistente.Id;
-                    _repositoryFactory.Instancie<IConfiguracaoEmpresaRepository>().Atualizar(configuracaoEmpresa);
-                }
-                else _repositoryFactory.Instancie<IConfiguracaoEmpresaRepository>().Inserir(configuracaoEmpresa);
-
-                if (empresa != null && (int)empresa.TipoInscricao > 0)
-                    _repositoryFactory.Instancie<IEmpresaRepository>().Atualizar(empresa);
-
-                ExcluirUsuarioCriarNovo(empresaExistente, empresa.EmailPrincipal);
-
-                var consultarCte = configuracaoEmpresa.SalvarCteEntrada || configuracaoEmpresa.SalvarCteSaida;
-
-                if (!consultarCte) RemoverEmpresaFilaCte(empresa.Inscricao);
+                configuracaoEmpresa.Id = configuracaoExistente.Id;
+                _repositoryFactory.Instancie<IConfiguracaoEmpresaRepository>().Atualizar(configuracaoEmpresa);
             }
+            else _repositoryFactory.Instancie<IConfiguracaoEmpresaRepository>().Inserir(configuracaoEmpresa);
+
+            if ((int)empresa.TipoInscricao > 0)
+                empresaRepository.Atualizar(empresa);
+
+            ExcluirUsuarioCriarNovo(empresaExistente, empresa.EmailPrincipal);
+
+            var consultarCte = configuracaoEmpresa.SalvarCteEntrada || configuracaoEmpresa.SalvarCteSaida;
+
+            if (!consultarCte) RemoverEmpresaFilaCte(empresa.Inscricao);
         }
+
+        public async Task AtualizarTodasCredenciaisPortalEstadual(IEnumerable<Guid> tenantIds)
+        {
+            var tenantsList = tenantIds?.ToList();
+            
+            if (tenantsList == null || !tenantsList.Any())
+            {
+                _bus.RaiseEvent(new DomainNotification("SemBases", "Nenhuma base foi selecionada!"));
+                return;
+            }
+
+            var configReferencia = BuscarConfiguracaoEmpresa();
+
+            if (configReferencia.DadosMatoGrosso == null && configReferencia.DadosMatoGrossoSul == null)
+            {
+                _bus.RaiseEvent(new DomainNotification("NaoConfigurado", "A empresa de referência não está configurada"));
+                return;
+            }
+
+            var mobileToken = await UtilitarioHttpClient.ObtenhaCredencialRootAsync();
+
+            var requestPath = $"/api/usuarios/{_usuarioLogado.GetUsuarioId()}/tenants-modulo/{(int)eModuloTron.BX}";
+            var result = await UtilitarioHttpClient.GetRequest(mobileToken,
+                Constantes.URI_BASE_ST_API,
+                requestPath);
+            
+            var tenants = JsonConvert.DeserializeObject<List<Tenant>>(result);
+            
+            var tenantsSelecionados = tenants.Where(t => tenantsList.Contains(t.Id));
+          
+            var tp = FabricaGeral.Instancie<ITenantProvider>();
+            foreach (var tnt in tenantsSelecionados)
+            {
+                tp.SetTenantTmp(tnt);
+                var confiruacaoEmpresa = BuscarConfiguracaoEmpresa();
+
+                if (confiruacaoEmpresa.DadosMatoGrosso == null && confiruacaoEmpresa.DadosMatoGrossoSul == null)
+                    continue;
+                
+                if (confiruacaoEmpresa.DadosMatoGrosso != null && configReferencia.DadosMatoGrosso != null)
+                    confiruacaoEmpresa.DadosMatoGrosso = configReferencia.DadosMatoGrosso;
+
+                if (confiruacaoEmpresa.DadosMatoGrossoSul != null && configReferencia.DadosMatoGrossoSul != null)
+                    confiruacaoEmpresa.DadosMatoGrossoSul = configReferencia.DadosMatoGrossoSul;
+                
+                _repositoryFactory.Instancie<IConfiguracaoEmpresaRepository>()
+                    .Atualizar(confiruacaoEmpresa);
+            }
+            
+            tp.SetTenantTmp(null);
+        }
+
 
         public async Task<Resposta> Upload(CertificadoCreateDTO certificadoCreateDTO)
         {

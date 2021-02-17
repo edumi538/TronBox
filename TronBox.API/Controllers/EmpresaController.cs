@@ -5,6 +5,8 @@ using Comum.UI.Controllers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using TronBox.Application.Services.Interfaces;
@@ -174,5 +176,33 @@ namespace TronBox.UI.Controllers
                 mensagem = "Operação realizada com sucesso."
             });
         }
+        
+        [HttpPut("replicar-configuracao-acesso")]
+        public async Task<IActionResult> ReplicarConfiguracoesAcesso([FromBody] IEnumerable<Guid> tenantIds)
+        {
+            await AppServiceFactory.Instancie<IConfiguracaoEmpresaAppService>().AtualizarTodasCredenciaisPortalEstadual(tenantIds);
+            
+            if (_notifications.HasNotifications())
+            {
+                return BadRequest(new
+                {
+                    sucesso = false,
+                    erro = _notifications.GetNotifications()
+                        .Select(c => new
+                        {
+                            Chave = c.Key,
+                            Mensagem = c.Value
+                        })
+                });
+            }
+
+            return Ok(new
+            {
+                sucesso = true,
+                mensagem = "Operação realizada com sucesso."
+            });
+        }
     }
+
+
 }
