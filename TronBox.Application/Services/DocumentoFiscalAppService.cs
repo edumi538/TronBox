@@ -543,6 +543,8 @@ namespace TronBox.Application.Services
                 SerieDocumentoFiscal = nfe.NFe.infNFe.ide.serie.ToString(),
                 NumeroDocumentoFiscal = nfe.NFe.infNFe.ide.nNF.ToString(),
                 ValorDocumentoFiscal = (double)nfe.NFe.infNFe.total.ICMSTot.vNF,
+                UFEmitente = nfe.NFe.infNFe.emit.enderEmit.UF.ToString(),
+                CFOP = ObterCFOP(nfe.NFe.infNFe.det),
                 TipoDocumentoFiscal = nfe.NFe.infNFe.ide.mod == ModeloDocumento.NFCe
                     ? ETipoDocumentoFiscal.Nfce
                     : ObterTipoNotaFiscal(inscricaoEmpresa, nfe.NFe.infNFe.ide.tpNF, nfe.NFe.infNFe.emit, nfe.NFe.infNFe.dest, nfe.NFe.infNFe.det.FirstOrDefault())
@@ -551,7 +553,12 @@ namespace TronBox.Application.Services
             if (documentoFiscal.TipoDocumentoFiscal == 0) return null;
 
             var inscricaoEmitente = nfe.NFe.infNFe.emit.CNPJ ?? nfe.NFe.infNFe.emit.CPF;
-            var inscricaoDestinatario = nfe.NFe.infNFe.dest != null ? nfe.NFe.infNFe.dest.CNPJ ?? nfe.NFe.infNFe.dest.CPF : string.Empty;
+            string inscricaoDestinatario = "";
+            if (nfe.NFe.infNFe.dest != null)
+            {
+                inscricaoDestinatario =  nfe.NFe.infNFe.dest.CNPJ ?? nfe.NFe.infNFe.dest.CPF;
+                documentoFiscal.UFDestinatario = nfe.NFe.infNFe.dest.enderDest.UF;
+            }
 
             if (inscricaoEmpresa != inscricaoEmitente && inscricaoEmpresa != inscricaoDestinatario) return null;
 
@@ -758,6 +765,15 @@ namespace TronBox.Application.Services
                     documentosValidos.Add(documentoFiscal);
                 }
             }
+        }
+        private List<int> ObterCFOP(List <det> detList)
+        {
+            List<int> cfop = new List<int>();
+
+            foreach (det item in detList)
+                if (!cfop.Contains(item.prod.CFOP))
+                    cfop.Add(item.prod.CFOP);
+            return cfop;
         }
 
         private bool EhValido(DocumentoFiscal documentoFiscal)
