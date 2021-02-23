@@ -136,9 +136,9 @@ namespace TronBox.Application.Services
                 return;
             }
 
-            var configReferencia = BuscarConfiguracaoEmpresa();
+            var configReferencia = _repositoryFactory.Instancie<IConfiguracaoEmpresaRepository>().BuscarTodos().FirstOrDefault();
 
-            if (configReferencia.DadosMatoGrosso == null && configReferencia.DadosMatoGrossoSul == null)
+            if (configReferencia == null || configReferencia.DadosMatoGrosso == null && configReferencia.DadosMatoGrossoSul == null)
             {
                 _bus.RaiseEvent(new DomainNotification("NaoConfigurado", "A empresa de referência não está configurada"));
                 return;
@@ -153,14 +153,17 @@ namespace TronBox.Application.Services
             
             var tenants = JsonConvert.DeserializeObject<List<Tenant>>(result);
             
-            var tenantsSelecionados = tenants.Where(t => tenantsList.Contains(t.Id));
-          
             var tp = FabricaGeral.Instancie<ITenantProvider>();
+            
+            var tenantsSelecionados = tenants.Where(t => tp.GetTenant().Id != t.Id && tenantsList.Contains(t.Id));
+          
             foreach (var tnt in tenantsSelecionados)
             {
                 tp.SetTenantTmp(tnt);
-                var configuracaoEmpresa = BuscarConfiguracaoEmpresa();
+                var configuracaoEmpresa = _repositoryFactory.Instancie<IConfiguracaoEmpresaRepository>().BuscarTodos().FirstOrDefault();
 
+                if (configuracaoEmpresa == null) continue;
+                
                 if (configuracaoEmpresa.DadosMatoGrosso == null && configuracaoEmpresa.DadosMatoGrossoSul == null)
                     continue;
                 

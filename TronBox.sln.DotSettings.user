@@ -1,0 +1,16 @@
+﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+	<s:String x:Key="/Default/Environment/Highlighting/HighlightingSourceSnapshotLocation/@EntryValue">C:\Users\Desenvolvedor\AppData\Local\JetBrains\Rider2021.1\resharper-host\temp\Rider\vAny\CoverageData\_TronBox.1018037469\Snapshot\snapshot.utdcvr</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=c116c7dc_002D59d3_002D49a9_002D9713_002D3bc8063281ed/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="ReplicarConfiguracoesAcesso_QuandoChamadoComOsTenants_RetornaOk" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;Or&gt;&#xD;
+    &lt;Project Location="D:\Projetos.Net\TronBox\TronBox.API.UnitTests" Presentation="&amp;lt;6 - Web&amp;gt;\&amp;lt;TronBox.API.UnitTests&amp;gt;" /&gt;&#xD;
+    &lt;TestAncestor&gt;&#xD;
+      &lt;TestId&gt;NUnit3x::0529B0D1-9621-4590-849B-2118E95D236D::.NETCoreApp,Version=v3.1::TronBox.Application.UnitTests.Services.ConfiguracaoEmpresaAppServiceTests.AtualizarTodasCredenciaisPortalEstadual_QuandoListaDeTenantsVazia_EmitirEventoNotificacao&lt;/TestId&gt;&#xD;
+      &lt;TestId&gt;NUnit3x::0529B0D1-9621-4590-849B-2118E95D236D::.NETCoreApp,Version=v3.1::TronBox.Application.UnitTests.Services.ConfiguracaoEmpresaAppServiceTests.AtualizarTodasCredenciaisPortalEstadual_QuandoListaDeTenantsVaziaOuNull_EmitirEventoNotificacao&lt;/TestId&gt;&#xD;
+      &lt;TestId&gt;NUnit3x::0529B0D1-9621-4590-849B-2118E95D236D::.NETCoreApp,Version=v3.1::TronBox.Application.UnitTests.Services.ConfiguracaoEmpresaAppServiceTests.AtualizarTodasCredenciaisPortalEstadual_QuandoListaDeTenantsNullOuVazia_EmitirEventoNotificacao&lt;/TestId&gt;&#xD;
+      &lt;TestId&gt;NUnit3x::0529B0D1-9621-4590-849B-2118E95D236D::.NETCoreApp,Version=v3.1::TronBox.Application.UnitTests.Services.ConfiguracaoEmpresaAppServiceTests.AtualizarTodasCredenciaisPortalEstadual_QuandoListaDeTenantsNull_EmitirEventoNotificacao&lt;/TestId&gt;&#xD;
+      &lt;TestId&gt;NUnit3x::0529B0D1-9621-4590-849B-2118E95D236D::.NETCoreApp,Version=v3.1::TronBox.Application.UnitTests.Services.ConfiguracaoEmpresaAppServiceTests.AtualizarTodasCredenciaisPortalEstadual_QuandoListaDeTenantsVazio_EmitirEventoNotificacao&lt;/TestId&gt;&#xD;
+      &lt;TestId&gt;NUnit3x::0529B0D1-9621-4590-849B-2118E95D236D::.NETCoreApp,Version=v3.1::TronBox.Application.UnitTests.Services.ConfiguracaoEmpresaAppServiceTests.AtualizarTodasCredenciaisPortalEstadual_QuandoConfiguracaoReferenciaVazia_EmitirEventoNotificacao&lt;/TestId&gt;&#xD;
+      &lt;TestId&gt;NUnit3x::0529B0D1-9621-4590-849B-2118E95D236D::.NETCoreApp,Version=v3.1::TronBox.Application.UnitTests.Services.ConfiguracaoEmpresaAppServiceTests&lt;/TestId&gt;&#xD;
+    &lt;/TestAncestor&gt;&#xD;
+  &lt;/Or&gt;&#xD;
+&lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>
