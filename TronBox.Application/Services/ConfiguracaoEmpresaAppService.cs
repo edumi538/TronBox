@@ -19,7 +19,6 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Sentinela.Domain.Aggregates.TenantAgg;
-using Sentinela.Domain.DTO.ViewModels;
 using TronBox.Application.Services.Interfaces;
 using TronBox.Domain.Aggregates.ConfiguracaoEmpresaAgg;
 using TronBox.Domain.Aggregates.ConfiguracaoEmpresaAgg.Repository;
@@ -160,19 +159,19 @@ namespace TronBox.Application.Services
             foreach (var tnt in tenantsSelecionados)
             {
                 tp.SetTenantTmp(tnt);
-                var confiruacaoEmpresa = BuscarConfiguracaoEmpresa();
+                var configuracaoEmpresa = BuscarConfiguracaoEmpresa();
 
-                if (confiruacaoEmpresa.DadosMatoGrosso == null && confiruacaoEmpresa.DadosMatoGrossoSul == null)
+                if (configuracaoEmpresa.DadosMatoGrosso == null && configuracaoEmpresa.DadosMatoGrossoSul == null)
                     continue;
                 
-                if (confiruacaoEmpresa.DadosMatoGrosso != null && configReferencia.DadosMatoGrosso != null)
-                    confiruacaoEmpresa.DadosMatoGrosso = configReferencia.DadosMatoGrosso;
+                if (configuracaoEmpresa.DadosMatoGrosso != null && configReferencia.DadosMatoGrosso != null)
+                    configuracaoEmpresa.DadosMatoGrosso = configReferencia.DadosMatoGrosso;
 
-                if (confiruacaoEmpresa.DadosMatoGrossoSul != null && configReferencia.DadosMatoGrossoSul != null)
-                    confiruacaoEmpresa.DadosMatoGrossoSul = configReferencia.DadosMatoGrossoSul;
+                if (configuracaoEmpresa.DadosMatoGrossoSul != null && configReferencia.DadosMatoGrossoSul != null)
+                    configuracaoEmpresa.DadosMatoGrossoSul = configReferencia.DadosMatoGrossoSul;
                 
                 _repositoryFactory.Instancie<IConfiguracaoEmpresaRepository>()
-                    .Atualizar(confiruacaoEmpresa);
+                    .Atualizar(configuracaoEmpresa);
             }
             
             tp.SetTenantTmp(null);
