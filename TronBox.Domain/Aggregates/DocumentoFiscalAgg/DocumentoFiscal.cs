@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using MongoDB.Bson.Serialization.Attributes;
+using System.Collections.Generic;
 using TronBox.Domain.Enums;
 using TronBox.Domain.InnerClass;
 using TronCore.DefinicoesConfiguracoes;
@@ -22,6 +23,9 @@ namespace TronBox.Domain.Aggregates.DocumentoFiscalAgg
         public string NsuDocumentoFiscal { get; set; }
         public long DataArmazenamento { get; set; }
         public int DataEmissaoDocumento { get; set; }
+        public string UFEmitente { get; set; }
+        public string UFDestinatario { get; set; }
+        public List<int> CFOP { get; set; } 
         public bool Cancelado { get; set; }
         public bool Rejeitado { get; set; }
         public bool Denegada { get; set; }
