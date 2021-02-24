@@ -27,7 +27,8 @@ namespace TronBox.UI.Controllers
         [HttpPost]
         public async Task<IActionResult> Post([FromBody]InquilinoMongoDTO inquilino)
         {
-            var empresaExistente = AppServiceFactory.Instancie<IEmpresaAppService>().BuscarPorInscricao(inquilino.Inscricao);
+           var empresaExistente = AppServiceFactory.Instancie<IEmpresaAppService>()
+                    .BuscarPorInscricao(inquilino.Inscricao);
 
             if (empresaExistente == null)
             {

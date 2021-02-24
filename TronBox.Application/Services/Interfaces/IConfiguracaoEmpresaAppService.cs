@@ -1,6 +1,7 @@
 ﻿using Comum.Domain.ViewModels;
 using Comum.DTO;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using TronBox.Domain.DTO;
 using TronCore.Dominio.Base;
@@ -19,5 +20,6 @@ namespace TronBox.Application.Services.Interfaces
         Task NotificarContadorAcessoInvalido(ESefazEstado estado);
         void AlterarPessoa(PessoaViewModel pessoa);
         void CriarPessoa(PessoaUsuarioDTO pessoaUsuario);
+        Task AtualizarTodasCredenciaisPortalEstadual(IEnumerable<Guid> tenantIds);
     }
 }

@@ -7,6 +7,7 @@ using DFe.Classes.Flags;
 using DFe.Utils;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Internal;
 using NFe.Classes;
 using NFe.Classes.Informacoes.Destinatario;
 using NFe.Classes.Informacoes.Detalhe;
@@ -17,6 +18,7 @@ using Sentry;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -52,6 +54,7 @@ namespace TronBox.Application.Services
     {
         public static string path = "documentosfiscais/{tipo}/{anomes}";
         public static string MigracaoTronBox = "Migração do TronBox";
+        public const int MaximoParalelismo = 100;
 
 #if DEBUG
         public static string URL_AGENTE_MANIFESTACAO_NFE = "http://10.20.30.33:5001";
@@ -146,6 +149,17 @@ namespace TronBox.Application.Services
 
         public async Task<IEnumerable<RetornoDocumentoFiscalDTO>> Inserir(EnviarArquivosDTO arquivos)
         {
+            if (arquivos.Arquivos.Any(c => c.ContentType.Contains("zip")))
+            {
+                if (arquivos.Arquivos.Count() > 1)
+                {
+                    _bus.RaiseEvent(new DomainNotification(arquivos.Arquivos.FirstOrDefault().FileName, "Não é suportado vários documentos juntamente com arquivos zip. Mande o aquivo .zip separadamente."));
+                    return null;
+                }
+
+                arquivos.Arquivos = ExtrairZipParaFormFile(arquivos.Arquivos.FirstOrDefault());
+            }
+
             var empresa = _mapper.Map<EmpresaDTO>(_repositoryFactory.Instancie<IEmpresaRepository>().BuscarTodos().FirstOrDefault());
             empresa.ConfiguracaoEmpresa = _mapper.Map<ConfiguracaoEmpresaDTO>(_repositoryFactory.Instancie<IConfiguracaoEmpresaRepository>().BuscarTodos().FirstOrDefault());
 
@@ -345,7 +359,13 @@ namespace TronBox.Application.Services
                 Originador = arquivos.Originador
             };
 
-            foreach (var arquivo in arquivos.Arquivos)
+            var tasks = new List<Task<DocumentoFiscalDTO>>();
+            var tasksDocsInvalidos = new List<Task>();
+
+            var parallelOptions = new ParallelOptions { MaxDegreeOfParallelism = MaximoParalelismo };
+
+            // TODO ver como fechar as stream abertas arquivo.OpenReadStream()
+            Parallel.ForEach(arquivos.Arquivos, parallelOptions, arquivo =>
             {
                 try
                 {
@@ -364,7 +384,7 @@ namespace TronBox.Application.Services
                             var notaFiscal = ProcessarXMLparaNFe(empresa.Inscricao, conteudoXML, arquivo.FileName);
 
                             if (notaFiscal != null)
-                                documentosFiscais.Add(await PrepararDocumentoFiscal(dadosOrigem, notaFiscal, arquivo.FileName, arquivo.OpenReadStream()));
+                                tasks.Add(PrepararDocumentoFiscal(dadosOrigem, notaFiscal, arquivo.FileName, arquivo.OpenReadStream()));
                         }
                         else if (Regex.IsMatch(conteudoXML, "<chCTe>(.*?)</chCTe>", RegexOptions.IgnoreCase))
                         {
@@ -372,7 +392,7 @@ namespace TronBox.Application.Services
                                 conteudoXML, arquivo.FileName);
 
                             if (conhecimentoTransporte != null)
-                                documentosFiscais.Add(await PrepararDocumentoFiscal(dadosOrigem, conhecimentoTransporte, arquivo.FileName, arquivo.OpenReadStream()));
+                                tasks.Add(PrepararDocumentoFiscal(dadosOrigem, conhecimentoTransporte, arquivo.FileName, arquivo.OpenReadStream()));
                         }
                         else
                         {
@@ -380,8 +400,8 @@ namespace TronBox.Application.Services
 
                             if (matches.Count == 0)
                             {
-                                await NotificarDocumentoInvalidos(empresa, arquivo, null, "Documento não suportado.");
-                                continue;
+                                tasksDocsInvalidos.Add(NotificarDocumentoInvalidos(empresa, arquivo, null, "Documento não suportado."));
+                                return;
                             }
 
                             foreach (Match match in matches)
@@ -391,7 +411,7 @@ namespace TronBox.Application.Services
                                 if (notaFiscalServico != null)
                                 {
                                     using (var streamFile = new MemoryStream(Encoding.UTF8.GetBytes(match.Value)))
-                                        documentosFiscais.Add(await PrepararDocumentoFiscal(dadosOrigem, notaFiscalServico, arquivo.FileName, streamFile));
+                                        tasks.Add(PrepararDocumentoFiscal(dadosOrigem, notaFiscalServico, arquivo.FileName, streamFile));
                                 }
                             }
                         }
@@ -399,10 +419,15 @@ namespace TronBox.Application.Services
                 }
                 catch (Exception ex)
                 {
-                    await NotificarDocumentoInvalidos(empresa, arquivo, ex, "Documento não suportado.");
-                    continue;
+                    tasksDocsInvalidos.Add(NotificarDocumentoInvalidos(empresa, arquivo, ex, "Documento não suportado."));
+                    return;
                 }
-            }
+            });
+
+            var taskResult = await Task.WhenAll(tasks.ToArray());
+            documentosFiscais.AddRange(taskResult.ToList());
+
+            Task.WaitAll(tasksDocsInvalidos.ToArray());
 
             return documentosFiscais;
         }
@@ -1062,6 +1087,27 @@ namespace TronBox.Application.Services
 
         public async Task CriarIndexChaveDocumentoFiscalAsync()
             => await _repositoryFactory.Instancie<IDocumentoFiscalRepository>().CreateIndexAsync(d => d.ChaveDocumentoFiscal);
+
+        private List<IFormFile> ExtrairZipParaFormFile(IFormFile zipFile)
+        {
+            var result = new List<IFormFile>();
+
+            using (var stream = zipFile.OpenReadStream())
+            using (var archive = new ZipArchive(stream, ZipArchiveMode.Read))
+            {
+                foreach (var entry in archive.Entries)
+                {
+                    var ms = new MemoryStream((int)entry.Length);
+                    using (var st = entry.Open())
+                    {
+                        st.CopyTo(ms);
+                        result.Add(new FormFile(ms, 0, ms.Length, "arquivos", entry.Name));
+                    }
+                }
+            }
+
+            return result;
+        }
 
         #endregion
     }

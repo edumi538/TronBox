@@ -13,3 +13,4 @@ obj/
 *.ide-wal
 .vs/
 .config/
+.idea/
