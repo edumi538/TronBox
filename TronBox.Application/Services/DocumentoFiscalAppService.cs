@@ -435,14 +435,19 @@ namespace TronBox.Application.Services
 
             var conhecimentoTransporte = ObterConhecimentoTransporteFromObject(inscricaoEmpresa, salvarCteEntrada, salvarCteSaida, salvarCteNaoTomador, cte);
 
-            if (conhecimentoTransporte == null)
+           var feedback = ObterFeedbacksDoEnvioDeArquivosCTes(conhecimentoTransporte, salvarCteEntrada, salvarCteSaida, salvarCteNaoTomador, inscricaoEmpresa, cte);
+
+            if(feedback != "")
             {
-                NotificarAplicacao(nomeArquivo, "Documento não pertence a empresa selecionada.");
+                var msgPrincipal = "Não foi possível importar. ";
+                NotificarAplicacao(nomeArquivo, msgPrincipal + feedback);
                 return null;
             }
 
             return conhecimentoTransporte;
         }
+
+        
 
         private DocumentoFiscalDTO ProcessarXMLparaNFe(string inscricaoEmpresa, string conteudoXML, string nomeArquivo)
         {
@@ -495,12 +500,6 @@ namespace TronBox.Application.Services
             };
 
             if (documentoFiscal.TipoDocumentoFiscal == 0) return null;
-
-            if (documentoFiscal.TipoDocumentoFiscal == ETipoDocumentoFiscal.CteSaida && !salvarCteSaida) return null;
-
-            if (documentoFiscal.TipoDocumentoFiscal == ETipoDocumentoFiscal.CteEntrada && !salvarCteEntrada) return null;
-
-            if (documentoFiscal.TipoDocumentoFiscal == ETipoDocumentoFiscal.CTeNaoTomador && !salvarCteNaoTomador) return null;
 
             documentoFiscal.InscricaoEstadual = ObterInscricaoEstadualConhecimentoFrete(inscricaoEmpresa, cte.CTe.infCte);
 
@@ -657,6 +656,46 @@ namespace TronBox.Application.Services
                 return infCte.ide.toma4.IE;
 
             return string.Empty;
+        }
+        private static string ObterFeedbacksDoEnvioDeArquivosCTes(DocumentoFiscalDTO conhecimentoTransporte, bool salvarCTeEntrada, bool salvarCTeSaida, bool salvarCTeNaoTomador,string inscricaoEmpresa, cteProc cte)
+        {
+
+            var isEqualCnpj = InscricaoCteIsEqualInscricaoEmpresa(inscricaoEmpresa, cte);
+
+            if (isEqualCnpj)
+            {
+                if (conhecimentoTransporte.TipoDocumentoFiscal == ETipoDocumentoFiscal.CteEntrada && !salvarCTeEntrada)
+                    return "A opção 'Salvar CTe de Entrada' não está habilitada na configuração de cadastro da empresa.";
+                if (conhecimentoTransporte.TipoDocumentoFiscal == ETipoDocumentoFiscal.CteSaida && !salvarCTeSaida)
+                    return "A opção 'Salvar CTe de Saída' não está habilitada na configuração de cadastro da empresa.";
+                if (conhecimentoTransporte.TipoDocumentoFiscal == ETipoDocumentoFiscal.CTeNaoTomador && !salvarCTeNaoTomador)
+                    return "A opção 'Salvar CTe Não Tomador' não está habilitada na configuração de cadastro da empresa.";
+
+                return "";
+            }
+            else
+            {
+                return "Documento não pertence a empresa selecionada.";
+            }
+        }
+
+        private static bool InscricaoCteIsEqualInscricaoEmpresa(string inscricaoEmpresa, cteProc cte)
+        {
+
+            if (cte.CTe.infCte.emit != null && (cte.CTe.infCte.emit.CNPJ != null && cte.CTe.infCte.emit.CNPJ == inscricaoEmpresa)) return true; // Todo: Classe apresenta apenas tag emitente com CNPJ e não com CPF.
+            if (cte.CTe.infCte.rem != null && (cte.CTe.infCte.rem.CNPJ != null && cte.CTe.infCte.rem.CNPJ == inscricaoEmpresa ||
+                  cte.CTe.infCte.rem.CPF != null && cte.CTe.infCte.rem.CPF == inscricaoEmpresa)) return true;
+            if (cte.CTe.infCte.exped != null && (cte.CTe.infCte.exped.CNPJ != null && cte.CTe.infCte.exped.CNPJ == inscricaoEmpresa ||
+                  cte.CTe.infCte.exped.CPF != null && cte.CTe.infCte.exped.CPF == inscricaoEmpresa)) return true;
+            if (cte.CTe.infCte.receb != null && (cte.CTe.infCte.receb.CNPJ != null && cte.CTe.infCte.receb.CNPJ == inscricaoEmpresa ||
+                  cte.CTe.infCte.exped.CPF != null && cte.CTe.infCte.exped.CPF == inscricaoEmpresa)) return true;
+            if (cte.CTe.infCte.dest != null && (cte.CTe.infCte.dest.CNPJ != null && cte.CTe.infCte.dest.CNPJ == inscricaoEmpresa ||
+                  cte.CTe.infCte.dest.CPF != null && cte.CTe.infCte.dest.CPF == inscricaoEmpresa)) return true;
+            if (cte.CTe.infCte.toma != null && (cte.CTe.infCte.toma.CNPJ != null && cte.CTe.infCte.toma.CNPJ == inscricaoEmpresa ||
+                cte.CTe.infCte.toma.CPF != null && cte.CTe.infCte.toma.CPF == inscricaoEmpresa)) return true;
+
+            return false;
+
         }
 
         private ETipoDocumentoFiscal ObterTipoNotaFiscal(string inscricaoEmpresa, TipoNFe tpNF, emit emit, dest dest, det det)
